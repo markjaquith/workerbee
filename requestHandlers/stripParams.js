@@ -16,7 +16,9 @@ export default async function stripParams(request) {
 		}
 	}
 
-	return new Request(url, request);
+	if (url.toString() !== request.url) {
+		return setRequestUrl(url, request);
+	}
 }
 
 export function getStrippableParams(url) {

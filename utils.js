@@ -20,10 +20,7 @@ export function isRedirect({ status, headers }) {
 
 export function setRequestUrl(url, request, options = {}) {
 	return new Request(url, {
-		body: request.body,
-		headers: request.headers,
-		method: request.method,
-		redirect: request.redirect,
+		...request,
 		...options,
 	});
 }

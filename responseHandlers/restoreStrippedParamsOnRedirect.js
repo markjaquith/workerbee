@@ -21,6 +21,4 @@ export default async function restoreStrippedParamsOnRedirect(
 			return newResponse;
 		}
 	}
-
-	return response;
 }

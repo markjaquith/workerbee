@@ -1,4 +1,14 @@
-export async function redirectHttps(url) {
-	url.protocol = "https:";
-	return Response.redirect(url, 301);
+import { redirect } from '../utils';
+
+const HTTPS = 'https:';
+
+export async function redirectHttps(request) {
+	const url = new URL(request.url);
+
+	if (url.protocol !== HTTPS) {
+		url.protocol = HTTPS;
+		return redirect(url, 301);
+	}
+
+	return request;
 }

@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/markjaquith/cf-worker-utils/issues"
   },
-  "homepage": "https://github.com/markjaquith/cf-worker-utils#readme"
+  "homepage": "https://github.com/markjaquith/cf-worker-utils#readme",
+  "dependencies": {
+    "cookie": "^0.4.1"
+  }
 }

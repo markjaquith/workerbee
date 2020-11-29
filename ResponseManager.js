@@ -25,7 +25,7 @@ export default class RequestManager {
 				console.log('🎬', originalRequest);
 	
 				// Request starts out as the original request.
-				this.request = originalRequest.clone();
+				this.request = new Request(originalRequest);
 	
 				// Loop through request handlers.
 				try {

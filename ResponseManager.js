@@ -14,8 +14,8 @@ export default class RequestManager {
 		this.responseHandlers.push(handler);
 	}
 
-	async handleFetch() {
-		addEventListener('fetch', (event) => {
+	handleFetch() {
+		addEventListener('fetch', event => {
 			event.passThroughOnException();
 	
 			const makeResponse = async originalRequest => {

@@ -1,9 +1,6 @@
-import * as utils from './utils';
-import * as requestHandlers from './requestHandlers';
-import * as responseHandlers from './responseHandlers';
+import { handleFetch } from './utils';
+export * from './utils';
+export * from './requestHandlers';
+export * from './responseHandlers';
 
-export default {
-	...utils,
-	...requestHandlers,
-	...responseHandlers,
-};
+export default handleFetch;

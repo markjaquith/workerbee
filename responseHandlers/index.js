@@ -1,7 +1,2 @@
-import forbidden from './forbidden';
-import restoreStrippedParamsOnRedirect from './restoreStrippedParamsOnRedirect';
-
-export default {
-	forbidden,
-	restoreStrippedParamsOnRedirect,
-};
+export { default as forbidden } from './forbidden';
+export { default as restoreStrippedParamsOnRedirect } from './restoreStrippedParamsOnRedirect';

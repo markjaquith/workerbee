@@ -1,9 +1,3 @@
-import https from './https';
-import requireCookieOrParam from './requireCookieOrParam';
-import stripParams from './stripParams';
-
-export default {
-	https,
-	requireCookieOrParam,
-	stripParams,
-};
+export { default as https } from './https';
+export { default as requireCookieOrParam } from './requireCookieOrParam';
+export { default as stripParams } from './stripParams';

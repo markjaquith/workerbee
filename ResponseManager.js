@@ -30,7 +30,7 @@ export default class RequestManager {
 				// Loop through request handlers.
 				try {
 					while(this.requestHandlers.length > 0) {
-						const requestHandler = requestHandlers.shift();
+						const requestHandler = this.requestHandlers.shift();
 						let result = await requestHandler(this.request);
 
 						// If we don't get back a result, the handler declined to do anything.

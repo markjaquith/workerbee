@@ -16,12 +16,7 @@ export default async function stripParams(request) {
 		}
 	}
 
-	return new Request(url, {
-		body: request.body,
-		headers: request.headers,
-		method: request.method,
-		redirect: request.redirect,
-	});
+	return Request(url, request);
 }
 
 export function getStrippableParams(url) {

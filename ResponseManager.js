@@ -1,4 +1,4 @@
-import { toArray } from './utils';
+import { toArray, isRedirect } from './utils';
 
 export default class RequestManager {
 	constructor(requestHandlers = [], responseHandlers = []) {
@@ -18,7 +18,7 @@ export default class RequestManager {
 		addEventListener('fetch', (event) => {
 			event.passThroughOnException();
 	
-			async function makeResponse(originalRequest) {
+			const makeResponse = async originalRequest => {
 				this.originalRequest = originalRequest;
 
 				console.group(originalRequest.url);

@@ -19,6 +19,7 @@ export function isRedirect({ status, headers }) {
 }
 
 export function setRequestUrl(url, request, options = {}) {
+	console.log('set request url');
 	return new Request(url, {
 		...request,
 		...options,

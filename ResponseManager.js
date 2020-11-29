@@ -1,12 +1,6 @@
 import { toArray } from './utils';
 
 export default class RequestManager {
-	requestHandlers = [];
-	responseHandlers = [];
-	originalRequest;
-	request;
-	response;
-
 	constructor(requestHandlers = [], responseHandlers = []) {
 		this.requestHandlers = toArray(requestHandlers);
 		this.responseHandlers = toArray(responseHandlers);

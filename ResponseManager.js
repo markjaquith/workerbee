@@ -41,13 +41,13 @@ export default class RequestManager {
 							// This skips the rest of the response handlers.
 							throw result;
 						} else if (result instanceof Request) {
+							// Log that the request URL changed.
+							if (result.url !== this.request.url) {
+								console.log('✏️', result.url, result);
+							}
+
 							// The handler returned a new Request object.
 							this.request = result;
-
-							// Log that the request URL changed.
-							if (result.url !== request.url) {
-								console.log('✏️', request.url, request);
-							}
 						}
 					}
 				} catch (result) {

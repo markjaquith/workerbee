@@ -2,7 +2,7 @@ import { redirect } from '../utils';
 
 const HTTPS = 'https:';
 
-export default async function redirectHttps(request) {
+export default async function redirectHttps({ request }) {
 	const url = new URL(request.url);
 
 	if (url.protocol !== HTTPS) {

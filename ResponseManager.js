@@ -7,6 +7,8 @@ export default class RequestManager {
 		this.requestHandlers = [];
 		this.responseHandlers = [];
 		this.makeResponse = this.makeResponse.bind(this);
+		this.addRequestHandler = this.addRequestHandler.bind(this);
+		this.addResponseHandler = this.addResponseHandler.bind(this);
 	}
 
 	addRequestHandler(handler) {
@@ -33,7 +35,7 @@ export default class RequestManager {
 		// Loop through request handlers.
 		while(this.requestHandlers.length > 0 && !this.response) {
 			const requestHandler = this.requestHandlers.shift();
-			const result = await requestHandler(this.request);
+			const result = await requestHandler(this);
 
 			if (result instanceof Response) {
 				// Request handlers can bail early and return a response.
@@ -70,7 +72,7 @@ export default class RequestManager {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
 			const responseHandler = this.responseHandlers.shift();
-			const result = await responseHandler(this.response, this.request, this.originalRequest);
+			const result = await responseHandler(this);
 
 			// If we receive a result, replace the response.
 			if (result instanceof Response) {

@@ -1,9 +1,13 @@
+import cookie from 'cookie';
+
 export function toArray(mixed) {
 	return Array.isArray(mixed) ? mixed : [mixed];
 }
 
 export function redirect(url, status = 302) {
-	return Response.redirect(`${url}`, status);
+	const response = Response.redirect(`${url}`, status);
+
+	return new Response(null, response);
 }
 
 /**
@@ -17,7 +21,6 @@ export function isRedirect({ status, headers }) {
 }
 
 export function setRequestUrl(url, request, options = {}) {
-	console.log('set request url');
 	return new Request(url, {
 		...request,
 		...options,
@@ -31,20 +34,7 @@ export function setRequestUrl(url, request, options = {}) {
  * @param {string} name of the cookie to get
  */
 export function getCookie(request, name) {
-	let result = "";
-	const cookieString = request.headers.get("Cookie");
+	const cookies = cookie.parse(request.headers.get("cookie") || "");
 
-	if (cookieString) {
-	 const cookies = cookieString.split(";");
-	 cookies.forEach(cookie => {
-	  const cookiePair = cookie.split("=", 2);
-	  const cookieName = cookiePair[0].trim();
-	  if (cookieName === name) {
-	   const cookieVal = cookiePair[1];
-	   result = cookieVal;
-	  }
-	 });
-	}
-
-	return result;
+	return cookies[name] || null;
 }

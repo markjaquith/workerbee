@@ -2,8 +2,11 @@ import { toArray, isRedirect } from './utils';
 
 export default class RequestManager {
 	constructor(requestHandlers = [], responseHandlers = []) {
-		this.requestHandlers = toArray(requestHandlers);
-		this.responseHandlers = toArray(responseHandlers);
+		this.originalRequestHandlers = toArray(requestHandlers);
+		this.originalResponseHandlers = toArray(responseHandlers);
+		this.requestHandlers = [];
+		this.responseHandlers = [];
+		this.makeResponse = this.makeResponse.bind(this);
 	}
 
 	addRequestHandler(handler) {
@@ -14,92 +17,79 @@ export default class RequestManager {
 		this.responseHandlers.push(handler);
 	}
 
-	handleFetch() {
-		addEventListener('fetch', event => {
-			event.passThroughOnException();
-	
-			const makeResponse = async originalRequest => {
-				this.originalRequest = originalRequest;
+	async makeResponse(originalRequest) {
+		// Reset things for this request, because this object can be long-lived on Cloudflare!
+		delete(this.response);
+		this.requestHandlers = [...this.originalRequestHandlers];
+		this.responseHandlers = [...this.originalResponseHandlers];
+		this.originalRequest = originalRequest;
 
-				console.group(originalRequest.url);
-				console.log('🎬', originalRequest);
-	
-				// Request starts out as the original request.
-				this.request = new Request(originalRequest);
-	
-				// Loop through request handlers.
-				try {
-					while(this.requestHandlers.length > 0) {
-						const requestHandler = this.requestHandlers.shift();
-						let result = await requestHandler(this.request);
+		console.group(originalRequest.url);
+		console.log('🎬', originalRequest);
 
-						// If we don't get back a result, the handler declined to do anything.
-						if (!result) {
-							continue;
-						} else if (result instanceof Response) {
-							// Request handlers can bail early and return a response.
-							// This skips the rest of the response handlers.
-							throw result;
-						} else if (result instanceof Request) {
-							// Log that the request URL changed.
-							if (result.url !== this.request.url) {
-								console.log('✏️', result.url, result);
-							}
+		// Request starts out as the original request.
+		this.request = originalRequest;
 
-							// The handler returned a new Request object.
-							this.request = result;
-						}
-					}
-				} catch (result) {
-					this.response = result;
-					if (isRedirect(this.response)) {
-						console.log(
-							`⏪ ${this.response.status}`,
-							this.response.headers.get('location'),
-							this.response
-						);
-					} else {
-						console.log('⏪', this.response);
-					}
-				}
+		// Loop through request handlers.
+		while(this.requestHandlers.length > 0 && !this.response) {
+			const requestHandler = this.requestHandlers.shift();
+			const result = await requestHandler(this.request);
 
-				// If we don't already have a response, we should fetch the request.
-				if (!this.response) {
-					// Fetch.
-					console.log('➡️', this.request.url);
-					this.response = await fetch(this.request);
-					console.log('⬅️', this.response);
-				}
-	
-				// If there are response handlers, loop through them.
-				while (this.responseHandlers.length > 0) {
-					const responseHandler = this.responseHandlers.shift();
-					const result = await responseHandler(this.response, this.request, this.originalRequest);
+			if (result instanceof Response) {
+				// Request handlers can bail early and return a response.
+				// This skips the rest of the response handlers.
+				this.response = result;
 
-					// If we don't get back a result, the handler declined to do anything.
-					if (!result) {
-						continue;
-					} else if (result instanceof Response) {
-						this.response = result;
-					} 
-				}
-	
 				if (isRedirect(this.response)) {
 					console.log(
-						`⤴️ ${this.response.status}`,
-						this.response.headers.get('location') || '',
+						`⏪ ${this.response.status}`,
+						this.response.headers.get('location'),
 						this.response
 					);
 				} else {
-					console.log('✅', this.response);
+					console.log('⏪', this.response);
 				}
-	
-				console.groupEnd();
-	
-				return this.response;
+			} else if (result instanceof Request) {
+				// A new Request was returned.
+				if (result.url !== this.request.url) {
+					// The request URL changed.
+					console.log('✏️', result.url, result);
+				}
+
+				this.request = result;
 			}
-	
-			event.respondWith(makeResponse(event.request));
-		});
+		}
+		
+		if (!this.response) {
+			// If we don't already have a response, we should fetch the request.
+			console.log('➡️', this.request.url);
+			this.response = await fetch(this.request);
+			console.log('⬅️', this.response);
+		}
+
+		// If there are response handlers, loop through them.
+		while (this.responseHandlers.length > 0) {
+			const responseHandler = this.responseHandlers.shift();
+			const result = await responseHandler(this.response, this.request, this.originalRequest);
+
+			// If we receive a result, replace the response.
+			if (result instanceof Response) {
+				this.response = result;
+			} 
+		}
+
+		if (isRedirect(this.response)) {
+			console.log(
+				`⤴️ ${this.response.status}`,
+				this.response.headers.get('location') || '',
+				this.response
+			);
+		} else {
+			console.log('✅', this.response);
+		}
+
+		console.groupEnd();
+
+		return this.response;
 	}
 }

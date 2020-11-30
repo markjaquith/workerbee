@@ -3,9 +3,7 @@ export function toArray(mixed) {
 }
 
 export function redirect(url, status = 302) {
-	const response = Response.redirect(`${url}`, status);
-
-	return new Response(response.body.tee(), response);
+	return Response.redirect(`${url}`, status);
 }
 
 /**

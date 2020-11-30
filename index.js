@@ -6,7 +6,11 @@ export function handleFetch(
 	requestHandlers = [],
 	responseHandlers = []
 ) {
-	(new ResponseManager(requestHandlers, responseHandlers)).handleFetch();
+	addEventListener('fetch', event => {
+		event.passThroughOnException();
+		const responder = new ResponseManager(requestHandlers, responseHandlers);
+		event.respondWith(responder.makeResponse(event.request));
+	});
 }
 
 export default handleFetch;

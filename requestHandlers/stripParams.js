@@ -9,7 +9,7 @@ export default function stripParams(params = STRIP_PARAMS) {
 	return async ({ request, addResponseHandler }) => {
 		const url = new URL(request.url);
 
-		const strippableParams = getStrippableParams(url);
+		const strippableParams = getStrippableParams(url, params);
 
 		for (const param in strippableParams) {
 			if (url.searchParams.has(param)) {
@@ -20,16 +20,16 @@ export default function stripParams(params = STRIP_PARAMS) {
 
 		// We changed the URL.
 		if (url.toString() !== request.url) {
-			addResponseHandler()
+			addResponseHandler(restoreStrippedParamsOnRedirect(strippableParams));
 			return setRequestUrl(url, request);
 		}
 	}
 }
 
-function getStrippableParams(url) {
+function getStrippableParams(url, params = []) {
 	const strippableParams = {};
 
-	for (const param of STRIP_PARAMS) {
+	for (const param of params) {
 		if (url.searchParams.has(param)) {
 			strippableParams[param] = url.searchParams.get(param);
 		}
@@ -39,14 +39,13 @@ function getStrippableParams(url) {
 }
 
 function restoreStrippedParamsOnRedirect(params = []) {
-	return async ({ response, originalRequest }) => {
+	return async ({ response }) => {
 		if (isRedirect(response)) {
 			const redirectLocation = new URL(response.headers.get('location'));
-			const strippedParams = getStrippableParams(new URL(originalRequest.url));
-			if (Object.keys(strippedParams).length) {
-				for (const param in strippedParams) {
-					console.log('🕊 Restore param', param, strippedParams[param]);
-					redirectLocation.searchParams.set(param, strippedParams[param]);
+			if (Object.keys(params).length) {
+				for (const param in params) {
+					console.log('🕊 Restore param', param, params[param]);
+					redirectLocation.searchParams.set(param, params[param]);
 				}
 
 				const newResponse = new Response(response.body, response);

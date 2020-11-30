@@ -1,0 +1,26 @@
+{
+  "name": "cf-worker-utils",
+  "version": "0.1.0",
+  "description": "Utilities for writing Cloudflare Workers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markjaquith/cf-worker-utils.git"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers"
+  ],
+  "author": "Mark Jaquith",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markjaquith/cf-worker-utils/issues"
+  },
+  "homepage": "https://github.com/markjaquith/cf-worker-utils#readme",
+  "dependencies": {
+    "cookie": "^0.4.1"
+  }
+}

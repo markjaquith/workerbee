@@ -1,6 +1,5 @@
-export * from './requestHandlers';
-export * from './responseHandlers';
-import RequestManager from './RequestManager';
+export * from './src';
+import RequestManager from './src/RequestManager';
 
 export function handleFetch(
 	requestHandlers = [],

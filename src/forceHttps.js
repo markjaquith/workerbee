@@ -1,4 +1,4 @@
-import { redirect } from '../utils';
+import { redirect } from './utils';
 
 const HTTPS = 'https:';
 

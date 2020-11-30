@@ -1,6 +1,6 @@
 export * from './requestHandlers';
 export * from './responseHandlers';
-import ResponseManager from './ResponseManager';
+import RequestManager from './RequestManager';
 
 export function handleFetch(
 	requestHandlers = [],
@@ -8,7 +8,7 @@ export function handleFetch(
 ) {
 	addEventListener('fetch', event => {
 		event.passThroughOnException();
-		const responder = new ResponseManager(requestHandlers, responseHandlers);
+		const responder = new RequestManager(requestHandlers, responseHandlers);
 		event.respondWith(responder.makeResponse(event.request));
 	});
 }

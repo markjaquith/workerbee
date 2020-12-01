@@ -1,4 +1,4 @@
-export default function addResponseHeaders(headers = []) {
+export default function setResponseHeaders(headers = []) {
 	return async function ({ response }) {
 		const newResponse = new Response(
 			response.body,

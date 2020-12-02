@@ -4,7 +4,7 @@
   "description": "Utilities for writing Cloudflare Workers",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,13 @@
   },
   "homepage": "https://github.com/markjaquith/cf-worker-utils#readme",
   "dependencies": {
-    "cookie": "^0.4.1"
+    "cookie": "^0.4.1",
+    "lodash.curry": "^4.1.1",
+    "lodash.partialright": "^4.2.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "jest": "^26.6.3"
   }
 }

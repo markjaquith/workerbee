@@ -9,6 +9,16 @@ export default class RequestManager {
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
+		this.addImmediateRequestHandler = this.addImmediateRequestHandler.bind(this);
+		this.addImmediateResponseHandler = this.addImmediateResponseHandler.bind(this);
+	}
+
+	addImmediateRequestHandler(handler) {
+		this.requestHandlers.unshift(handler);
+	}
+
+	addImmediateResponseHandler(handler) {
+		this.responseHandlers.unshift(handler);
 	}
 
 	addRequestHandler(handler) {
@@ -25,6 +35,7 @@ export default class RequestManager {
 		this.requestHandlers = [...this.originalRequestHandlers];
 		this.responseHandlers = [...this.originalResponseHandlers];
 		this.originalRequest = originalRequest;
+		this.phase = 'request';
 
 		console.group(originalRequest.url);
 		console.log('🎬', originalRequest);
@@ -68,6 +79,8 @@ export default class RequestManager {
 			this.response = await fetch(this.request);
 			console.log('⬅️', this.response);
 		}
+
+		this.phase = 'response';
 
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {

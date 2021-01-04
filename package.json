@@ -1,6 +1,6 @@
 {
   "name": "cf-worker-utils",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Utilities for writing Cloudflare Workers",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "dependencies": {
     "cookie": "^0.4.1",
     "lodash.curry": "^4.1.1",
+    "lodash.partial": "^4.2.1",
     "lodash.partialright": "^4.2.1"
   },
   "devDependencies": {

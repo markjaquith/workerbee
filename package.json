@@ -23,6 +23,7 @@
   "dependencies": {
     "cookie": "^0.4.1",
     "lodash.curry": "^4.1.1",
+    "lodash.negate": "^3.0.2",
     "lodash.partial": "^4.2.1",
     "lodash.partialright": "^4.2.1"
   },

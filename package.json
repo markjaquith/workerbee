@@ -20,6 +20,7 @@
     "cloudflare",
     "workers"
   ],
+  "sideEffects": false,
   "author": "Mark Jaquith",
   "license": "MIT",
   "bugs": {
@@ -28,10 +29,7 @@
   "homepage": "https://github.com/markjaquith/cf-worker-utils#readme",
   "dependencies": {
     "cookie": "^0.4.1",
-    "lodash.curry": "^4.1.1",
-    "lodash.negate": "^3.0.2",
-    "lodash.partial": "^4.2.1",
-    "lodash.partialright": "^4.2.1"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.12.1",

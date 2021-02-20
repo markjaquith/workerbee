@@ -1,4 +1,4 @@
-import curry from 'lodash.curry';
+import curry from 'lodash/curry';
 
 export default curry(function pathStartsWith(startsWith, { request }) {
 	const url = new URL(request.url);

@@ -1,6 +1,6 @@
 import applyHandlersIf from './applyHandlersIf';
 import applyHandlersUnless from './applyHandlersUnless';
-import partial from 'lodash.partial';
+import partial from 'lodash/partial';
 import withRequest from './withRequest';
 
 export const createIf = (fn) => (...args) => (_manager) =>

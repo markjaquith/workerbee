@@ -1,6 +1,6 @@
 import applyHandlersIf from './applyHandlersIf';
 import applyHandlersUnless from './applyHandlersUnless';
-import partial from 'lodash.partial';
+import partial from 'lodash/partial';
 
 export const createIf = (fn) => (...args) =>
 	partial(applyHandlersIf, fn(...args));

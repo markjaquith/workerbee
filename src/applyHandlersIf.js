@@ -1,4 +1,4 @@
-import curry from 'lodash.curry';
+import curry from 'lodash/curry';
 import { toArray } from './utils';
 
 /**

@@ -34,7 +34,7 @@ export function setRequestUrl(url, request, options = {}) {
  * @param {string} name of the cookie to get
  */
 export function getCookie(request, name) {
-	const cookies = cookie.parse(request.headers.get("cookie") || "");
+	const cookies = cookie.parse(request.headers.get('cookie') || '');
 
 	return cookies[name] || null;
 }

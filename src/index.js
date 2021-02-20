@@ -12,8 +12,18 @@ export { default as setResponseHeaders } from './setResponseHeaders';
 export { default as appendResponseHeaders } from './appendResponseHeaders';
 export { default as removeResponseHeaders } from './removeResponseHeaders';
 export { default as applyHandlersIf } from './applyHandlersIf';
-export { headerContains, pathStartsWith, createConditionals, createRequestConditionals };
+export {
+	headerContains,
+	pathStartsWith,
+	createConditionals,
+	createRequestConditionals,
+};
 export * from './utils';
 
-export const [ifRequestHeaderContains, unlessRequestHeaderContains] = createRequestConditionals(headerContains);
-export const [ifPathStartsWith, unlessPathStartsWith] = createConditionals(pathStartsWith);
+export const [
+	ifRequestHeaderContains,
+	unlessRequestHeaderContains,
+] = createRequestConditionals(headerContains);
+export const [ifPathStartsWith, unlessPathStartsWith] = createConditionals(
+	pathStartsWith
+);

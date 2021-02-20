@@ -9,8 +9,12 @@ export default class RequestManager {
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
-		this.addImmediateRequestHandler = this.addImmediateRequestHandler.bind(this);
-		this.addImmediateResponseHandler = this.addImmediateResponseHandler.bind(this);
+		this.addImmediateRequestHandler = this.addImmediateRequestHandler.bind(
+			this
+		);
+		this.addImmediateResponseHandler = this.addImmediateResponseHandler.bind(
+			this
+		);
 	}
 
 	addImmediateRequestHandler(handler) {
@@ -29,22 +33,22 @@ export default class RequestManager {
 		this.responseHandlers.push(handler);
 	}
 
-	async makeResponse(originalRequest) {
+	async makeResponse({ request }) {
 		// Reset things for this request, because this object can be long-lived on Cloudflare!
-		delete(this.response);
+		delete this.response;
 		this.requestHandlers = [...this.originalRequestHandlers];
 		this.responseHandlers = [...this.originalResponseHandlers];
-		this.originalRequest = originalRequest;
+		this.originalRequest = request;
 		this.phase = 'request';
 
-		console.group(originalRequest.url);
-		console.log('🎬', originalRequest);
+		console.group(request.url);
+		console.log('🎬', request);
 
 		// Request starts out as the original request.
-		this.request = originalRequest;
+		this.request = request;
 
 		// Loop through request handlers.
-		while(this.requestHandlers.length > 0 && !this.response) {
+		while (this.requestHandlers.length > 0 && !this.response) {
 			const requestHandler = this.requestHandlers.shift();
 			const result = await requestHandler(this);
 
@@ -72,7 +76,7 @@ export default class RequestManager {
 				this.request = result;
 			}
 		}
-		
+
 		if (!this.response) {
 			// If we don't already have a response, we should fetch the request.
 			console.log('➡️', this.request.url);
@@ -90,7 +94,7 @@ export default class RequestManager {
 			// If we receive a result, replace the response.
 			if (result instanceof Response) {
 				this.response = result;
-			} 
+			}
 		}
 
 		if (isRedirect(this.response)) {

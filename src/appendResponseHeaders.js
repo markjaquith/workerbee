@@ -1,9 +1,6 @@
 export default function appendResponseHeaders(headers = []) {
 	return async function ({ response }) {
-		const newResponse = new Response(
-			response.body,
-			response
-		);
+		const newResponse = new Response(response.body, response);
 		let changed = false;
 
 		for (const [key, value] of headers) {
@@ -16,5 +13,5 @@ export default function appendResponseHeaders(headers = []) {
 		if (changed) {
 			return newResponse;
 		}
-	}
+	};
 }

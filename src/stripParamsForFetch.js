@@ -23,7 +23,7 @@ export default function stripParams(params = STRIP_PARAMS) {
 			addResponseHandler(restoreStrippedParamsOnRedirect(strippableParams));
 			return setRequestUrl(url, request);
 		}
-	}
+	};
 }
 
 function getStrippableParams(url, params = []) {
@@ -54,5 +54,5 @@ function restoreStrippedParamsOnRedirect(params = []) {
 				return newResponse;
 			}
 		}
-	}
+	};
 }

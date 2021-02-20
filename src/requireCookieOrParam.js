@@ -2,7 +2,7 @@ import { getCookie, redirect } from './utils';
 import cookie from 'cookie';
 
 export default function requireCookieOrParam(name, message = 'Access denied') {
-	return async function({ request }) {
+	return async function ({ request }) {
 		const url = new URL(request.url);
 
 		if (url.searchParams.has(name)) {
@@ -23,5 +23,5 @@ export default function requireCookieOrParam(name, message = 'Access denied') {
 				statusText: 'Forbidden',
 			});
 		}
-	}
+	};
 }

@@ -4,7 +4,13 @@
   "description": "Utilities for writing Cloudflare Workers",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "prettier": "prettier --write \"./**/*.{mjs,js,jsx}\""
+  },
+  "prettier": {
+    "useTabs": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
   },
   "repository": {
     "type": "git",
@@ -30,6 +36,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.7",
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1"
   }
 }

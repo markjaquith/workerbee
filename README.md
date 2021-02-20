@@ -1,5 +1,7 @@
 # cf-worker-utils
 
+![minified and zipped size](https://img.shields.io/bundlephobia/minzip/cf-worker-utils)
+
 This is a simple package for composing Cloudflare Workers, focused on the normal
 use case of having an upstream server, and wanting to manipulate requests and
 responses.

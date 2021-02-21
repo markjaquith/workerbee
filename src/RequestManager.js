@@ -33,6 +33,28 @@ export default class RequestManager {
 		this.responseHandlers.push(handler);
 	}
 
+	testing() {
+		return process.env.JEST_WORKER_ID !== undefined;
+	}
+	
+	log(...args) {
+		if (!this.testing()) {
+			console.log(...args);
+		}
+	}
+
+	group(...args) {
+		if (!this.testing()) {
+			console.group(...args);
+		}
+	}
+
+	groupEnd(...args) {
+		if (!this.testing()) {
+			console.groupEnd(...args);
+		}
+	}
+
 	async getFinalRequest({ request }) {
 		// Reset things for this request, because this object can be long-lived on Cloudflare!
 		delete this.response;
@@ -55,20 +77,20 @@ export default class RequestManager {
 				this.response = result;
 
 				if (isRedirect(this.response)) {
-					console.log(
+					this.log(
 						`⏪ ${this.response.status}`,
 						this.response.headers.get('location'),
 						this.response
 					);
 				} else {
-					console.log('⏪', this.response);
+					this.log('⏪', this.response);
 				}
 				return this.response;
 			} else if (result instanceof Request) {
 				// A new Request was returned.
 				if (result.url !== this.request.url) {
 					// The request URL changed.
-					console.log('✏️', result.url, result);
+					this.log('✏️', result.url, result);
 				}
 
 				this.request = result;
@@ -82,9 +104,9 @@ export default class RequestManager {
 		if (!this.response) {
 			this.phase = 'fetch';
 			// If we don't already have a response, we should fetch the request.
-			console.log('➡️', this.request.url);
+			this.log('➡️', this.request.url);
 			this.response = await fetch(this.request);
-			console.log('⬅️', this.response);
+			this.log('⬅️', this.response);
 		}
 
 		return this.response;
@@ -105,13 +127,13 @@ export default class RequestManager {
 		}
 
 		if (isRedirect(this.response)) {
-			console.log(
+			this.log(
 				`⤴️ ${this.response.status}`,
 				this.response.headers.get('location') || '',
 				this.response
 			);
 		} else {
-			console.log('✅', this.response);
+			this.log('✅', this.response);
 		}
 
 		return this.response;
@@ -119,14 +141,14 @@ export default class RequestManager {
 
 	async makeResponse(event) {
 		const { request } = event;
-		console.group(request.url);
-		console.log('🎬', request);
+		this.group(request.url);
+		this.log('🎬', request);
 
 		await this.getFinalRequest(event);
 		await this.maybeFetch();
 		const finalResponse = await this.getFinalResponse();
 
-		console.groupEnd();
+		this.groupEnd();
 
 		return finalResponse;
 	}

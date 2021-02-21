@@ -4,8 +4,6 @@ export default class RequestManager {
 	constructor(requestHandlers = [], responseHandlers = []) {
 		this.originalRequestHandlers = toArray(requestHandlers);
 		this.originalResponseHandlers = toArray(responseHandlers);
-		this.requestHandlers = [];
-		this.responseHandlers = [];
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
@@ -56,15 +54,14 @@ export default class RequestManager {
 	}
 
 	async getFinalRequest({ request }) {
-		// Reset things for this request, because this object can be long-lived on Cloudflare!
-		delete this.response;
-		this.requestHandlers = [...this.originalRequestHandlers];
-		this.responseHandlers = [...this.originalResponseHandlers];
 		this.originalRequest = request;
 		this.phase = 'request';
 
 		// Request starts out as the original request.
 		this.request = request;
+
+		// Response starts null.
+		let response = null;
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !this.response) {
@@ -74,18 +71,18 @@ export default class RequestManager {
 			if (result instanceof Response) {
 				// Request handlers can bail early and return a response.
 				// This skips the rest of the response handlers.
-				this.response = result;
+				response = result;
 
-				if (isRedirect(this.response)) {
+				if (isRedirect(response)) {
 					this.log(
-						`⏪ ${this.response.status}`,
-						this.response.headers.get('location'),
-						this.response
+						`⏪ ${response.status}`,
+						response.headers.get('location'),
+						response
 					);
 				} else {
-					this.log('⏪', this.response);
+					this.log('⏪', response);
 				}
-				return this.response;
+				break;
 			} else if (result instanceof Request) {
 				// A new Request was returned.
 				if (result.url !== this.request.url) {
@@ -97,23 +94,20 @@ export default class RequestManager {
 			}
 		}
 
-		return this.request;
+		return [this.request, response];
 	}
 
-	async maybeFetch() {
-		if (!this.response) {
-			this.phase = 'fetch';
-			// If we don't already have a response, we should fetch the request.
-			this.log('➡️', this.request.url);
-			this.response = await fetch(this.request);
-			this.log('⬅️', this.response);
-		}
-
-		return this.response;
+	async fetch(request) {
+		this.phase = 'fetch';
+		this.log('➡️', request.url);
+		const response = await fetch(request);
+		this.log('⬅️', response);
+		return response;
 	}
 
-	async getFinalResponse() {
+	async getFinalResponse(response) {
 		this.phase = 'response';
+		this.response = response;
 
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
@@ -126,27 +120,34 @@ export default class RequestManager {
 			}
 		}
 
-		if (isRedirect(this.response)) {
-			this.log(
-				`⤴️ ${this.response.status}`,
-				this.response.headers.get('location') || '',
-				this.response
-			);
-		} else {
-			this.log('✅', this.response);
-		}
-
 		return this.response;
 	}
 
 	async makeResponse(event) {
 		const { request } = event;
+
+		// We don't have a response yet, so delete it in case it is left over from another attempt.
+		delete this.response;
+
 		this.group(request.url);
 		this.log('🎬', request);
 
-		await this.getFinalRequest(event);
-		await this.maybeFetch();
-		const finalResponse = await this.getFinalResponse();
+		this.requestHandlers = [...this.originalRequestHandlers];
+		this.responseHandlers = [...this.originalResponseHandlers];
+
+		const [finalRequest, earlyResponse] = await this.getFinalRequest(event);
+		const initialResponse = earlyResponse || await this.fetch(finalRequest)
+		const finalResponse = await this.getFinalResponse(initialResponse);
+
+		if (isRedirect(finalResponse)) {
+			this.log(
+				`⤴️ ${finalResponse.status}`,
+				finalResponse.headers.get('location') || '',
+				finalResponse
+			);
+		} else {
+			this.log('✅', finalResponse);
+		}
 
 		this.groupEnd();
 

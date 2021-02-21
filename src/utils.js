@@ -38,3 +38,7 @@ export function getCookie(request, name) {
 
 	return cookies[name] || null;
 }
+
+export 	function testing() {
+	return process.env.JEST_WORKER_ID !== undefined;
+}

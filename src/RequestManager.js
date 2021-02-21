@@ -1,4 +1,4 @@
-import { toArray, isRedirect } from './utils';
+import { toArray, isRedirect, testing } from './utils';
 
 export default class RequestManager {
 	constructor(requestHandlers = [], responseHandlers = []) {
@@ -7,58 +7,45 @@ export default class RequestManager {
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
-		this.addImmediateRequestHandler = this.addImmediateRequestHandler.bind(
-			this
-		);
-		this.addImmediateResponseHandler = this.addImmediateResponseHandler.bind(
-			this
-		);
 	}
 
-	addImmediateRequestHandler(handler) {
-		this.requestHandlers.unshift(handler);
+	addRequestHandler(handler, options = { immediate: false }) {
+		if (options.immediate) {
+			this.requestHandlers.unshift(handler);
+		} else {
+			this.requestHandlers.push(handler);
+		}
 	}
 
-	addImmediateResponseHandler(handler) {
-		this.responseHandlers.unshift(handler);
-	}
-
-	addRequestHandler(handler) {
-		this.requestHandlers.push(handler);
-	}
-
-	addResponseHandler(handler) {
-		this.responseHandlers.push(handler);
-	}
-
-	testing() {
-		return process.env.JEST_WORKER_ID !== undefined;
+	addResponseHandler(handler, options = { immediate: false }) {
+		if (options.immediate) {
+			this.responseHandlers.unshift(handler);
+		} else {
+			this.responseHandlers.push(handler);
+		}
 	}
 	
 	log(...args) {
-		if (!this.testing()) {
+		if (!testing()) {
 			console.log(...args);
 		}
 	}
 
 	group(...args) {
-		if (!this.testing()) {
+		if (!testing()) {
 			console.group(...args);
 		}
 	}
 
 	groupEnd(...args) {
-		if (!this.testing()) {
+		if (!testing()) {
 			console.groupEnd(...args);
 		}
 	}
 
 	async getFinalRequest({ request }) {
-		this.originalRequest = request;
-		this.phase = 'request';
-
-		// Request starts out as the original request.
-		this.request = request;
+		const originalRequest = request;
+		const phase = 'request';
 
 		// Response starts null.
 		let response = null;
@@ -66,7 +53,7 @@ export default class RequestManager {
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !this.response) {
 			const requestHandler = this.requestHandlers.shift();
-			const result = await requestHandler(this);
+			const result = await requestHandler({ ...this, request, response, originalRequest, phase });
 
 			if (result instanceof Response) {
 				// Request handlers can bail early and return a response.
@@ -85,16 +72,17 @@ export default class RequestManager {
 				break;
 			} else if (result instanceof Request) {
 				// A new Request was returned.
-				if (result.url !== this.request.url) {
+				if (result.url !== request.url) {
 					// The request URL changed.
 					this.log('✏️', result.url, result);
 				}
 
-				this.request = result;
+				// We have a new request to pass to the next handler.
+				request = result;
 			}
 		}
 
-		return [this.request, response];
+		return [request, response];
 	}
 
 	async fetch(request) {
@@ -105,22 +93,21 @@ export default class RequestManager {
 		return response;
 	}
 
-	async getFinalResponse(response) {
-		this.phase = 'response';
-		this.response = response;
+	async getFinalResponse({ request, response, originalRequest }) {
+		const phase = 'response';
 
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
 			const responseHandler = this.responseHandlers.shift();
-			const result = await responseHandler(this);
+			const result = await responseHandler({ ...this, request, response, originalRequest, phase });
 
 			// If we receive a result, replace the response.
 			if (result instanceof Response) {
-				this.response = result;
+				response = result;
 			}
 		}
 
-		return this.response;
+		return response;
 	}
 
 	async makeResponse(event) {
@@ -134,10 +121,11 @@ export default class RequestManager {
 
 		this.requestHandlers = [...this.originalRequestHandlers];
 		this.responseHandlers = [...this.originalResponseHandlers];
+		const originalRequest = event.requset;
 
 		const [finalRequest, earlyResponse] = await this.getFinalRequest(event);
-		const initialResponse = earlyResponse || await this.fetch(finalRequest)
-		const finalResponse = await this.getFinalResponse(initialResponse);
+		const response = earlyResponse || await this.fetch(finalRequest)
+		const finalResponse = await this.getFinalResponse({ response, request, originalRequest });
 
 		if (isRedirect(finalResponse)) {
 			this.log(

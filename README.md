@@ -68,3 +68,17 @@ It goes like this:
 handler does, add that response handler on the fly in the request handler.
 
 [wrangler]: https://developers.cloudflare.com/workers/learning/getting-started
+
+## License
+
+MIT License
+
+Copyright &copy; 2020–2021 Mark Jaquith
+
+--
+
+This software incorporates work covered by the following copyright and permission notices:
+
+[tsndr/cloudflare-worker-router](https://github.com/tsndr/cloudflare-worker-router)
+Copyright &copy; 2021 Tobias Schneider
+(MIT License)

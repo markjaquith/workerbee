@@ -1,9 +1,15 @@
 import { toArray, isRedirect, testing } from './utils';
 
 export default class RequestManager {
-	constructor(requestHandlers = [], responseHandlers = []) {
-		this.originalRequestHandlers = toArray(requestHandlers);
-		this.originalResponseHandlers = toArray(responseHandlers);
+	constructor(options = {}) {
+		options = Object.assign({
+			request: [],
+			response: [],
+			router: null,
+		}, options);
+
+		this.originalRequestHandlers = toArray(options.request);
+		this.originalResponseHandlers = toArray(options.response);
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);

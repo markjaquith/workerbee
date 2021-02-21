@@ -1,6 +1,6 @@
 {
   "name": "cf-worker-utils",
-  "version": "0.3.2",
+  "version": "0.4.0-beta",
   "description": "Utilities for writing Cloudflare Workers",
   "main": "index.js",
   "type": "module",

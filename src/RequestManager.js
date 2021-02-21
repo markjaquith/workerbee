@@ -33,16 +33,13 @@ export default class RequestManager {
 		this.responseHandlers.push(handler);
 	}
 
-	async makeResponse({ request }) {
+	async getFinalRequest({ request }) {
 		// Reset things for this request, because this object can be long-lived on Cloudflare!
 		delete this.response;
 		this.requestHandlers = [...this.originalRequestHandlers];
 		this.responseHandlers = [...this.originalResponseHandlers];
 		this.originalRequest = request;
 		this.phase = 'request';
-
-		console.group(request.url);
-		console.log('🎬', request);
 
 		// Request starts out as the original request.
 		this.request = request;
@@ -66,6 +63,7 @@ export default class RequestManager {
 				} else {
 					console.log('⏪', this.response);
 				}
+				return this.response;
 			} else if (result instanceof Request) {
 				// A new Request was returned.
 				if (result.url !== this.request.url) {
@@ -77,13 +75,22 @@ export default class RequestManager {
 			}
 		}
 
+		return this.request;
+	}
+
+	async maybeFetch() {
 		if (!this.response) {
+			this.phase = 'fetch';
 			// If we don't already have a response, we should fetch the request.
 			console.log('➡️', this.request.url);
 			this.response = await fetch(this.request);
 			console.log('⬅️', this.response);
 		}
 
+		return this.response;
+	}
+
+	async getFinalResponse() {
 		this.phase = 'response';
 
 		// If there are response handlers, loop through them.
@@ -107,8 +114,20 @@ export default class RequestManager {
 			console.log('✅', this.response);
 		}
 
+		return this.response;
+	}
+
+	async makeResponse(event) {
+		const { request } = event;
+		console.group(request.url);
+		console.log('🎬', request);
+
+		await this.getFinalRequest(event);
+		await this.maybeFetch();
+		const finalResponse = await this.getFinalResponse();
+
 		console.groupEnd();
 
-		return this.response;
+		return finalResponse;
 	}
 }

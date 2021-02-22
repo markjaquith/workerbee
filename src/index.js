@@ -2,8 +2,8 @@ import headerContains from './conditions/headerContains';
 import pathStartsWith from './conditions/pathStartsWith';
 import createConditionals from './createConditionals';
 import createRequestConditionals from './createRequestConditionals';
+import RequestManager from './RequestManager';
 
-export { default as RequestManager } from './RequestManager';
 export { default as forbidden } from './forbidden';
 export { default as forceHttps } from './forceHttps';
 export { default as requireCookieOrParam } from './requireCookieOrParam';
@@ -28,3 +28,21 @@ export const [
 export const [ifPathStartsWith, unlessPathStartsWith] = createConditionals(
 	pathStartsWith
 );
+
+export function handleFetch(options = {}) {
+	options = {
+		passThroughOnException: true,
+		...options,
+	};
+
+	addEventListener('fetch', (event) => {
+		if (options.passThroughOnException) {
+			event.passThroughOnException();
+		}
+
+		const responder = new RequestManager(options);
+		event.respondWith(responder.makeResponse(event));
+	});
+}
+
+export default handleFetch;

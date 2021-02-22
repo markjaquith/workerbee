@@ -1,6 +1,10 @@
 import cookie from 'cookie';
 
 export function toArray(mixed) {
+	if (null === mixed || undefined === mixed) {
+		return [];
+	}
+
 	return Array.isArray(mixed) ? mixed : [mixed];
 }
 
@@ -39,6 +43,6 @@ export function getCookie(request, name) {
 	return cookies[name] || null;
 }
 
-export 	function testing() {
+export function testing() {
 	return process.env.JEST_WORKER_ID !== undefined;
 }

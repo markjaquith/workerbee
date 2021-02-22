@@ -8,32 +8,62 @@ responses.
 
 ## Usage
 
-1. Bootstrap your Cloudflare worker, [using wrangler][wrangler].
+1. Bootstrap your Cloudflare worker, [using wrangler][wrangler]. Make sure you&#8217;re using Webpack.
 2. `npm i cf-worker-utils` from your worker directory.
 3. In your worker, import `handleFetch` and provide an array of request and/or
-response handlers.
+response handlers, and/or route-limited request/response handlers.
 
 example:
 
 ```
 import handleFetch from 'cf-worker-utils';
 
-handleFetch(requestHandlers, responseHandlers);
+handleFetch({
+	request: requestHandlers,
+	response: responseHandler,
+	routes: router => {
+		router.get('/test', {
+			request: requestHandlers,
+			response: responseHanders,
+		});
+
+		router.get('/', {
+			request: requestHandlers,
+			response: responseHandlers,
+		})
+	},
+});
 ```
 
-For both requestHandlers and responseHandlers, you can provide one handler, an
-array of handlers, or no handlers (empty array).
+Top level request and response handlers will be run on every route, before any
+route-specific handlers.
+
+For all places where you specify handlers, you can provide one handler, an
+array of handlers, or no handlers (null, or empty array).
 
 ## Handlers
-Handlers get passed an instance of a `RequestManager` object, which has
-the following public API:
+Handlers should be `async` functions. They are passed an object that contains:
 
-`request` — A `Request` object representing the current state of the request.
-`originalRequest` — The original `Request` object (might be different if other handlers
+```js
+{
+	handlers,
+	originalRequest,
+	request,
+	response,
+	params,
+	phase,
+}
+```
+
+-`handlers` — The instance of the `RequestManager` object, which has:
+  - `addRequest(handler, options)` — dynamically adds another request handler (pass `{immediate: true}` to add it as the first or next handler).
+  - `addResponse(handler, options)` — dynamically adds another response handler (pass `{immediate: true}` to add it as the first or next handler).
+- `request` — A `Request` object representing the current state of the request.
+- `originalRequest` — The original `Request` object (might be different if other handlers
 returned a new request).
-`response` — A `Response` object with the current state of the response.
-`addRequestHandler()` — dynamically adds another request handler (at the end).
-`addResponseHandler()` — dynamically adds another response handler (at the end).
+- `response` — A `Response` object with the current state of the response.
+- `params` — An object containing any param matches from the route.
+- `phase` — One of `"request"` or `"response"`.
 
 Request handlers can return three things:
 
@@ -54,10 +84,10 @@ handlers.
 ## Lifecycle
 It goes like this:
 
-1. Request is received.
-2. The Request loops through all request handlers.
-3. If early Response wasn't received, the resulting Request object is fetched.
-4. The resulting Response object is passed through the response handlers.
+1. `Request` is received.
+2. The `Request` loops through all request handlers.
+3. If early `Response` wasn't received, the resulting `Request` object is fetched.
+4. The resulting `Response` object is passed through the response handlers.
 5. The response is returned to the client.
 
 ## Best practices

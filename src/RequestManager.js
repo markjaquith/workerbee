@@ -1,13 +1,16 @@
+import { Router } from '.';
 import { toArray, isRedirect, testing } from './utils';
 
 export default class RequestManager {
 	constructor(options = {}) {
-		options = Object.assign({
+		options = {
 			request: [],
 			response: [],
-			router: null,
-		}, options);
+			routes: null,
+			...options,
+		};
 
+		this.routes = options.routes;
 		this.originalRequestHandlers = toArray(options.request);
 		this.originalResponseHandlers = toArray(options.response);
 		this.makeResponse = this.makeResponse.bind(this);
@@ -30,7 +33,7 @@ export default class RequestManager {
 			this.responseHandlers.push(handler);
 		}
 	}
-	
+
 	log(...args) {
 		if (!testing()) {
 			console.log(...args);
@@ -49,17 +52,23 @@ export default class RequestManager {
 		}
 	}
 
-	async getFinalRequest({ request }) {
+	async getFinalRequest({ request, params }) {
 		const originalRequest = request;
-		const phase = 'request';
 
 		// Response starts null.
 		let response = null;
 
 		// Loop through request handlers.
-		while (this.requestHandlers.length > 0 && !this.response) {
+		while (this.requestHandlers.length > 0 && !response) {
 			const requestHandler = this.requestHandlers.shift();
-			const result = await requestHandler({ ...this, request, response, originalRequest, phase });
+			const result = await requestHandler({
+				handlers: this,
+				request,
+				response,
+				originalRequest,
+				params,
+				phase: 'request',
+			});
 
 			if (result instanceof Response) {
 				// Request handlers can bail early and return a response.
@@ -92,20 +101,24 @@ export default class RequestManager {
 	}
 
 	async fetch(request) {
-		this.phase = 'fetch';
 		this.log('➡️', request.url);
 		const response = await fetch(request);
 		this.log('⬅️', response);
 		return response;
 	}
 
-	async getFinalResponse({ request, response, originalRequest }) {
-		const phase = 'response';
-
+	async getFinalResponse({ request, response, originalRequest, params }) {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
 			const responseHandler = this.responseHandlers.shift();
-			const result = await responseHandler({ ...this, request, response, originalRequest, phase });
+			const result = await responseHandler({
+				handlers: this,
+				request,
+				response,
+				originalRequest,
+				phase: 'response',
+				params,
+			});
 
 			// If we receive a result, replace the response.
 			if (result instanceof Response) {
@@ -119,19 +132,46 @@ export default class RequestManager {
 	async makeResponse(event) {
 		const { request } = event;
 
-		// We don't have a response yet, so delete it in case it is left over from another attempt.
-		delete this.response;
-
 		this.group(request.url);
 		this.log('🎬', request);
 
-		this.requestHandlers = [...this.originalRequestHandlers];
-		this.responseHandlers = [...this.originalResponseHandlers];
-		const originalRequest = event.requset;
+		// Determine the route.
+		let routeRequestHandlers = [];
+		let routeResponseHandlers = [];
+		let params = {};
 
-		const [finalRequest, earlyResponse] = await this.getFinalRequest(event);
-		const response = earlyResponse || await this.fetch(finalRequest)
-		const finalResponse = await this.getFinalResponse({ response, request, originalRequest });
+		if (this.routes) {
+			const router = new Router();
+			this.routes(router);
+			const route = router.getRoute(request);
+			routeRequestHandlers = toArray(route.handlers.request);
+			routeResponseHandlers = toArray(route.handlers.response);
+			params = route.params;
+		}
+
+		this.requestHandlers = [
+			...this.originalRequestHandlers,
+			...routeRequestHandlers,
+		];
+		this.responseHandlers = [
+			...this.originalResponseHandlers,
+			...routeResponseHandlers,
+		];
+		const originalRequest = event.request;
+
+		const [finalRequest, earlyResponse] = await this.getFinalRequest({
+			response,
+			request,
+			originalRequest,
+			params,
+		});
+		const response = earlyResponse || (await this.fetch(finalRequest));
+		const finalResponse = await this.getFinalResponse({
+			response,
+			request,
+			originalRequest,
+			params,
+		});
 
 		if (isRedirect(finalResponse)) {
 			this.log(

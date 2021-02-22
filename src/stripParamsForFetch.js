@@ -6,7 +6,7 @@ import { setRequestUrl, isRedirect } from './utils';
  * @param {Request} request
  */
 export default function stripParams(params = STRIP_PARAMS) {
-	return async ({ request, addResponseHandler }) => {
+	return async ({ request, handlers }) => {
 		const url = new URL(request.url);
 
 		const strippableParams = getStrippableParams(url, params);
@@ -20,7 +20,7 @@ export default function stripParams(params = STRIP_PARAMS) {
 
 		// We changed the URL.
 		if (url.toString() !== request.url) {
-			addResponseHandler(restoreStrippedParamsOnRedirect(strippableParams));
+			handlers.addResponse(restoreStrippedParamsOnRedirect(strippableParams));
 			return setRequestUrl(url, request);
 		}
 	};

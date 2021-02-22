@@ -10,6 +10,7 @@ const POST_UPDATE_HANDLER = makeHandler();
 const OPTIONAL_PARAM_HANDLER = makeHandler();
 const WILDCARD_HANDLER = makeHandler();
 const SANDWICH_HANDLER = makeHandler();
+const MOTHER_HANDLER = makeHandler();
 
 const DOMAIN = 'https://example.com';
 const GET = 'GET';
@@ -19,10 +20,11 @@ const router = new Router();
 router.get('/', ROOT_HANDLER);
 router.get('/posts', POSTS_HANDLER);
 router.get('/posts/:id', POST_HANDLER);
-router.post('/posts/:id', POST_UPDATE_HANDLER);
+router.post('/posts/:id(\\d+)', POST_UPDATE_HANDLER);
 router.get('/optional/:id?', OPTIONAL_PARAM_HANDLER);
 router.get('/wildcard/:extra*', WILDCARD_HANDLER);
-router.get('/bread/:meat*/bread', SANDWICH_HANDLER);
+router.get('/bread/:meat+/bread', SANDWICH_HANDLER);
+router.get('/mother{-:type}?', MOTHER_HANDLER);
 
 function makeGet(path) {
 	return httpMocks.createRequest({
@@ -53,4 +55,9 @@ test('Router', () => {
 	expect(router.getRoute(makeGet('/wildcard/with/more/stuff'))).toMatchObject(makeHandlerMatcher(GET, WILDCARD_HANDLER, { extra: ['with', 'more', 'stuff'] }));
 	expect(router.getRoute(makeGet('/wildcard'))).toMatchObject(makeHandlerMatcher(GET, WILDCARD_HANDLER), {});
 	expect(router.getRoute(makeGet('/bread/peanut-butter/jelly/bread'))).toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER), { meat: ['peanut-butter', 'jelly'] });
+	expect(router.getRoute(makeGet('/bread/ham/bread'))).toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER), { meat: 'ham' });
+	expect(router.getRoute(makeGet('/bread/bread'))).not.toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER));
+	expect(router.getRoute(makeGet('/mother'))).toMatchObject(makeHandlerMatcher(GET, MOTHER_HANDLER));
+	expect(router.getRoute(makeGet('/mother-in-law'))).toMatchObject(makeHandlerMatcher(GET, MOTHER_HANDLER, { type: "in-law" }));
+	expect(router.getRoute(makeGet('/mothers'))).not.toMatchObject(makeHandlerMatcher(GET, MOTHER_HANDLER));
 });

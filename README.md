@@ -6,6 +6,23 @@ This is a simple package for composing Cloudflare Workers, focused on the normal
 use case of having an upstream server, and wanting to manipulate requests and
 responses.
 
+## Concepts
+
+* **Handler** — A handler is a function that can get run when a request is being
+received, and/or a response from the server/cache is coming back. It can change
+the request/response, deliver a new request/response altogether, or conditionally
+add other handlers.
+* **Route** — A path pattern that can add handlers only for requests that match the pattern.
+
+## Lifecycle
+It goes like this:
+
+1. `Request` is received.
+2. The `Request` loops through all request handlers (global, and then route).
+3. If early `Response` wasn't received, the resulting `Request` object is fetched (from the cache or the server).
+4. The resulting `Response` object is passed through the response handlers (global, and then route).
+5. The response is returned to the client.
+
 ## Usage
 
 1. Bootstrap your Cloudflare worker, [using wrangler][wrangler]. Make sure you&#8217;re using Webpack.
@@ -27,7 +44,7 @@ handleFetch({
 			response: responseHanders,
 		});
 
-		router.get('/', {
+		router.get('/posts/:id', {
 			request: requestHandlers,
 			response: responseHandlers,
 		})
@@ -41,6 +58,26 @@ route-specific handlers.
 For all places where you specify handlers, you can provide one handler, an
 array of handlers, or no handlers (null, or empty array).
 
+## Routing
+
+The router has functions for all HTTP methods, plus `router.any()` which matches
+any method. The path argument uses the [path-to-regexp][path-to-regexp] library,
+which has good support for positional path parameters:
+
+* `/posts/:id` matches `/posts/123` (params: `{ id: "123" }`).
+* `/posts/:id(\\d+)` will only match digits for the id parameter.
+* `/posts/:id?` matches for `/posts/123` but also `/posts/` and `/posts`.
+* `/posts/:ids+` matches for `/posts/123` but also `/posts/123/456`
+(params: `{ ids: ["123", "456"] }`).
+* `/bread/:meat+/bread` matches for `/bread/turkey/bread` and `/bread/peanut-butter/jelly/bread`.
+* `/mother{-:type}?` matches `/mother` and `/mother-in-law` but not `/mothers`.
+
+If you want to match a path prefix and everything after it, just use a wildcard
+matcher: `/prefix/:any*`.
+
+Go read [their documentation][path-to-regexp] for more information.
+
+[path-to-regexp]: https://github.com/pillarjs/path-to-regexp#readme
 ## Handlers
 Handlers should be `async` functions. They are passed an object that contains:
 
@@ -81,21 +118,13 @@ handlers.
 2. A new `Response` object — this will get passed on to the rest of the request
 handlers.
 
-## Lifecycle
-It goes like this:
-
-1. `Request` is received.
-2. The `Request` loops through all request handlers.
-3. If early `Response` wasn't received, the resulting `Request` object is fetched.
-4. The resulting `Response` object is passed through the response handlers.
-5. The response is returned to the client.
-
 ## Best practices
 
 1. Always return a new Request or Response object if you want to change things.
 2. Don't return anything if your handler is declining to act.
 3. If you have a response handler that is only needed based on what a request
-handler does, add that response handler on the fly in the request handler.
+handler does, conditionally add that response handler on the fly in the request
+handler.
 
 [wrangler]: https://developers.cloudflare.com/workers/learning/getting-started
 

@@ -1,14 +1,12 @@
 {
   "name": "cf-worker-utils",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Utilities for writing Cloudflare Workers",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "jest",
-    "prettier": "prettier --write \"./src/**/*.{mjs,js,jsx}\"",
-    "prepare": "rimraf dist/* && babel src --out-dir dist",
-    "dev": "rimraf dist/* && babel src --out-dir dist --watch"
+    "prettier": "prettier --write \"./src/**/*.{mjs,js,jsx}\""
   },
   "prettier": {
     "useTabs": true,
@@ -37,11 +35,9 @@
   "devDependencies": {
     "@babel/cli": "^7.12.17",
     "@babel/core": "^7.12.17",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/preset-env": "^7.12.17",
     "jest": "^26.6.3",
     "node-mocks-http": "^1.10.1",
-    "prettier": "^2.2.1",
-    "rimraf": "^3.0.2"
+    "prettier": "^2.2.1"
   }
 }

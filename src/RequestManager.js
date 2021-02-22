@@ -160,7 +160,6 @@ export default class RequestManager {
 		const originalRequest = event.request;
 
 		const [finalRequest, earlyResponse] = await this.getFinalRequest({
-			response,
 			request,
 			originalRequest,
 			params,

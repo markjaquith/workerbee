@@ -62,20 +62,40 @@ array of handlers, or no handlers (null, or empty array).
 
 The router has functions for all HTTP methods, plus `router.any()` which matches
 any method. The path argument uses the [path-to-regexp][path-to-regexp] library,
-which has good support for positional path parameters:
+which has good support for positional path parameters. Here's what various routes
+would yield for a given request:
 
-* `/posts/:id` matches `/posts/123` (params: `{ id: "123" }`).
-* `/posts/:id(\\d+)` will only match digits for the id parameter.
-* `/posts/:id?` matches for `/posts/123` but also `/posts/` and `/posts`.
-* `/posts/:ids+` matches for `/posts/123` but also `/posts/123/456`
-(params: `{ ids: ["123", "456"] }`).
-* `/bread/:meat+/bread` matches for `/bread/turkey/bread` and `/bread/peanut-butter/jelly/bread`.
-* `/mother{-:type}?` matches `/mother` and `/mother-in-law` but not `/mothers`.
+* `/posts/:id`
+  * ✅ `/posts/123` ➡️ `{id: "123"}`
+  * ✅ `/posts/123/` ➡️ `{id: "123"}`
+  * ✅ `/posts/hello` ➡️ `{id: "hello"}`
+  * ❌ `/posts/123/more`
+  * ❌ `/posts/`
+	* ❌ `/posts`
+* `/posts/:id(\\d+)`
+  * ✅ `/posts/123` ➡️ `{id: "123"}`
+  * ❌ `/posts/word`
+* `/posts/:id?`
+  * ✅ `/posts/123` ➡️ `{id: "123"}`
+  * ✅ `/posts/hello` ➡️ `{id: "hello"}`
+  * ✅ `/posts/` ➡️ `{}`
+  * ✅ `/posts` => `{}`
+* `/posts/:id+`
+  * ✅ `/posts/123` ➡️ `{id: "123"}`
+  * ✅ `/posts/123/456` ➡️ `{id: ["123", "456"]}`
+* `/bread/:meat+/bread`
+  * ✅ `/bread/turkey/bread` ➡️ `{meat: "turkey"}`
+  * ✅ `/bread/peanut-butter/jelly/bread` ➡️ `{meat: ["peanut-butter", "jelly"]}`
+  * ❌ `/bread/bread`
+* `/mother{-:type}?`
+  * ✅ `/mother` ➡️ `{}`
+  * ✅ `/mother-in-law` ➡️ `{type: "in-law"}`
+  * ❌ `/mothers`
 
 If you want to match a path prefix and everything after it, just use a wildcard
 matcher: `/prefix/:any*`.
 
-Go read [their documentation][path-to-regexp] for more information.
+Go read the [path-to-regex documentation][path-to-regexp] for more information.
 
 [path-to-regexp]: https://github.com/pillarjs/path-to-regexp#readme
 ## Handlers

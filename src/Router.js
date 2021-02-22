@@ -1,4 +1,5 @@
 import partial from 'lodash/partial';
+import { match } from 'path-to-regexp';
 
 const METHODS = [
 	'CONNECT',
@@ -34,52 +35,32 @@ export default class Router {
 	}
 
 	getRoute(request) {
-		const nullRoute = {
+		for (const route of this.routes) {
+			// If the method does not match, continue.
+			if (![request.method, '*'].includes(route.method)) {
+				continue;
+			}
+
+			const parsed = match(route.url)(new URL(request.url).pathname);
+
+			if (parsed) {
+				route.handlers = { request: null, response: null, ...route.handlers };
+				return {
+					...route,
+					params: parsed.params,
+				};
+			}
+		}
+
+		// No match. Return a nulled out object.
+		return {
 			method: request.method,
 			url: null,
 			handlers: {
 				request: null,
 				response: null,
 			},
+			params: {},
 		};
-		const requestParts = new URL(request.url).pathname
-			.split('/')
-			.filter((i) => i);
-		let params = {};
-		const route =
-			this.routes.find((r) => {
-				const routeParts = r.url.split('/').filter((i) => i);
-				// If the method does not match, or the number of path segments doesn't match, no match.
-				if (
-					![request.method, '*'].includes(r.method) ||
-					routeParts.length !== requestParts.length
-				) {
-					return false;
-				}
-
-				// Reset the params for looking at this route.
-				params = {};
-
-				for (let i = 0; i < routeParts.length; i++) {
-					const requestPart = requestParts[i];
-					const routePart = routeParts[i];
-					const isPlaceholder = routePart[0] === ':';
-
-					// If the current path segment doesn't match and isn't a placeholder, no match.
-					if (routePart !== requestPart && !isPlaceholder) {
-						return false;
-					}
-
-					// If this a placeholder, set the param
-					if (isPlaceholder) {
-						params[routePart.substring(1)] = requestPart;
-					}
-				}
-
-				return true;
-			}) || nullRoute;
-		route.handlers = { request: null, response: null, ...route.handlers }
-
-		return { ...route, params };
 	}
 }

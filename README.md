@@ -1,19 +1,55 @@
-# cf-worker-utils
+# cf-worker-utils: Cloudflare Worker Utilities
 
 ![minified and zipped size](https://img.shields.io/bundlephobia/minzip/cf-worker-utils)
 
-This is a simple package for composing Cloudflare Workers, focused on the normal
-use case of having an upstream server, and wanting to manipulate requests and
-responses.
+This is a simple package for composing Cloudflare Workers, focused on the use
+case of having an upstream server, and wanting to conditionally manipulate requests
+and responses.
 
 ## Concepts
 
-* **Handler** — A handler is a function that can get run when a request is being
-received, and/or a response from the server/cache is coming back. It can change
-the request/response, deliver a new request/response altogether, or conditionally
+* **Handler** — An async function that is run when a request is being received,
+and/or a response from the server/cache is coming back. It can change the
+request/response, deliver a new request/response altogether, or conditionally
 add other handlers.
-* **Route** — A path pattern that can add handlers only for requests that match the pattern.
+* **Route** — A request path pattern with handlers thare are only added only for
+requests that match the pattern.
 
+## Usage
+
+1. Bootstrap your Cloudflare worker, [using wrangler][wrangler]. Make sure
+you&#8217;re using Webpack.
+2. `npm i cf-worker-utils` from your Worker directory.
+3. In your worker, import `handleFetch` and provide an array of request/response
+handlers, and/or route-limited request/response handlers.
+
+Example:
+
+```
+import handleFetch from 'cf-worker-utils';
+
+handleFetch({
+	request: requestHandlers, // Run on every request.
+	response: responseHandler, // Run on every response.
+	routes: router => {
+		router.get('/test', {
+			request: requestHandlers, // Run on matching requests.
+			response: responseHanders, // Run on responses from matching requests.
+		});
+
+		router.get('/posts/:id', {
+			request: requestHandlers, // Run on matching requests.
+			response: responseHandlers, // Run on responses from matching requests.
+		})
+	},
+});
+```
+
+Top level request and response handlers will be run on every route, *before* any
+route-specific handlers.
+
+For all places where you specify handlers, you can provide one handler, an
+array of handlers, or no handlers (null, or empty array).
 ## Lifecycle
 It goes like this:
 
@@ -23,40 +59,79 @@ It goes like this:
 4. The resulting `Response` object is passed through the response handlers (global, and then route).
 5. The response is returned to the client.
 
-## Usage
-
-1. Bootstrap your Cloudflare worker, [using wrangler][wrangler]. Make sure you&#8217;re using Webpack.
-2. `npm i cf-worker-utils` from your worker directory.
-3. In your worker, import `handleFetch` and provide an array of request and/or
-response handlers, and/or route-limited request/response handlers.
-
-example:
-
 ```
-import handleFetch from 'cf-worker-utils';
-
-handleFetch({
-	request: requestHandlers,
-	response: responseHandler,
-	routes: router => {
-		router.get('/test', {
-			request: requestHandlers,
-			response: responseHanders,
-		});
-
-		router.get('/posts/:id', {
-			request: requestHandlers,
-			response: responseHandlers,
-		})
-	},
-});
+  ┌──────────────────┐
+  │ Incoming Request │
+  │  to your Worker  │
+  └──────────────────┘
+            │
+            ▼
+    .───────────────.
+   (  Matches route? )───Yes─┐
+    `───────────────'        │
+            │                ▼
+            │    ┌───────────────────────┐
+           No    │ Append route handlers │
+            │    │  to global handlers   │
+            │    └───────────────────────┘
+            │                │
+            └───────┬────────┘
+                    │
+                    ▼
+           ┌─────────────────┐
+           │    Run next     │
+ ┌────────▶│ request handler │
+ │         └─────────────────┘
+ │                  │
+ │                  ▼
+ │   .─────────────────────────────.
+ │  ( Handler returned a Response?  )───┐
+ │   `─────────────────────────────'    │
+ │                  │                  Yes
+ │                 No                   │
+Yes                 │                   │
+ │                  ▼                   │
+ │          .───────────────.           │
+ └─────────(  More handlers? )          │
+            `───────────────'           │
+                    │                   │
+                   No                   │
+                    │                   │
+                    ▼                   │
+         .─────────────────────.        │
+  ┌─────(  Request in CF cache? )────┐  │
+  │      `─────────────────────'     │  │
+ Yes                                No  │
+  │  ┌────────────┐  ┌────────────┐  │  │
+  │  │ Fetch from │  │ Fetch from │  │  │
+  └─▶│   cache    │  │   server   │◀─┘  │
+     └────────────┘  └────────────┘     │
+            │               │           │
+            └───────┬───────┘           │
+                    │                   │
+                    ▼                   │
+              ┌──────────┐              │
+              │ Response │◀─────────────┘
+              └──────────┘
+                    │
+                    ▼
+          ┌──────────────────┐
+          │     Run next     │
+      ┌──▶│ response handler │
+      │   └──────────────────┘
+      │             │
+     Yes            ▼
+      │     .───────────────.
+      └────(  More handlers? )
+            `───────────────'
+                    │
+                   No
+                    │
+                    ▼
+           ┌────────────────┐
+           │ Final Response │
+           └────────────────┘
 ```
-
-Top level request and response handlers will be run on every route, before any
-route-specific handlers.
-
-For all places where you specify handlers, you can provide one handler, an
-array of handlers, or no handlers (null, or empty array).
 
 ## Routing
 

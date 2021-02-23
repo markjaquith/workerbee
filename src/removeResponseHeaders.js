@@ -1,12 +1,16 @@
 export default function removeResponseHeaders(headers = []) {
 	return async function ({ response }) {
 		const newResponse = new Response(response.body, response);
+		let removedAny = false;
 
-		for (let header of headers) {
-			newResponse.headers.delete(header);
+		for (const header of headers) {
+			if (newResponse.headers.has(header)) {
+				newResponse.headers.delete(header);
+				removedAny = true;
+			}
 		}
 
-		if (newResponse.headers.length !== response.headers.length) {
+		if (removedAny) {
 			return newResponse;
 		}
 	};

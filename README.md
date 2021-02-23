@@ -155,9 +155,19 @@ would yield for a given request:
   * ✅ `/posts/hello` ➡️ `{id: "hello"}`
   * ✅ `/posts/` ➡️ `{}`
   * ✅ `/posts` => `{}`
+  * ❌ `/posts/123/more`
 * `/posts/:id+`
   * ✅ `/posts/123` ➡️ `{id: "123"}`
   * ✅ `/posts/123/456` ➡️ `{id: ["123", "456"]}`
+  * ✅ `/posts/123/hello` ➡️ `{id: ["123", "hello"]}`
+  * ❌ `/posts/`
+	* ❌ `/posts`
+* `/posts/:id(\\d+)+`
+  * ✅ `/posts/123` ➡️ `{id: "123"}`
+  * ✅ `/posts/123/456` ➡️ `{id: ["123", "456"]}`
+  * ❌ `/posts/123/hello`
+  * ❌ `/posts/`
+	* ❌ `/posts`
 * `/bread/:meat+/bread`
   * ✅ `/bread/turkey/bread` ➡️ `{meat: "turkey"}`
   * ✅ `/bread/peanut-butter/jelly/bread` ➡️ `{meat: ["peanut-butter", "jelly"]}`

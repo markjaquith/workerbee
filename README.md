@@ -6,6 +6,14 @@ This is a simple package for composing Cloudflare Workers, focused on the use
 case of having an upstream server, and wanting to conditionally manipulate requests
 and responses.
 
+## Table of Contents
+- [Concepts](#concepts)
+- [Usage](#usage)
+- [Lifecycle](#lifecycle)
+- [Routing](#routing)
+- [Handlers](#handlers)
+- [Best Practices](#best-practices)
+
 ## Concepts
 
 * **Handler** — An async function that is run when a request is being received,
@@ -50,6 +58,7 @@ route-specific handlers.
 
 For all places where you specify handlers, you can provide one handler, an
 array of handlers, or no handlers (null, or empty array).
+
 ## Lifecycle
 It goes like this:
 
@@ -183,6 +192,7 @@ matcher: `/prefix/:any*`.
 Go read the [path-to-regex documentation][path-to-regexp] for more information.
 
 [path-to-regexp]: https://github.com/pillarjs/path-to-regexp#readme
+
 ## Handlers
 Handlers should be `async` functions. They are passed an object that contains:
 
@@ -223,7 +233,7 @@ handlers.
 2. A new `Response` object — this will get passed on to the rest of the request
 handlers.
 
-## Best practices
+## Best Practices
 
 1. Always return a new Request or Response object if you want to change things.
 2. Don't return anything if your handler is declining to act.

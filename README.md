@@ -191,7 +191,7 @@ Handlers should be `async` functions. They are passed an object that contains:
 	handlers,
 	originalRequest,
 	request,
-	response,
+	response, // Only for response handlers.
 	params,
 	phase,
 }

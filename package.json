@@ -1,6 +1,6 @@
 {
   "name": "cf-worker-utils",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Utilities for writing Cloudflare Workers",
   "main": "src/index.js",
   "type": "module",
@@ -30,7 +30,8 @@
   "homepage": "https://github.com/markjaquith/cf-worker-utils#readme",
   "dependencies": {
     "cookie": "^0.4.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "path-to-regexp": "^6.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.17",
@@ -38,7 +39,6 @@
     "@babel/preset-env": "^7.12.17",
     "jest": "^26.6.3",
     "node-mocks-http": "^1.10.1",
-    "path-to-regexp": "^6.2.0",
     "prettier": "^2.2.1"
   }
 }

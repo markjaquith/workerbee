@@ -207,9 +207,8 @@ Handlers should be `async` functions. They are passed an object that contains:
 }
 ```
 
-- `handlers` — The instance of the `RequestManager` object, which has:
-  - `addRequest(handler, options)` — dynamically adds another request handler (pass `{immediate: true}` to add it as the first or next handler).
-  - `addResponse(handler, options)` — dynamically adds another response handler (pass `{immediate: true}` to add it as the first or next handler).
+- `addRequestHandler(handler, options)` — dynamically adds another request handler (pass `{immediate: true}` to add it as the first or next handler).
+- `addResponseHandler(handler, options)` — dynamically adds another response handler (pass `{immediate: true}` to add it as the first or next handler).
 - `request` — A `Request` object representing the current state of the request.
 - `originalRequest` — The original `Request` object (might be different if other handlers
 returned a new request).

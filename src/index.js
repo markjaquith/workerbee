@@ -1,6 +1,10 @@
 import headerContains from './conditions/headerContains';
-import createConditionals from './createConditionals';
-import createRequestConditionals from './createRequestConditionals';
+import isHtml from './conditions/isHtml';
+import isContentType from './conditions/isContentType';
+import createAllConditionals from './createAllConditionals';
+// import createConditionals from './createConditionals';
+// import createRequestConditionals from './createRequestConditionals';
+import createResponseConditionals from './createResponseConditionals';
 import RequestManager from './RequestManager';
 
 export { default as forbidden } from './forbidden';
@@ -14,17 +18,24 @@ export { default as copyResponseHeader } from './copyResponseHeader';
 export { default as applyHandlersIf } from './applyHandlersIf';
 export { default as lazyLoadImages } from './lazyLoadImages';
 export { default as Router } from './Router';
-export {
-	headerContains,
-	createConditionals,
-	createRequestConditionals,
-};
 export * from './utils';
 
 export const [
 	ifRequestHeaderContains,
 	unlessRequestHeaderContains,
-] = createRequestConditionals(headerContains);
+	ifResponseHeaderContains,
+	unlessResponseHeaderContains,
+] = createAllConditionals(headerContains);
+
+export const [
+	ifHtml,
+	unlessHtml,
+] = createResponseConditionals(isHtml);
+
+export const [
+	ifContentType,
+	unlessContentType,
+] = createResponseConditionals(isContentType);
 
 export function handleFetch(options = {}) {
 	options = {

@@ -14,8 +14,8 @@ export default curry(function applyHandlersIf(condition, handlers) {
 			for (const handler of handlers) {
 				const addHandler =
 					manager.phase === 'response'
-						? manager.handlers.addResponseHandler
-						: manager.handlers.addRequestHandler;
+						? manager.addResponseHandler
+						: manager.addRequestHandler;
 				addHandler(handler, { immediate: true });
 			}
 		}

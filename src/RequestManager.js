@@ -62,7 +62,8 @@ export default class RequestManager {
 		while (this.requestHandlers.length > 0 && !response) {
 			const requestHandler = this.requestHandlers.shift();
 			const result = await requestHandler({
-				handlers: this,
+				addRequestHandler: this.addRequestHandler,
+				addResponseHandler: this.addResponseHandler,
 				request,
 				response,
 				originalRequest,
@@ -112,7 +113,7 @@ export default class RequestManager {
 		while (this.responseHandlers.length > 0) {
 			const responseHandler = this.responseHandlers.shift();
 			const result = await responseHandler({
-				handlers: this,
+				addResponseHandler: this.addResponseHandler,
 				request,
 				response,
 				originalRequest,

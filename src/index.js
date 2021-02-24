@@ -1,5 +1,4 @@
 import headerContains from './conditions/headerContains';
-import pathStartsWith from './conditions/pathStartsWith';
 import createConditionals from './createConditionals';
 import createRequestConditionals from './createRequestConditionals';
 import RequestManager from './RequestManager';
@@ -15,7 +14,6 @@ export { default as applyHandlersIf } from './applyHandlersIf';
 export { default as Router } from './Router';
 export {
 	headerContains,
-	pathStartsWith,
 	createConditionals,
 	createRequestConditionals,
 };
@@ -25,9 +23,6 @@ export const [
 	ifRequestHeaderContains,
 	unlessRequestHeaderContains,
 ] = createRequestConditionals(headerContains);
-export const [ifPathStartsWith, unlessPathStartsWith] = createConditionals(
-	pathStartsWith
-);
 
 export function handleFetch(options = {}) {
 	options = {

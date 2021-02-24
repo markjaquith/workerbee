@@ -11,6 +11,7 @@ export { default as setResponseHeaders } from './setResponseHeaders';
 export { default as appendResponseHeaders } from './appendResponseHeaders';
 export { default as removeResponseHeaders } from './removeResponseHeaders';
 export { default as applyHandlersIf } from './applyHandlersIf';
+export { default as lazyLoadImages } from './lazyLoadImages';
 export { default as Router } from './Router';
 export {
 	headerContains,

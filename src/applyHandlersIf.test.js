@@ -24,17 +24,26 @@ function makeEvent() {
 }
 
 test('applyHandlersIf', async () => {
-	let trueSpy = jest.fn(mockResponse());
-	let falseSpy = jest.fn(mockResponse());
-	let manager = new RequestManager({
+	const trueRequestSpy = jest.fn(mockResponse());
+	const falseRequestSpy = jest.fn(mockResponse());
+	const trueResponseSpy = jest.fn(mockResponse());
+	const falseResponseSpy = jest.fn(mockResponse());
+
+	const manager = new RequestManager({
 		request: [
-			applyHandlersIf(() => false, falseSpy),
-			applyHandlersIf(() => true, trueSpy),
+			applyHandlersIf(() => false, falseRequestSpy),
+			applyHandlersIf(() => true, trueRequestSpy),
+		],
+		response: [
+			applyHandlersIf(() => false, falseResponseSpy),
+			applyHandlersIf(() => true, trueResponseSpy),
 		],
 	});
 
 	await manager.makeResponse(makeEvent());
 
-	expect(trueSpy).toHaveBeenCalled();
-	expect(falseSpy).not.toHaveBeenCalled();
+	expect(trueRequestSpy).toHaveBeenCalled();
+	expect(trueResponseSpy).toHaveBeenCalled();
+	expect(falseRequestSpy).not.toHaveBeenCalled();
+	expect(falseResponseSpy).not.toHaveBeenCalled();
 });

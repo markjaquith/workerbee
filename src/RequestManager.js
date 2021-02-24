@@ -121,7 +121,7 @@ export default class RequestManager {
 			});
 
 			// If we receive a result, replace the response.
-			if (result instanceof Response) {
+			if (isResponse(result)) {
 				response = result;
 			}
 		}

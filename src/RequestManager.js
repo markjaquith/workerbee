@@ -1,5 +1,5 @@
 import { Router } from '.';
-import { toArray, isRedirect, testing } from './utils';
+import { toArray, isRedirect, testing, isResponse, isRequest } from './utils';
 
 export default class RequestManager {
 	constructor(options = {}) {
@@ -70,7 +70,7 @@ export default class RequestManager {
 				phase: 'request',
 			});
 
-			if (result instanceof Response) {
+			if (isResponse(result)) {
 				// Request handlers can bail early and return a response.
 				// This skips the rest of the response handlers.
 				response = result;
@@ -85,7 +85,7 @@ export default class RequestManager {
 					this.log('⏪', response);
 				}
 				break;
-			} else if (result instanceof Request) {
+			} else if (isRequest(result)) {
 				// A new Request was returned.
 				if (result.url !== request.url) {
 					// The request URL changed.

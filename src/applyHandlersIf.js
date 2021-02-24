@@ -3,7 +3,8 @@ import { toArray } from './utils';
 
 /**
  * Takes condition (a function which receives a RequestManager object and returns a boolean)
- * and an array of handlers (or a single handler) and returns a
+ * and an array of handlers (or a single handler) and returns a function that evaluates the
+ * condition, and if true, immediately adds the handler.
  */
 export default curry(function applyHandlersIf(condition, handlers) {
 	handlers = toArray(handlers);
@@ -13,9 +14,9 @@ export default curry(function applyHandlersIf(condition, handlers) {
 			for (const handler of handlers) {
 				const addHandler =
 					manager.phase === 'response'
-						? manager.addImmediateResponseaddHandler
-						: manager.addImmediateRequestHandler;
-				addHandler(handler);
+						? manager.handlers.addResponseHandler
+						: manager.handlers.addRequestHandler;
+				addHandler(handler, { immediate: true });
 			}
 		}
 	};

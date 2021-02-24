@@ -46,3 +46,11 @@ export function getCookie(request, name) {
 export function testing() {
 	return process.env.JEST_WORKER_ID !== undefined;
 }
+
+export function isRequest(request) {
+	return request && !! request.method || false;
+}
+
+export function isResponse(response) {
+	return response && !! response.status || false;
+}

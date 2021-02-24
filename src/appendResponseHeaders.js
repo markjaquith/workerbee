@@ -1,16 +1,15 @@
 export default function appendResponseHeaders(headers = []) {
 	return async function ({ response }) {
-		const newResponse = new Response(response.body, response);
-		let changed = false;
+		let newResponse;
 
 		for (const [key, value] of headers) {
-			if (newResponse.headers.get(key) !== value) {
+			if (response.headers.get(key) !== value) {
+				newResponse = newResponse || new Response(response.body, response);
 				newResponse.headers.append(key, value);
-				changed = true;
 			}
 		}
 
-		if (changed) {
+		if (newResponse) {
 			return newResponse;
 		}
 	};

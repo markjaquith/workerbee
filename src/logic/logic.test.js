@@ -18,7 +18,7 @@ function makeEvent() {
 			headers: {
 				foo: 'bar',
 			},
-		})
+		}),
 	};
 }
 
@@ -61,8 +61,14 @@ test('complex logic', async () => {
 			ifRequest(none(no, no, yes), falseRequestSpy), // 0.
 		],
 		response: [
-			ifResponse(all(all(yes, yes), any(yes, no), none(all(yes, no))), trueResponseSpy), // 1.
-			ifResponse(all(all(yes, yes), any(yes, no), none(all(yes, yes))), falseResponseSpy), // 0.
+			ifResponse(
+				all(all(yes, yes), any(yes, no), none(all(yes, no))),
+				trueResponseSpy
+			), // 1.
+			ifResponse(
+				all(all(yes, yes), any(yes, no), none(all(yes, yes))),
+				falseResponseSpy
+			), // 0.
 		],
 	});
 

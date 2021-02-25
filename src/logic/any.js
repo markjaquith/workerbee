@@ -2,7 +2,7 @@ export default function any(...conditions) {
 	if (!conditions.length) {
 		return () => false;
 	}
-	
+
 	return (message) => {
 		for (const condition of conditions) {
 			if (condition(message)) {
@@ -10,5 +10,5 @@ export default function any(...conditions) {
 			}
 		}
 		return false;
-	}
+	};
 }

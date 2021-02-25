@@ -6,5 +6,5 @@ export default function none(...conditions) {
 			}
 		}
 		return true;
-	}
+	};
 }

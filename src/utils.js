@@ -48,9 +48,9 @@ export function testing() {
 }
 
 export function isRequest(request) {
-	return request && !! request.method || false;
+	return (request && !!request.method) || false;
 }
 
 export function isResponse(response) {
-	return response && !! response.status || false;
+	return (response && !!response.status) || false;
 }

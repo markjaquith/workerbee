@@ -8,4 +8,14 @@ import requireCookieOrParam from './requireCookieOrParam';
 import setResponseHeaders from './setResponseHeaders';
 import stripParamsForFetch from './stripParamsForFetch';
 
-export { appendResponseHeaders, copyResponseHeader, forbidden, forceHttps, lazyLoadImages, removeResponseHeaders, requireCookieOrParam, setResponseHeaders, stripParamsForFetch };
+export {
+	appendResponseHeaders,
+	copyResponseHeader,
+	forbidden,
+	forceHttps,
+	lazyLoadImages,
+	removeResponseHeaders,
+	requireCookieOrParam,
+	setResponseHeaders,
+	stripParamsForFetch,
+};

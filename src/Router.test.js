@@ -1,5 +1,4 @@
 import Router from './Router';
-import httpMocks from 'node-mocks-http';
 
 const makeHandler = () => ({ request: Symbol(), response: Symbol() });
 
@@ -27,17 +26,11 @@ router.get('/bread/:meat+/bread', SANDWICH_HANDLER);
 router.get('/mother{-:type}?', MOTHER_HANDLER);
 
 function makeGet(path) {
-	return httpMocks.createRequest({
-		method: GET, 
-		url: DOMAIN + path,
-	});
+	return new Request(DOMAIN + path, { method: GET });
 }
 
 function makePost(path) {
-	return httpMocks.createRequest({
-		method: 'POST',
-		url: DOMAIN + path,
-	});
+	return new Request(DOMAIN + path, { method: POST });
 }
 
 function makeHandlerMatcher(method, handlers, params = {}) {
@@ -45,7 +38,7 @@ function makeHandlerMatcher(method, handlers, params = {}) {
 }
 
 test('Router', () => {
-	expect(makeGet('/').path).toBe('/');
+	expect(new URL(makeGet('/').url).pathname).toBe('/');
 	expect(router.getRoute(makeGet('/'))).toMatchObject(makeHandlerMatcher(GET, ROOT_HANDLER));
 	expect(router.getRoute(makeGet('/posts'))).toMatchObject(makeHandlerMatcher(GET, POSTS_HANDLER));
 	expect(router.getRoute(makeGet('/posts/123'))).toMatchObject(makeHandlerMatcher(GET, POST_HANDLER, ID_PARAM));

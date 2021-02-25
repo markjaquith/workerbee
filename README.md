@@ -1,6 +1,7 @@
 # cf-worker-utils: Cloudflare Worker Utilities
 
 ![minified and zipped size](https://img.shields.io/bundlephobia/minzip/cf-worker-utils)
+![Tests](https://github.com/markjaquith/cf-worker-utils/actions/workflows/tests.yml/badge.svg)
 
 This is a simple package for composing Cloudflare Workers, focused on the use
 case of having an upstream server, and wanting to conditionally manipulate requests

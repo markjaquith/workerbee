@@ -37,19 +37,19 @@ Example:
 import handleFetch from 'cf-worker-utils';
 
 handleFetch({
-	request: requestHandlers, // Run on every request.
-	response: responseHandler, // Run on every response.
-	routes: router => {
-		router.get('/test', {
-			request: requestHandlers, // Run on matching requests.
-			response: responseHanders, // Run on responses from matching requests.
-		});
+  request: requestHandlers, // Run on every request.
+  response: responseHandler, // Run on every response.
+  routes: router => {
+    router.get('/test', {
+      request: requestHandlers, // Run on matching requests.
+      response: responseHanders, // Run on responses from matching requests.
+    });
 
-		router.get('/posts/:id', {
-			request: requestHandlers, // Run on matching requests.
-			response: responseHandlers, // Run on responses from matching requests.
-		})
-	},
+    router.get('/posts/:id', {
+      request: requestHandlers, // Run on matching requests.
+      response: responseHandlers, // Run on responses from matching requests.
+    })
+  },
 });
 ```
 
@@ -198,12 +198,12 @@ Handlers should be `async` functions. They are passed an object that contains:
 
 ```js
 {
-	handlers,
-	originalRequest,
-	request,
-	response, // Only for response handlers.
-	params,
-	phase,
+  handlers,
+  originalRequest,
+  request,
+  response, // Only for response handlers.
+  params,
+  phase,
 }
 ```
 
@@ -231,6 +231,34 @@ Response handlers can return two things:
 handlers.
 2. A new `Response` object — this will get passed on to the rest of the request
 handlers.
+
+## Logic
+
+Instead of bundling logic into custom handlers, you can also use
+`ifRequest(condition, ...handlers)` and `ifResponse(condition, ...handlers)`
+together with the `any()`, `all()` and `none()` gates to specify the logic
+outside of the handler. Here's an example:
+
+```js
+import { handleFetch, ifRequest, headerContains, forbidden } from 'cf-worker-utils';
+
+handleFetch({
+  request: [
+    ifRequest(
+      any(
+        headerContains('user-agent', 'Googlebot'),
+        headerContains('user-agent', 'Yahoo! Slurp')
+      ),
+      forbidden,
+      someCustomHandler
+    ),
+  ],
+});
+```
+
+`ifRequest()` and `ifResponse()` take a single condition as their first argument,
+but you can nest `any()`, `all()` and `none()` as much as you like to compose
+a more complex condition.
 
 ## Best Practices
 

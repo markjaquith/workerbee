@@ -22,7 +22,7 @@ function makeEvent() {
 	};
 }
 
-test('ifRequest and isResponse', async () => {
+test('ifRequest and ifResponse', async () => {
 	const trueRequestSpy = jest.fn();
 	const falseRequestSpy = jest.fn();
 	const trueResponseSpy = jest.fn();
@@ -30,12 +30,12 @@ test('ifRequest and isResponse', async () => {
 
 	const manager = new RequestManager({
 		request: [
-			ifRequest(no)(falseRequestSpy), // 0.
-			ifRequest(yes)(trueRequestSpy), // 1.
+			ifRequest(no, falseRequestSpy), // 0.
+			ifRequest(yes, trueRequestSpy), // 1.
 		],
 		response: [
-			ifResponse(no)(falseResponseSpy), // 0.
-			ifResponse(yes)(trueResponseSpy), // 1.
+			ifResponse(no, falseResponseSpy), // 0.
+			ifResponse(yes, trueResponseSpy), // 1.
 		],
 	});
 
@@ -55,14 +55,14 @@ test('complex logic', async () => {
 
 	const manager = new RequestManager({
 		request: [
-			ifRequest(all(yes, yes, yes, yes))(trueRequestSpy), // 1.
-			ifRequest(any(yes, no, no, no))(trueRequestSpy), // 2.
-			ifRequest(none(no, no, no))(trueRequestSpy), // 3.
-			ifRequest(none(no, no, yes))(falseRequestSpy), // 0.
+			ifRequest(all(yes, yes, yes, yes), trueRequestSpy), // 1.
+			ifRequest(any(yes, no, no, no), trueRequestSpy), // 2.
+			ifRequest(none(no, no, no), trueRequestSpy), // 3.
+			ifRequest(none(no, no, yes), falseRequestSpy), // 0.
 		],
 		response: [
-			ifResponse(all(all(yes, yes), any(yes, no), none(all(yes, no))))(trueResponseSpy), // 1.
-			ifResponse(all(all(yes, yes), any(yes, no), none(all(yes, yes))))(falseResponseSpy), // 0.
+			ifResponse(all(all(yes, yes), any(yes, no), none(all(yes, no))), trueResponseSpy), // 1.
+			ifResponse(all(all(yes, yes), any(yes, no), none(all(yes, yes))), falseResponseSpy), // 0.
 		],
 	});
 

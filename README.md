@@ -34,7 +34,7 @@ handlers, and/or route-limited request/response handlers.
 
 Example:
 
-```
+```js
 import handleFetch from 'cf-worker-utils';
 
 handleFetch({

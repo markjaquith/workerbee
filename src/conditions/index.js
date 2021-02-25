@@ -1,5 +1,5 @@
-import headerContains from './headerContains';
-import isContentType from './isContentType';
-import isHtml from './isHtml';
+import headerContains from './headerContains.js';
+import isContentType from './isContentType.js';
+import isHtml from './isHtml.js';
 
 export { headerContains, isContentType, isHtml };

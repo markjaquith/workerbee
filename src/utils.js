@@ -54,3 +54,7 @@ export function isRequest(request) {
 export function isResponse(response) {
 	return (response && !!response.status) || false;
 }
+
+export function matchesValue(test, value) {
+	return typeof test === 'function' ? test(value) : test === value;
+}

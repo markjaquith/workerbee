@@ -1,5 +1,11 @@
-import { Router } from '.';
-import { toArray, isRedirect, testing, isResponse, isRequest } from './utils';
+import { Router } from './Router.js';
+import {
+	toArray,
+	isRedirect,
+	testing,
+	isResponse,
+	isRequest,
+} from './utils.js';
 
 export default class RequestManager {
 	constructor(options = {}) {

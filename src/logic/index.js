@@ -1,7 +1,7 @@
-import all from './all';
-import any from './any';
-import none from './none';
-import ifRequest from './ifRequest';
-import ifResponse from './ifResponse';
+import all from './all.js';
+import any from './any.js';
+import none from './none.js';
+import ifRequest from './ifRequest.js';
+import ifResponse from './ifResponse.js';
 
 export { all, any, none, ifRequest, ifResponse };

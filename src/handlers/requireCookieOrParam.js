@@ -1,4 +1,4 @@
-import { getCookie, redirect } from '../utils';
+import { getCookie, redirect } from '../utils.js';
 import cookie from 'cookie';
 
 export default function requireCookieOrParam(name, message = 'Access denied') {

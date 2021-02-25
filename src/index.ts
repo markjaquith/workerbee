@@ -1,15 +1,14 @@
-export * from './conditions';
-export * from './logic';
-export * from './handlers';
-export * from './utils';
+export * from './conditions/index.js';
+export * from './logic/index.js';
+export * from './handlers/index.js';
+export * from './utils.js';
 
 // Heavy lifting.
-export { default as Router } from './Router';
-import RequestManager from './RequestManager';
-export { RequestManager };
+import Router from './Router.js';
+import RequestManager from './RequestManager.js';
 
 // The prestige.
-export function handleFetch(options = {}) {
+export function handleFetch(options: any = {}) {
 	options = {
 		passThroughOnException: true,
 		...options,
@@ -24,5 +23,7 @@ export function handleFetch(options = {}) {
 		event.respondWith(responder.makeResponse(event));
 	});
 }
+
+export { Router, RequestManager };
 
 export default handleFetch;

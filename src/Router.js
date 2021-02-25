@@ -13,7 +13,7 @@ const METHODS = [
 	'TRACE',
 ];
 
-export default class Router {
+export class Router {
 	constructor() {
 		this.routes = [];
 
@@ -64,3 +64,5 @@ export default class Router {
 		};
 	}
 }
+
+export default Router;

@@ -1,5 +1,5 @@
-import AttributeSetter from '../rewriters/AttributeSetter';
-import isHtml from '../conditions/isHtml';
+import AttributeSetter from '../rewriters/AttributeSetter.js';
+import isHtml from '../conditions/isHtml.js';
 
 export default async function ({ response }) {
 	if (isHtml(response)) {

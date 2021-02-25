@@ -1,12 +1,12 @@
-import appendResponseHeaders from './appendResponseHeaders';
-import copyResponseHeader from './copyResponseHeader';
-import forbidden from './forbidden';
-import forceHttps from './forceHttps';
-import lazyLoadImages from './lazyLoadImages';
-import removeResponseHeaders from './removeResponseHeaders';
-import requireCookieOrParam from './requireCookieOrParam';
-import setResponseHeaders from './setResponseHeaders';
-import stripParamsForFetch from './stripParamsForFetch';
+import appendResponseHeaders from './appendResponseHeaders.js';
+import copyResponseHeader from './copyResponseHeader.js';
+import forbidden from './forbidden.js';
+import forceHttps from './forceHttps.js';
+import lazyLoadImages from './lazyLoadImages.js';
+import removeResponseHeaders from './removeResponseHeaders.js';
+import requireCookieOrParam from './requireCookieOrParam.js';
+import setResponseHeaders from './setResponseHeaders.js';
+import stripParamsForFetch from './stripParamsForFetch.js';
 
 export {
 	appendResponseHeaders,

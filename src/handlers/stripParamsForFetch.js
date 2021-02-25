@@ -1,5 +1,5 @@
-import { STRIP_PARAMS } from '../config';
-import { setRequestUrl, isRedirect } from '../utils';
+import { STRIP_PARAMS } from '../config.js';
+import { setRequestUrl, isRedirect } from '../utils.js';
 
 /**
  * Fetch and log a request

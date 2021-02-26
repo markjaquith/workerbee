@@ -1,4 +1,4 @@
-import { toArray } from '../utils.js';
+import { toArray } from '../utils';
 import curry from 'lodash/curry';
 
 export default curry(function (types, thing) {

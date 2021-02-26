@@ -1,5 +1,5 @@
-import { STRIP_PARAMS } from '../config.js';
-import { setRequestUrl, isRedirect } from '../utils.js';
+import { STRIP_PARAMS } from '../config';
+import { setRequestUrl, isRedirect } from '../utils';
 
 /**
  * Fetch and log a request
@@ -38,7 +38,7 @@ function getStrippableParams(url, params = []) {
 	return strippableParams;
 }
 
-function restoreStrippedParamsOnRedirect(params = []) {
+function restoreStrippedParamsOnRedirect(params = {}) {
 	return async ({ response }) => {
 		if (isRedirect(response)) {
 			const redirectLocation = new URL(response.headers.get('location'));

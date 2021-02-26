@@ -8,14 +8,14 @@
     "build": "rimraf dist && tsc",
     "dev": "npm run --silent build",
     "prepare": "npm run --silent build",
-    "prettier": "prettier --write \"./src/**/*.{mjs,js,jsx}\"",
+    "prettier": "prettier --write \"./src/**/*.{mjs,js,jsx,ts,tsx}\"",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable"
   },
   "jest": {
     "setupFiles": [
-      "./src/jestSetup.js"
+      "./src/jestSetup.ts"
     ]
   },
   "prettier": {

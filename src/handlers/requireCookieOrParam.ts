@@ -1,5 +1,6 @@
-import { getCookie, redirect } from '../utils.js';
+import { getCookie, redirect } from '../utils';
 import cookie from 'cookie';
+import forbidden from './forbidden';
 
 export default function requireCookieOrParam(name, message = 'Access denied') {
 	return async function ({ request }) {
@@ -18,10 +19,7 @@ export default function requireCookieOrParam(name, message = 'Access denied') {
 
 			return response;
 		} else if (!getCookie(request, name)) {
-			return new Response(message, {
-				status: '403',
-				statusText: 'Forbidden',
-			});
+			return forbidden(message);
 		}
 	};
 }

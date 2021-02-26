@@ -1,9 +1,9 @@
-import ifRequest from './ifRequest.js';
-import ifResponse from './ifResponse.js';
-import any from './any.js';
-import all from './all.js';
-import none from './none.js';
-import RequestManager from '../RequestManager.js';
+import ifRequest from './ifRequest';
+import ifResponse from './ifResponse';
+import any from './any';
+import all from './all';
+import none from './none';
+import RequestManager from '../RequestManager';
 
 const DOMAIN = 'https://example.com';
 const GET = 'GET';

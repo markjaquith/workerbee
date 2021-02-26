@@ -1,11 +1,11 @@
-export * from './conditions/index.js';
-export * from './logic/index.js';
-export * from './handlers/index.js';
-export * from './utils.js';
+export * from './conditions/index';
+export * from './logic/index';
+export * from './handlers/index';
+export * from './utils';
 
 // Heavy lifting.
-import Router from './Router.js';
-import RequestManager from './RequestManager.js';
+import Router from './Router';
+import RequestManager from './RequestManager';
 
 // The prestige.
 export function handleFetch(options: any = {}) {

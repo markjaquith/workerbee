@@ -1,4 +1,4 @@
-import Router from './Router.js';
+import Router from './Router';
 
 const makeHandler = () => ({ request: Symbol(), response: Symbol() });
 

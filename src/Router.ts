@@ -1,5 +1,6 @@
 import partial from 'lodash/partial';
 import { match } from 'path-to-regexp';
+import { MethodRegistrar } from './Router.d';
 
 const METHODS = [
 	'CONNECT',
@@ -14,9 +15,19 @@ const METHODS = [
 ];
 
 export class Router {
-	constructor() {
-		this.routes = [];
+	private routes: any[] = [];
+	connect: MethodRegistrar;
+	delete: MethodRegistrar;
+	get: MethodRegistrar;
+	head: MethodRegistrar;
+	options: MethodRegistrar;
+	patch: MethodRegistrar;
+	post: MethodRegistrar;
+	put: MethodRegistrar;
+	trace: MethodRegistrar;
+	all: MethodRegistrar;
 
+	constructor() {
 		for (const method of METHODS) {
 			this[method.toLowerCase()] = partial(this.register, method);
 		}
@@ -24,7 +35,7 @@ export class Router {
 		this.all = partial(this.register, '*');
 	}
 
-	register(method, url, handlers) {
+	register(method: String, url: String, handlers) {
 		this.routes.push({
 			method,
 			url,

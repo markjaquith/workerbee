@@ -250,8 +250,8 @@ handleFetch({
         headerContains('user-agent', 'Googlebot'),
         headerContains('user-agent', 'Yahoo! Slurp')
       ),
-      forbidden,
-      someCustomHandler
+      forbidden(),
+      someCustomHandler()
     ),
   ],
 });

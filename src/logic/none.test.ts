@@ -1,4 +1,4 @@
-import none from './none.js';
+import none from './none';
 
 const yes = () => true;
 const no = () => false;

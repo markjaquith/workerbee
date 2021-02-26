@@ -1,4 +1,4 @@
-import hasParam from './hasParam.js';
+import hasParam from './hasParam';
 
 const REQUEST = {
 	url: new URL('https://x.co/?foo=bar&foo2&foo3=bar3'),

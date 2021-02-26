@@ -1,4 +1,4 @@
-import all from './all.js';
+import all from './all';
 
 const yes = () => true;
 const no = () => false;

@@ -1,4 +1,4 @@
-import headerContains from './headerContains.js';
+import headerContains from './headerContains';
 
 const fooHeaderContainsBar = headerContains('foo', 'bar');
 const fooHeaderContainsBaz = headerContains('foo', 'baz');

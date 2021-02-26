@@ -1,14 +1,15 @@
-import { Router } from './Router.js';
-import {
-	toArray,
-	isRedirect,
-	testing,
-	isResponse,
-	isRequest,
-} from './utils.js';
+import { Router } from './Router';
+import { toArray, isRedirect, testing, isResponse, isRequest } from './utils';
+import { Handler, RouterCallback, Options } from './RequestManager.d';
 
 export default class RequestManager {
-	constructor(options = {}) {
+	private requestHandlers: Handler[] = [];
+	private responseHandlers: Handler[] = [];
+	private originalRequestHandlers: Handler[];
+	private originalResponseHandlers: Handler[];
+	private routes: RouterCallback;
+
+	constructor(options: Options = {}) {
 		options = {
 			request: [],
 			response: [],
@@ -52,9 +53,9 @@ export default class RequestManager {
 		}
 	}
 
-	groupEnd(...args) {
+	groupEnd() {
 		if (!testing()) {
-			console.groupEnd(...args);
+			console.groupEnd();
 		}
 	}
 
@@ -164,11 +165,10 @@ export default class RequestManager {
 			...this.originalResponseHandlers,
 			...routeResponseHandlers,
 		];
-		const originalRequest = event.request;
+		const originalRequest = request;
 
 		const [finalRequest, earlyResponse] = await this.getFinalRequest({
 			request,
-			originalRequest,
 			params,
 		});
 		const response = earlyResponse || (await this.fetch(finalRequest));

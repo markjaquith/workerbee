@@ -1,5 +1,5 @@
-import isContentType from './isContentType.js';
-import isHtml from './isHtml.js';
+import isContentType from './isContentType';
+import isHtml from './isHtml';
 
 function makeTypeHeader(type = null) {
 	const request = {

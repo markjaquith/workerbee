@@ -1,4 +1,4 @@
-import any from './any.js';
+import any from './any';
 
 const yes = () => true;
 const no = () => false;

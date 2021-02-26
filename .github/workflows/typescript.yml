@@ -1,0 +1,14 @@
+name: TypeScript
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: npm install
+
+      - name: Compile TypeScript
+        run: npx tsc --noEmit

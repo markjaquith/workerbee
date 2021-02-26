@@ -1,6 +1,15 @@
 import { Router } from './Router';
-import { toArray, isRedirect, testing, isResponse, isRequest } from './utils';
-import { Handler, RouterCallback, Options } from './RequestManager.d';
+import { toArray, isRedirect, testing } from './utils';
+
+export type Handler = (any) => void | Promise<Request | Response>;
+export type Handlers = Handler | Handler[];
+export type RouterCallback = (router: Router) => void;
+
+export interface Options {
+	request?: Handlers;
+	response?: Handlers;
+	routes?: RouterCallback;
+}
 
 export default class RequestManager {
 	private requestHandlers: Handler[] = [];
@@ -25,7 +34,7 @@ export default class RequestManager {
 		this.addResponseHandler = this.addResponseHandler.bind(this);
 	}
 
-	addRequestHandler(handler, options = { immediate: false }) {
+	addRequestHandler(handler: Handler, options = { immediate: false }) {
 		if (options.immediate) {
 			this.requestHandlers.unshift(handler);
 		} else {
@@ -33,7 +42,7 @@ export default class RequestManager {
 		}
 	}
 
-	addResponseHandler(handler, options = { immediate: false }) {
+	addResponseHandler(handler: Handler, options = { immediate: false }) {
 		if (options.immediate) {
 			this.responseHandlers.unshift(handler);
 		} else {
@@ -78,7 +87,7 @@ export default class RequestManager {
 				phase: 'request',
 			});
 
-			if (isResponse(result)) {
+			if (result instanceof Response) {
 				// Request handlers can bail early and return a response.
 				// This skips the rest of the response handlers.
 				response = result;
@@ -93,7 +102,7 @@ export default class RequestManager {
 					this.log('⏪', response);
 				}
 				break;
-			} else if (isRequest(result)) {
+			} else if (result instanceof Request) {
 				// A new Request was returned.
 				if (result.url !== request.url) {
 					// The request URL changed.
@@ -129,7 +138,7 @@ export default class RequestManager {
 			});
 
 			// If we receive a result, replace the response.
-			if (isResponse(result)) {
+			if (result instanceof Response) {
 				response = result;
 			}
 		}

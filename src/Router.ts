@@ -1,6 +1,7 @@
 import partial from 'lodash/partial';
 import { match } from 'path-to-regexp';
-import { MethodRegistrar } from './Router.d';
+
+export type MethodRegistrar = (pattern: string, ...Handler) => Router;
 
 const METHODS = [
 	'CONNECT',

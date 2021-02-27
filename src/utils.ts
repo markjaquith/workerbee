@@ -1,5 +1,8 @@
 import cookie from 'cookie';
 
+export type ValueMatchingFunction = (value: string) => boolean;
+export type ValueMatcher = string | string[] | ValueMatchingFunction | ValueMatchingFunction[];
+
 export function toArray(mixed) {
 	if (null === mixed || undefined === mixed) {
 		return [];
@@ -47,6 +50,19 @@ export function testing() {
 	return process.env.JEST_WORKER_ID !== undefined;
 }
 
-export function matchesValue(test, value) {
-	return typeof test === 'function' ? test(value) : test === value;
+export function matchesValue(test: ValueMatcher, value: string) {
+	switch(typeof test) {
+		case 'function':
+			return test(value);
+		case 'string':
+			return test === value;
+		default:
+			for (const eachTest of test) {
+				if (matchesValue(eachTest, value)) {
+					return true;
+				}
+			}
+
+			return false;
+	}
 }

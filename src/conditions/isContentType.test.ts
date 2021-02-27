@@ -24,6 +24,8 @@ test('isContentType', () => {
 			makeTypeHeader('   text/html   ; charset=utf-8   ')
 		)
 	).toBe(true); // Curried.
+	expect(isContentType(type => type.startsWith('text/'))(makeTypeHeader('text/foo'))).toBe(true);
+	expect(isContentType(type => type.startsWith('text/'))(makeTypeHeader('application/foo'))).toBe(false);
 });
 
 test('isHtml', () => {

@@ -1,13 +1,10 @@
-import { toArray } from '../utils';
+import { matchesValue } from '../utils';
 import curry from 'lodash/curry';
+import type { ValueMatcher } from '../utils';
 
-export default curry(function (types, thing) {
+export default curry(function (matcher: ValueMatcher, thing) {
 	return (
-		thing &&
-		thing.headers &&
-		thing.headers.has('content-type') &&
-		toArray(types).includes(
-			thing.headers.get('content-type').split(';')[0].trim()
-		)
+		thing?.headers?.has('content-type') &&
+		matchesValue(matcher, thing.headers?.get('content-type').split(';')[0].trim())
 	);
 });

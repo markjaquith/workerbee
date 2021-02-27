@@ -17,7 +17,9 @@ test('matchesContentType', () => {
 	expect(
 		matchesContentType('text/html', makeTypeHeader('text/html; charset=utf-8'))
 	).toBe(true);
-	expect(matchesContentType('text/html', makeTypeHeader('text/plain'))).toBe(false);
+	expect(matchesContentType('text/html', makeTypeHeader('text/plain'))).toBe(
+		false
+	);
 	expect(matchesContentType('text/html', makeTypeHeader())).toBe(false);
 	expect(
 		matchesContentType('text/html')(

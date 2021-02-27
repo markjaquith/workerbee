@@ -21,7 +21,16 @@
   "prettier": {
     "useTabs": true,
     "singleQuote": true,
-    "trailingComma": "es5"
+    "trailingComma": "es5",
+    "overrides": [
+      {
+        "files": "*.json",
+        "options": {
+          "useTabs": false,
+          "singleQuote": false
+        }
+      }
+    ]
   },
   "repository": {
     "type": "git",
@@ -57,6 +66,7 @@
     "node-fetch": "^2.6.1",
     "pinst": "^2.1.6",
     "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0",
     "rimraf": "^3.0.2",
     "service-worker-mock": "^2.0.5",
     "source-map-loader": "^2.0.1",

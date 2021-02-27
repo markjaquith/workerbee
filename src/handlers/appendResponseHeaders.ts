@@ -1,4 +1,6 @@
-export default function appendResponseHeaders(headers = []) {
+import type { Headers } from './setResponseHeaders';
+
+export default function appendResponseHeaders(headers: Headers = []) {
 	return async function ({ response }) {
 		let newResponse;
 

@@ -16,13 +16,12 @@ export default class RequestManager {
 	private responseHandlers: Handler[] = [];
 	private originalRequestHandlers: Handler[];
 	private originalResponseHandlers: Handler[];
-	private routes: RouterCallback;
+	private routes: RouterCallback | undefined;
 
 	constructor(options: Options = {}) {
 		options = {
 			request: [],
 			response: [],
-			routes: null,
 			...options,
 		};
 
@@ -72,11 +71,11 @@ export default class RequestManager {
 		const originalRequest = request;
 
 		// Response starts null.
-		let response = null;
+		let response: Response | null = null;
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
-			const requestHandler = this.requestHandlers.shift();
+			const requestHandler = this.requestHandlers.shift() as Function;
 			const result = await requestHandler({
 				addRequestHandler: this.addRequestHandler,
 				addResponseHandler: this.addResponseHandler,
@@ -127,7 +126,7 @@ export default class RequestManager {
 	async getFinalResponse({ request, response, originalRequest, params }) {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
-			const responseHandler = this.responseHandlers.shift();
+			const responseHandler = this.responseHandlers.shift() as Function;
 			const result = await responseHandler({
 				addResponseHandler: this.addResponseHandler,
 				request,
@@ -153,8 +152,8 @@ export default class RequestManager {
 		this.log('🎬', request);
 
 		// Determine the route.
-		let routeRequestHandlers = [];
-		let routeResponseHandlers = [];
+		let routeRequestHandlers: Handler[] = [];
+		let routeResponseHandlers: Handler[] = [];
 		let params = {};
 
 		if (this.routes) {

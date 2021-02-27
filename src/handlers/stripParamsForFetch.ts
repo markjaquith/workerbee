@@ -5,8 +5,8 @@ import { setRequestUrl, isRedirect } from '../utils';
  * Fetch and log a request
  * @param {Request} request
  */
-export default function stripParamsForFetch(params = STRIP_PARAMS) {
-	return async ({ request, handlers, addResponseHandler }) => {
+export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
+	return async ({ request, addResponseHandler }) => {
 		const url = new URL(request.url);
 
 		const strippableParams = getStrippableParams(url, params);
@@ -26,7 +26,7 @@ export default function stripParamsForFetch(params = STRIP_PARAMS) {
 	};
 }
 
-function getStrippableParams(url, params = []) {
+function getStrippableParams(url, params: string[] = []) {
 	const strippableParams = {};
 
 	for (const param of params) {

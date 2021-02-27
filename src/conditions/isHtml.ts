@@ -1,4 +1,4 @@
-import matchesContentType from './matchesContentType';
+import contentTypeMatches from './contentTypeMatches';
 import partial from 'lodash/partial';
 
-export default partial(matchesContentType, 'text/html');
+export default partial(contentTypeMatches, 'text/html');

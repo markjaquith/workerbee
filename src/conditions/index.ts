@@ -1,5 +1,5 @@
 import headerContains from './headerContains';
-import matchesContentType from './matchesContentType';
+import contentTypeMatches from './contentTypeMatches';
 import isHtml from './isHtml';
 
-export { headerContains, matchesContentType, isHtml };
+export { headerContains, contentTypeMatches, isHtml };

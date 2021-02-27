@@ -27,7 +27,7 @@ export function redirect(url, status = 302) {
  * @param Response A response object.
  * @return boolean
  */
-export function isRedirect({ status, headers }) {
+export function isRedirect({ status, headers }: Response) {
 	return status >= 300 && status < 400 && headers.get('location');
 }
 

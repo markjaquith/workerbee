@@ -1,7 +1,11 @@
 import cookie from 'cookie';
 
 export type ValueMatchingFunction = (value: string) => boolean;
-export type ValueMatcher = string | string[] | ValueMatchingFunction | ValueMatchingFunction[];
+export type ValueMatcher =
+	| string
+	| string[]
+	| ValueMatchingFunction
+	| ValueMatchingFunction[];
 
 export function toArray(mixed) {
 	if (null === mixed || undefined === mixed) {
@@ -51,7 +55,7 @@ export function testing() {
 }
 
 export function matchesValue(test: ValueMatcher, value: string) {
-	switch(typeof test) {
+	switch (typeof test) {
 		case 'function':
 			return test(value);
 		case 'string':

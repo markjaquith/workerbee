@@ -9,7 +9,7 @@ export { Router, RequestManager };
 
 // Make conditions act on current phase, curried.
 import { curryWithCurrent } from './utils';
-import * as conditions from './conditions/index';
+import * as conditions from './conditions';
 
 const [
 	header,

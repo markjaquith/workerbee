@@ -331,6 +331,53 @@ handleFetch({
 });
 ```
 
+Two more points:
+
+1. The built-in conditionals support partial application. So you can do this:
+
+```js
+const userAgent = header('user-agent');
+```
+
+Now, `userAgent` is a **function** that accepts a `ValueMatcher`.
+
+You could take this further and do:
+
+```js
+const isGoogle = userAgent(startsWith('Googlebot'));
+```
+
+Now you could just add a handler like:
+
+```js
+handleFetch({
+	request: [ifRequest(isGoogle, forbiddden)],
+});
+```
+
+2. The built-in conditionals automatically apply to `current`. So if you run them
+   as a request handler, header inspection will look at the request. As a response handler,
+   it'll look at response. But you can also use the raw conditionals while creating
+   your own handlers. For instance, in a response handler you might want to look at
+   the request that went to the server, or the originalRequest that came to Cloudflare.
+
+```js
+import forbidden from 'cf-worker-utils';
+import { hasParam } from 'cf-worker-utils/conditions';
+
+export default async function forbiddenIfFooParam({ request }) {
+	if (hasParam('foo', request)) {
+		return forbidden;
+	}
+}
+```
+
+In **most cases** you will not be reaching into the request from the response. A
+better way to handle this is to have a request handler that conditionally adds
+a response handler. But if you want to, you can, and you can use those "raw"
+conditions to help. Note that the raw conditions will not be curried, and you'll
+have to pass a request or response to them as their last argument.
+
 ## Best Practices
 
 1. Always return a new Request or Response object if you want to change things.
@@ -338,6 +385,7 @@ handleFetch({
 3. If you have a response handler that is only needed based on what a request
    handler does, conditionally add that response handler on the fly in the request
    handler.
+4. Use partial application of built-in conditionals to make your code easier to read.
 
 [wrangler]: https://developers.cloudflare.com/workers/learning/getting-started
 

@@ -281,6 +281,7 @@ As hinted above, there are several built-in conditions for you to use:
 - `isHtml()`
 - `hasParam(paramName: string)`
 - `hasRouteParam(paramName: string)`
+- `param(paramName: string, matcher: ValueMatcher)`
 - `routeParam(paramName: string, matcher: ValueMatcher)`
 
 The ones that take a string (or nothing) are straightforward, but what's up with `ValueMatcher`?

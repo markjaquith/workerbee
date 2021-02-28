@@ -4,5 +4,14 @@ import isHtml from './isHtml';
 import hasParam from './hasParam';
 import hasRouteParam from './hasRouteParam';
 import routeParam from './routeParam';
+import param from './param';
 
-export { header, contentType, isHtml, hasParam, hasRouteParam, routeParam };
+export {
+	header,
+	contentType,
+	isHtml,
+	hasParam,
+	hasRouteParam,
+	routeParam,
+	param,
+};

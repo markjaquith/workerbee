@@ -6,7 +6,6 @@ export interface IncompleteFunction {
 	(): Handler;
 	incomplete: true;
 }
-
 export type ValueMatchingFunction = (value: string) => boolean;
 export type ValueMatcher =
 	| string
@@ -78,15 +77,10 @@ export function matchesValue(test: ValueMatcher, value: string) {
 	}
 }
 
-export function makeStringMethodMatchers(method: string) {
-	return [
-		curry((searchText: string, value: string): boolean =>
-			value[method](searchText),
-		),
-		curry((searchText: string, value: string): boolean =>
-			value.toLowerCase()[method](searchText.toLowerCase()),
-		),
-	];
+export function makeStringMethodMatcher(method: string) {
+	return curry((searchText: string, value: string) =>
+		value[method](searchText),
+	);
 }
 
 export function incomplete(fn) {

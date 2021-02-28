@@ -1,4 +1,3 @@
-import { makeStringMethodMatchers } from '../utils';
+import { makeStringMethodMatcher } from '../utils';
 
-export const [startsWith, iStartsWith] = makeStringMethodMatchers('startsWith');
-export default startsWith;
+export default makeStringMethodMatcher('startsWith');

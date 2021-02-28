@@ -1,3 +1,4 @@
+import { partialRight } from 'lodash';
 import hasRouteParam from './hasRouteParam';
 
 const MESSAGE = {
@@ -8,12 +9,11 @@ const MESSAGE = {
 	},
 };
 
-const hasFooParam = hasRouteParam('foo');
+const applyHasRouteParam = partialRight(hasRouteParam, MESSAGE);
 
 test('hasRouteParam', () => {
-	expect(hasRouteParam('foo', MESSAGE)).toBe(true);
-	expect(hasFooParam(MESSAGE)).toBe(true); // Curried.
-	expect(hasRouteParam('foo2', MESSAGE)).toBe(true);
-	expect(hasRouteParam('foo3', MESSAGE)).toBe(true);
-	expect(hasRouteParam('foo4', MESSAGE)).toBe(false);
+	expect(applyHasRouteParam('foo')).toBe(true);
+	expect(applyHasRouteParam('foo2')).toBe(true);
+	expect(applyHasRouteParam('foo3')).toBe(true);
+	expect(applyHasRouteParam('foo4')).toBe(false);
 });

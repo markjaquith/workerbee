@@ -1,5 +1,4 @@
 import cookie from 'cookie';
-import curry from 'lodash/curry';
 import CaseInsensitiveString from './CaseInsensitiveString';
 import NegatedCaseInsensitiveString from './NegatedCaseInsensitiveString';
 import NegatedString from './NegatedString';
@@ -16,6 +15,16 @@ export type ValueMatcher =
 	| string[]
 	| ValueMatchingFunction
 	| ValueMatchingFunction[];
+
+export const curry = (fn) => {
+	const expectedArgs = fn.length;
+	const curried = (...args) => {
+		return args.length >= expectedArgs
+			? fn(...args)
+			: (...args2) => curried(...args.concat(args2));
+	};
+	return curried;
+};
 
 export function toArray(mixed) {
 	if (null === mixed || undefined === mixed) {

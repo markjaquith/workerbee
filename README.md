@@ -292,18 +292,13 @@ A `ValueMatcher` is flexible. It can be:
 
 The following `ValueMatchingFunction`s are available:
 
+- `is(value: string)`
 - `contains(value: string)`
 - `startsWith(value: string)`
 - `endsWith(value: string)`
 
-These functions can also accept insensitive strings and negated strings with the `i()` and `not()` helpers.
-
-```js
-ifRequest(header('User-Agent', startsWith(not(i('WordPress')))), forbidden);
-```
-
 Note that you can use logic functions to compose value matchers! So the example
-from the Logic section could be rewritten like this:
+from above could be rewritten like this:
 
 ```js
 import {

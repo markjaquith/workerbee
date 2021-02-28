@@ -1,6 +1,6 @@
 {
   "name": "cf-worker-utils",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Utilities for writing Cloudflare Workers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -51,9 +51,7 @@
   "homepage": "https://github.com/markjaquith/cf-worker-utils#readme",
   "dependencies": {
     "@cloudflare/workers-types": "^2.1.0",
-    "@types/lodash": "^4.14.168",
     "cookie": "^0.4.1",
-    "lodash": "^4.17.21",
     "path-to-regexp": "^6.2.0"
   },
   "devDependencies": {

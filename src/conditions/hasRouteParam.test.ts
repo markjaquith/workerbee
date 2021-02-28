@@ -1,4 +1,4 @@
-import { partialRight } from 'lodash';
+import { partialRight } from '../utils';
 import hasRouteParam from './hasRouteParam';
 
 const MESSAGE = {

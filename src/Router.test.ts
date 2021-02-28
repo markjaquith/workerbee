@@ -63,17 +63,18 @@ test('Router', () => {
 		}),
 	);
 	expect(router.getRoute(makeGet('/wildcard'))).toMatchObject(
-		makeHandlerMatcher(GET, WILDCARD_HANDLER),
-		{},
+		makeHandlerMatcher(GET, WILDCARD_HANDLER, {}),
 	);
 	expect(
 		router.getRoute(makeGet('/bread/peanut-butter/jelly/bread')),
-	).toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER), {
-		meat: ['peanut-butter', 'jelly'],
-	});
-	expect(
-		router.getRoute(makeGet('/bread/ham/bread')),
-	).toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER), { meat: 'ham' });
+	).toMatchObject(
+		makeHandlerMatcher(GET, SANDWICH_HANDLER, {
+			meat: ['peanut-butter', 'jelly'],
+		}),
+	);
+	expect(router.getRoute(makeGet('/bread/ham/bread'))).toMatchObject(
+		makeHandlerMatcher(GET, SANDWICH_HANDLER, { meat: ['ham'] }),
+	);
 	expect(router.getRoute(makeGet('/bread/bread'))).not.toMatchObject(
 		makeHandlerMatcher(GET, SANDWICH_HANDLER),
 	);

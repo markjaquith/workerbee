@@ -1,4 +1,4 @@
-import { partialRight } from 'lodash';
+import { partialRight } from '../utils';
 import { contains, startsWith } from '../logic';
 import routeParam from './routeParam';
 

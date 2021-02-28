@@ -1,4 +1,4 @@
-import partial from 'lodash/partial';
+import { partial } from './utils';
 import { match } from 'path-to-regexp';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
@@ -32,6 +32,8 @@ export class Router {
 	all: MethodRegistrar;
 
 	constructor() {
+		this.register = this.register.bind(this);
+
 		for (const method of METHODS) {
 			this[method.toLowerCase()] = partial(this.register, method);
 		}

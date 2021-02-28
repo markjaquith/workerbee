@@ -1,4 +1,4 @@
-import { partialRight } from 'lodash';
+import { partialRight } from '../utils';
 import { endsWith, startsWith } from '../logic';
 import param from './param';
 

@@ -1,5 +1,4 @@
 import contentType from './contentType';
-import partial from 'lodash/partial';
-import { incomplete } from '../utils';
+import { incomplete, partial } from '../utils';
 
 export default incomplete(() => partial(contentType, 'text/html'));

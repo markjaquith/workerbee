@@ -1,6 +1,6 @@
 import header from './header';
 import { all, contains, startsWith, endsWith } from '../logic';
-import { partialRight } from 'lodash';
+import { partialRight } from '../utils';
 
 const message = new Request('https://example.com/', {
 	headers: new Headers({

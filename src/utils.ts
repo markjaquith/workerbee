@@ -26,6 +26,11 @@ export const curry = (fn) => {
 	return curried;
 };
 
+export const partial = (fn, ...leftArgs) => (...args) =>
+	fn(...leftArgs, ...args);
+export const partialRight = (fn, ...rightArgs) => (...args) =>
+	fn(...args, ...rightArgs);
+
 export function toArray(mixed) {
 	if (null === mixed || undefined === mixed) {
 		return [];

@@ -1,7 +1,6 @@
 import hasRouteParam from './hasRouteParam';
 
 const REQUEST = {
-	url: new URL('https://x.co/?foo=bar&foo2&foo3=bar3'),
 	params: {
 		foo: 'bar',
 		foo2: '',

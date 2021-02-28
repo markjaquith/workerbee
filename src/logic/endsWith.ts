@@ -1,4 +1,3 @@
-import { makeStringMethodMatchers } from '../utils';
+import { makeStringMethodMatcher } from '../utils';
 
-export const [endsWith, iEndsWith] = makeStringMethodMatchers('endsWith');
-export default endsWith;
+export default makeStringMethodMatcher('endsWith');

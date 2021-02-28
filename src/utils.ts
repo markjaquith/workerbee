@@ -1,9 +1,5 @@
 import cookie from 'cookie';
 import curry from 'lodash/curry';
-import CaseInsensitiveString from './CaseInsensitiveString';
-import { none } from './logic';
-import NegatedCaseInsensitiveString from './NegatedCaseInsensitiveString';
-import NegatedString from './NegatedString';
 
 import type { Handler } from './RequestManager';
 export interface IncompleteFunction {
@@ -82,25 +78,15 @@ export function matchesValue(test: ValueMatcher, value: string) {
 	}
 }
 
-export function makeStringMethodMatcher(method: string) {
-	return curry(function (
-		searchText:
-			| string
-			| CaseInsensitiveString
-			| NegatedString
-			| NegatedCaseInsensitiveString,
-		value: string,
-	) {
-		if (searchText instanceof NegatedCaseInsensitiveString) {
-			return !value.toLowerCase()[method](searchText.value);
-		} else if (searchText instanceof CaseInsensitiveString) {
-			return value.toLowerCase()[method](searchText.value);
-		} else if (searchText instanceof NegatedString) {
-			return !value[method](searchText.value);
-		} else {
-			return value[method](searchText);
-		}
-	});
+export function makeStringMethodMatchers(method: string) {
+	return [
+		curry((searchText: string, value: string): boolean =>
+			value[method](searchText),
+		),
+		curry((searchText: string, value: string): boolean =>
+			value.toLowerCase()[method](searchText.toLowerCase()),
+		),
+	];
 }
 
 export function incomplete(fn) {
@@ -118,34 +104,4 @@ export function makeComplete(fn) {
 	}
 
 	return fn;
-}
-
-export function i(text: string): CaseInsensitiveString;
-export function i(text: NegatedString): NegatedCaseInsensitiveString;
-export function i(
-	text: string | NegatedString,
-): CaseInsensitiveString | NegatedCaseInsensitiveString {
-	if (text instanceof NegatedString) {
-		return new NegatedCaseInsensitiveString(text.value);
-	} else {
-		return new CaseInsensitiveString(text);
-	}
-}
-
-export function not(input: string): NegatedString;
-export function not(input: CaseInsensitiveString): NegatedCaseInsensitiveString;
-export function not(...input: any[]): ReturnType<typeof none>;
-
-export function not(
-	...input: any[]
-): NegatedString | NegatedCaseInsensitiveString | ReturnType<typeof none> {
-	const first = input[0];
-
-	if (typeof first === 'string') {
-		return new NegatedString(first);
-	} else if (first instanceof CaseInsensitiveString) {
-		return new NegatedCaseInsensitiveString(first.value);
-	} else {
-		return none(...input);
-	}
 }

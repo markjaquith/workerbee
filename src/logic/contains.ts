@@ -1,3 +1,4 @@
-import { makeStringMethodMatcher } from '../utils';
+import { makeStringMethodMatchers } from '../utils';
 
-export default makeStringMethodMatcher('includes');
+export const [contains, iContains] = makeStringMethodMatchers('includes');
+export default contains;

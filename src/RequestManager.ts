@@ -1,7 +1,7 @@
 import { Router } from './Router';
 import { toArray, isRedirect, testing } from './utils';
 
-export type Handler = (any) => void | Promise<Request | Response>;
+export type Handler = (any) => void | Promise<Request | Response | void>;
 export type Handlers = Handler | Handler[];
 export type RouterCallback = (router: Router) => void;
 

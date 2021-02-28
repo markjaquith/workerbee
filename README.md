@@ -280,8 +280,10 @@ As hinted above, there are several built-in conditions for you to use:
 - `contentType(matcher: ValueMatcher)`
 - `isHtml()`
 - `hasParam(paramName: string)`
+- `hasRouteParam(paramName: string)`
+- `routeParam(paramName: string, matcher: ValueMatcher)`
 
-`isHtml()` and `hasParam()` are straightforward, but what's up with `ValueMatcher`?
+The ones that take a string (or nothing) are straightforward, but what's up with `ValueMatcher`?
 
 A `ValueMatcher` is flexible. It can be:
 
@@ -292,9 +294,9 @@ A `ValueMatcher` is flexible. It can be:
 
 The following `ValueMatchingFunction`s are available:
 
-- `contains(value: string)`
-- `startsWith(value: string)`
-- `endsWith(value: string)`
+- `contains(value: string | NegatedString | CaseInsensitiveString | NegatedCaseInsensitiveString)`
+- `startsWith(value: string | NegatedString | CaseInsensitiveString | NegatedCaseInsensitiveString)`
+- `endsWith(value: string | NegatedString | CaseInsensitiveString | NegatedCaseInsensitiveString)`
 
 These functions can also accept insensitive strings and negated strings with the `i()` and `not()` helpers.
 

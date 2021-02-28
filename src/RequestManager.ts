@@ -1,7 +1,8 @@
 import { Router } from './Router';
 import { toArray, isRedirect, testing } from './utils';
 
-export type Handler = (any) => void | Promise<Request | Response | void>;
+type HandlerResult = void | Request | Response;
+export type Handler = (any) => void | Promise<HandlerResult>;
 export type Handlers = Handler | Handler[];
 export type RouterCallback = (router: Router) => void;
 
@@ -75,7 +76,8 @@ export default class RequestManager {
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
-			const requestHandler = this.requestHandlers.shift() as Function;
+			const requestHandler = this.requestHandlers.shift() as Handler;
+
 			const result = await requestHandler({
 				addRequestHandler: this.addRequestHandler,
 				addResponseHandler: this.addResponseHandler,
@@ -127,7 +129,7 @@ export default class RequestManager {
 	async getFinalResponse({ request, response, originalRequest, params }) {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
-			const responseHandler = this.responseHandlers.shift() as Function;
+			const responseHandler = this.responseHandlers.shift() as Handler;
 			const result = await responseHandler({
 				addResponseHandler: this.addResponseHandler,
 				request,

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "allowJs": true,
-    "module": "commonjs",
+    "module": "ES2020",
     "moduleResolution": "node",
     "preserveConstEnums": true,
     "declaration": true,

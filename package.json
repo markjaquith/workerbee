@@ -1,9 +1,10 @@
 {
   "name": "cf-worker-utils",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Utilities for writing Cloudflare Workers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "build": "rimraf dist && tsc",

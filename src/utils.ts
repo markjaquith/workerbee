@@ -1,11 +1,15 @@
 import cookie from 'cookie';
 import curry from 'lodash/curry';
+import CaseInsensitiveString from './CaseInsensitiveString';
+import NegatedCaseInsensitiveString from './NegatedCaseInsensitiveString';
+import NegatedString from './NegatedString';
 
 import type { Handler } from './RequestManager';
 export interface IncompleteFunction {
 	(): Handler;
 	incomplete: true;
 }
+
 export type ValueMatchingFunction = (value: string) => boolean;
 export type ValueMatcher =
 	| string
@@ -78,8 +82,28 @@ export function matchesValue(test: ValueMatcher, value: string) {
 }
 
 export function makeStringMethodMatcher(method: string) {
-	return curry((searchText: string, value: string) =>
-		value[method](searchText),
+	// return curry((searchText: string, value: string) =>
+	// 	value[method](searchText),
+	// );
+	return curry(
+		(
+			searchText:
+				| string
+				| CaseInsensitiveString
+				| NegatedString
+				| NegatedCaseInsensitiveString,
+			value: string,
+		) => {
+			if (searchText instanceof NegatedCaseInsensitiveString) {
+				return !value.toLowerCase()[method](searchText.value);
+			} else if (searchText instanceof CaseInsensitiveString) {
+				return value.toLowerCase()[method](searchText.value);
+			} else if (searchText instanceof NegatedString) {
+				return !value[method](searchText.value);
+			} else {
+				return value[method](searchText);
+			}
+		},
 	);
 }
 
@@ -98,4 +122,34 @@ export function makeComplete(fn) {
 	}
 
 	return fn;
+}
+
+export function test(input: string): string;
+export function test(input: number): number;
+export function test(input: number | string): number | string {
+	return input;
+}
+
+export function i(text: string): CaseInsensitiveString;
+export function i(text: NegatedString): NegatedCaseInsensitiveString;
+export function i(
+	text: string | NegatedString,
+): CaseInsensitiveString | NegatedCaseInsensitiveString {
+	if (text instanceof NegatedString) {
+		return new NegatedCaseInsensitiveString(text.value);
+	} else {
+		return new CaseInsensitiveString(text);
+	}
+}
+
+export function not(input: string): NegatedString;
+export function not(input: CaseInsensitiveString): NegatedCaseInsensitiveString;
+export function not(
+	input: string | CaseInsensitiveString,
+): NegatedString | NegatedCaseInsensitiveString {
+	if (typeof input === 'string') {
+		return new NegatedString(input);
+	} else {
+		return new NegatedCaseInsensitiveString(input.value);
+	}
 }

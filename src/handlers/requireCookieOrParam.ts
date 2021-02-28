@@ -14,7 +14,7 @@ export default function requireCookieOrParam(name, message = 'Access denied') {
 				cookie.serialize(name, '1', {
 					httpOnly: true,
 					path: '/',
-				})
+				}),
 			);
 
 			return response;

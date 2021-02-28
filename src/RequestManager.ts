@@ -80,6 +80,7 @@ export default class RequestManager {
 				addRequestHandler: this.addRequestHandler,
 				addResponseHandler: this.addResponseHandler,
 				request,
+				current: request,
 				response,
 				originalRequest,
 				params,
@@ -95,7 +96,7 @@ export default class RequestManager {
 					this.log(
 						`⏪ ${response.status}`,
 						response.headers.get('location'),
-						response
+						response,
 					);
 				} else {
 					this.log('⏪', response);
@@ -131,6 +132,7 @@ export default class RequestManager {
 				addResponseHandler: this.addResponseHandler,
 				request,
 				response,
+				current: response,
 				originalRequest,
 				phase: 'response',
 				params,
@@ -191,7 +193,7 @@ export default class RequestManager {
 			this.log(
 				`⤴️ ${finalResponse.status}`,
 				finalResponse.headers.get('location') || '',
-				finalResponse
+				finalResponse,
 			);
 		} else {
 			this.log('✅', finalResponse);

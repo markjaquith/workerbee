@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "target": "ESNext",
+    "target": "ES2019",
     "types": ["@cloudflare/workers-types"],
     "lib": ["ESNext", "WebWorker"],
     "skipLibCheck": true

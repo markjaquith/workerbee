@@ -40,50 +40,50 @@ function makeHandlerMatcher(method, handlers, params = {}) {
 test('Router', () => {
 	expect(new URL(makeGet('/').url).pathname).toBe('/');
 	expect(router.getRoute(makeGet('/'))).toMatchObject(
-		makeHandlerMatcher(GET, ROOT_HANDLER)
+		makeHandlerMatcher(GET, ROOT_HANDLER),
 	);
 	expect(router.getRoute(makeGet('/posts'))).toMatchObject(
-		makeHandlerMatcher(GET, POSTS_HANDLER)
+		makeHandlerMatcher(GET, POSTS_HANDLER),
 	);
 	expect(router.getRoute(makeGet('/posts/123'))).toMatchObject(
-		makeHandlerMatcher(GET, POST_HANDLER, ID_PARAM)
+		makeHandlerMatcher(GET, POST_HANDLER, ID_PARAM),
 	);
 	expect(router.getRoute(makePost('/posts/123'))).toMatchObject(
-		makeHandlerMatcher(POST, POST_UPDATE_HANDLER, ID_PARAM)
+		makeHandlerMatcher(POST, POST_UPDATE_HANDLER, ID_PARAM),
 	);
 	expect(router.getRoute(makeGet('/optional/123'))).toMatchObject(
-		makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER, ID_PARAM)
+		makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER, ID_PARAM),
 	);
 	expect(router.getRoute(makeGet('/optional'))).toMatchObject(
-		makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER)
+		makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER),
 	);
 	expect(router.getRoute(makeGet('/wildcard/with/more/stuff'))).toMatchObject(
 		makeHandlerMatcher(GET, WILDCARD_HANDLER, {
 			extra: ['with', 'more', 'stuff'],
-		})
+		}),
 	);
 	expect(router.getRoute(makeGet('/wildcard'))).toMatchObject(
 		makeHandlerMatcher(GET, WILDCARD_HANDLER),
-		{}
+		{},
 	);
 	expect(
-		router.getRoute(makeGet('/bread/peanut-butter/jelly/bread'))
+		router.getRoute(makeGet('/bread/peanut-butter/jelly/bread')),
 	).toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER), {
 		meat: ['peanut-butter', 'jelly'],
 	});
 	expect(
-		router.getRoute(makeGet('/bread/ham/bread'))
+		router.getRoute(makeGet('/bread/ham/bread')),
 	).toMatchObject(makeHandlerMatcher(GET, SANDWICH_HANDLER), { meat: 'ham' });
 	expect(router.getRoute(makeGet('/bread/bread'))).not.toMatchObject(
-		makeHandlerMatcher(GET, SANDWICH_HANDLER)
+		makeHandlerMatcher(GET, SANDWICH_HANDLER),
 	);
 	expect(router.getRoute(makeGet('/mother'))).toMatchObject(
-		makeHandlerMatcher(GET, MOTHER_HANDLER)
+		makeHandlerMatcher(GET, MOTHER_HANDLER),
 	);
 	expect(router.getRoute(makeGet('/mother-in-law'))).toMatchObject(
-		makeHandlerMatcher(GET, MOTHER_HANDLER, { type: 'in-law' })
+		makeHandlerMatcher(GET, MOTHER_HANDLER, { type: 'in-law' }),
 	);
 	expect(router.getRoute(makeGet('/mothers'))).not.toMatchObject(
-		makeHandlerMatcher(GET, MOTHER_HANDLER)
+		makeHandlerMatcher(GET, MOTHER_HANDLER),
 	);
 });

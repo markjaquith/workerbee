@@ -1,4 +1,4 @@
-import contentTypeMatches from './contentTypeMatches';
+import contentType from './contentType';
 import isHtml from './isHtml';
 
 function makeTypeHeader(type = null) {
@@ -13,26 +13,22 @@ function makeTypeHeader(type = null) {
 	return request;
 }
 
-test('contentTypeMatches', () => {
+test('contentType', () => {
 	expect(
-		contentTypeMatches('text/html', makeTypeHeader('text/html; charset=utf-8')),
+		contentType('text/html', makeTypeHeader('text/html; charset=utf-8')),
 	).toBe(true);
-	expect(contentTypeMatches('text/html', makeTypeHeader('text/plain'))).toBe(
-		false,
-	);
-	expect(contentTypeMatches('text/html', makeTypeHeader())).toBe(false);
+	expect(contentType('text/html', makeTypeHeader('text/plain'))).toBe(false);
+	expect(contentType('text/html', makeTypeHeader())).toBe(false);
 	expect(
-		contentTypeMatches('text/html')(
+		contentType('text/html')(
 			makeTypeHeader('   text/html   ; charset=utf-8   '),
 		),
 	).toBe(true); // Curried.
 	expect(
-		contentTypeMatches((type) => type.startsWith('text/'))(
-			makeTypeHeader('text/foo'),
-		),
+		contentType((type) => type.startsWith('text/'))(makeTypeHeader('text/foo')),
 	).toBe(true);
 	expect(
-		contentTypeMatches((type) => type.startsWith('text/'))(
+		contentType((type) => type.startsWith('text/'))(
 			makeTypeHeader('application/foo'),
 		),
 	).toBe(false);

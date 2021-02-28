@@ -1,4 +1,5 @@
 import cookie from 'cookie';
+import curry from 'lodash/curry';
 
 export type ValueMatchingFunction = (value: string) => boolean;
 export type ValueMatcher =
@@ -69,4 +70,10 @@ export function matchesValue(test: ValueMatcher, value: string) {
 
 			return false;
 	}
+}
+
+export function makeStringMethodMatcher(method: string) {
+	return curry((searchText: string, value: string) =>
+		value[method](searchText),
+	);
 }

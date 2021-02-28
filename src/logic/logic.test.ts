@@ -63,11 +63,11 @@ test('complex logic', async () => {
 		response: [
 			ifResponse(
 				all(all(yes, yes), any(yes, no), none(all(yes, no))),
-				trueResponseSpy
+				trueResponseSpy,
 			), // 1.
 			ifResponse(
 				all(all(yes, yes), any(yes, no), none(all(yes, yes))),
-				falseResponseSpy
+				falseResponseSpy,
 			), // 0.
 		],
 	});

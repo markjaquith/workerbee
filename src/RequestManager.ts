@@ -1,11 +1,18 @@
 import { Router } from './Router';
-import { toArray, isRedirect, testing } from './utils';
+import { toArray, isRedirect, testing, makeComplete } from './utils';
+import type { IncompleteFunction } from './utils';
 
-type HandlerResult = void | Request | Response;
+import type { Params } from './Router';
+
+export type HandlerResult = void | Request | Response;
 export type Handler = (any) => void | Promise<HandlerResult>;
 export type Handlers = Handler | Handler[];
 export type RouterCallback = (router: Router) => void;
 
+interface FinalRequestOptions {
+	request: Request;
+	params: Params;
+}
 export interface Options {
 	request?: Handlers;
 	response?: Handlers;
@@ -56,6 +63,12 @@ export default class RequestManager {
 		}
 	}
 
+	error(...args) {
+		if (!testing()) {
+			console.error(...args);
+		}
+	}
+
 	group(...args) {
 		if (!testing()) {
 			console.group(...args);
@@ -68,7 +81,7 @@ export default class RequestManager {
 		}
 	}
 
-	async getFinalRequest({ request, params }) {
+	async getFinalRequest({ request, params }: FinalRequestOptions) {
 		const originalRequest = request;
 
 		// Response starts null.
@@ -76,9 +89,11 @@ export default class RequestManager {
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
-			const requestHandler = this.requestHandlers.shift() as Handler;
+			let requestHandler = this.requestHandlers.shift() as
+				| Handler
+				| IncompleteFunction;
 
-			const result = await requestHandler({
+			const result = await makeComplete(requestHandler)({
 				addRequestHandler: this.addRequestHandler,
 				addResponseHandler: this.addResponseHandler,
 				request,
@@ -113,6 +128,11 @@ export default class RequestManager {
 
 				// We have a new request to pass to the next handler.
 				request = result;
+			} else if (typeof result !== 'undefined') {
+				console.error(
+					'Your handler returned something other than a Request, a Response, or undefined',
+					result,
+				);
 			}
 		}
 

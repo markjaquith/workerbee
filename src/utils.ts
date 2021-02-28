@@ -1,6 +1,11 @@
 import cookie from 'cookie';
 import curry from 'lodash/curry';
 
+import type { Handler } from './RequestManager';
+export interface IncompleteFunction {
+	(): Handler;
+	incomplete: true;
+}
 export type ValueMatchingFunction = (value: string) => boolean;
 export type ValueMatcher =
 	| string
@@ -76,4 +81,21 @@ export function makeStringMethodMatcher(method: string) {
 	return curry((searchText: string, value: string) =>
 		value[method](searchText),
 	);
+}
+
+export function incomplete(fn) {
+	fn.incomplete = true;
+	return fn;
+}
+
+export function isIncomplete(fn): fn is IncompleteFunction {
+	return fn?.incomplete === true;
+}
+
+export function makeComplete(fn) {
+	while (isIncomplete(fn)) {
+		fn = fn();
+	}
+
+	return fn;
 }

@@ -2,6 +2,9 @@ import partial from 'lodash/partial';
 import { match } from 'path-to-regexp';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
+export interface Params {
+	[key: string]: string;
+}
 
 const METHODS = [
 	'CONNECT',

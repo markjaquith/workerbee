@@ -153,3 +153,40 @@ export function not(
 		return new NegatedCaseInsensitiveString(input.value);
 	}
 }
+
+// Runs a transformation on the last property passed to the underlying function.
+export function transformLastProperty(
+	transform: (any) => any,
+	fn: (a?: any, b?: any, c?: any, d?: any, z?: any) => any,
+) {
+	switch (fn.length) {
+		case 0:
+			return fn;
+		case 1:
+			return (z) => fn(transform(z));
+		case 2:
+			return (a, z) => fn(a, transform(z));
+		case 3:
+			return (a, b, z) => fn(a, b, transform(z));
+		case 4:
+			return (a, b, c, z) => fn(a, b, c, transform(z));
+		case 5:
+			return (a, b, c, d, z) => fn(a, b, c, d, transform(z));
+		default:
+			console.error(
+				`transformLastProperty only accepts functions with between 0 and 5 arguments. Your function had ${fn.length}`,
+				fn,
+			);
+			return () => undefined;
+	}
+}
+
+// Passes the current property of the last passed argument to the underlying function.
+export function withCurrent(fn) {
+	return transformLastProperty((p) => p.current, fn);
+}
+
+// Curries the function after ensuring that its last passed argument digs into the current property.
+export function curryWithCurrent(fn) {
+	return curry(withCurrent(makeComplete(fn)));
+}

@@ -2,15 +2,15 @@ import contentType from './contentType';
 import isHtml from './isHtml';
 
 function makeTypeHeader(type = null) {
-	const request = {
+	const message = {
 		headers: new Headers(),
 	};
 
 	if (type) {
-		request.headers.set('content-type', type);
+		message.headers.set('content-type', type);
 	}
 
-	return request;
+	return message;
 }
 
 test('contentType', () => {
@@ -20,15 +20,17 @@ test('contentType', () => {
 	expect(contentType('text/html', makeTypeHeader('text/plain'))).toBe(false);
 	expect(contentType('text/html', makeTypeHeader())).toBe(false);
 	expect(
-		contentType('text/html')(
+		contentType(
+			'text/html',
 			makeTypeHeader('   text/html   ; charset=utf-8   '),
 		),
-	).toBe(true); // Curried.
-	expect(
-		contentType((type) => type.startsWith('text/'))(makeTypeHeader('text/foo')),
 	).toBe(true);
 	expect(
-		contentType((type) => type.startsWith('text/'))(
+		contentType((type) => type.startsWith('text/'), makeTypeHeader('text/foo')),
+	).toBe(true);
+	expect(
+		contentType(
+			(type) => type.startsWith('text/'),
 			makeTypeHeader('application/foo'),
 		),
 	).toBe(false);

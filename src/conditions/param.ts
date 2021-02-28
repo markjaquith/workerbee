@@ -1,10 +1,10 @@
-import curry from 'lodash/curry';
 import { matchesValue } from '../utils';
+import type { ValueMatcher } from '../utils';
 
-export default curry(function (param, matcher, { current }) {
-	const url = new URL(current.url);
+export default function (param, matcher: ValueMatcher, { url }) {
+	url = new URL(url);
 	const params = url.searchParams;
 	const paramValue = params.get(param) || false;
 
 	return paramValue && matchesValue(matcher, paramValue);
-});
+}

@@ -1,13 +1,12 @@
 import { matchesValue } from '../utils';
-import curry from 'lodash/curry';
 import type { ValueMatcher } from '../utils';
 
-export default curry(function (matcher: ValueMatcher, thing) {
+export default function (matcher: ValueMatcher, message) {
 	return (
-		thing?.headers?.has('content-type') &&
+		message?.headers?.has('content-type') &&
 		matchesValue(
 			matcher,
-			thing.headers?.get('content-type').split(';')[0].trim(),
+			message.headers?.get('content-type').split(';')[0].trim(),
 		)
 	);
-});
+}

@@ -1,22 +1,19 @@
+import { partialRight } from 'lodash';
 import { contains, startsWith } from '../logic';
 import routeParam from './routeParam';
 
-const REQUEST = {
-	current: {
-		params: {
-			foo: 'bar 123',
-			foo2: '',
-			foo3: 'bar3 123',
-		},
+const MESSAGE = {
+	params: {
+		foo: 'bar 123',
+		foo2: '',
+		foo3: 'bar3 123',
 	},
 };
 
-const fooParamContainsBar = routeParam('foo', contains('bar'));
-const fooParamStartsWithBar = routeParam('foo', startsWith('bar'));
-const foo2ParamContainsBar = routeParam('foo2', contains('bar'));
+const applyRouteParam = partialRight(routeParam, MESSAGE);
 
 test('routeParam', () => {
-	expect(fooParamContainsBar(REQUEST)).toBe(true);
-	expect(fooParamStartsWithBar(REQUEST)).toBe(true);
-	expect(foo2ParamContainsBar(REQUEST)).toBe(false);
+	expect(applyRouteParam('foo', contains('bar'))).toBe(true);
+	expect(applyRouteParam('foo', startsWith('bar'))).toBe(true);
+	expect(applyRouteParam('foo2', contains('bar'))).toBe(false);
 });

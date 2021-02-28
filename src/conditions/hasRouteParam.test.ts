@@ -1,6 +1,6 @@
 import hasRouteParam from './hasRouteParam';
 
-const REQUEST = {
+const MESSAGE = {
 	params: {
 		foo: 'bar',
 		foo2: '',
@@ -11,9 +11,9 @@ const REQUEST = {
 const hasFooParam = hasRouteParam('foo');
 
 test('hasRouteParam', () => {
-	expect(hasRouteParam('foo', REQUEST)).toBe(true);
-	expect(hasFooParam(REQUEST)).toBe(true); // Curried.
-	expect(hasRouteParam('foo2', REQUEST)).toBe(true);
-	expect(hasRouteParam('foo3', REQUEST)).toBe(true);
-	expect(hasRouteParam('foo4', REQUEST)).toBe(false);
+	expect(hasRouteParam('foo', MESSAGE)).toBe(true);
+	expect(hasFooParam(MESSAGE)).toBe(true); // Curried.
+	expect(hasRouteParam('foo2', MESSAGE)).toBe(true);
+	expect(hasRouteParam('foo3', MESSAGE)).toBe(true);
+	expect(hasRouteParam('foo4', MESSAGE)).toBe(false);
 });

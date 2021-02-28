@@ -1,18 +1,15 @@
+import { partialRight } from 'lodash';
 import { endsWith, startsWith } from '../logic';
 import param from './param';
 
-const REQUEST = {
-	current: {
-		url: new URL('https://x.co/?foo=bar-123&foo2&foo3=bar3-123'),
-	},
+const MESSAGE = {
+	url: new URL('https://x.co/?foo=bar-123&foo2&foo3=bar3-123'),
 };
 
-const fooParamStartsWithBar = param('foo', startsWith('bar'));
-const fooParamEndsWith123 = param('foo', endsWith('123'));
-const bazParamStartsWithFoo = param('baz', startsWith('foo'));
+const applyParam = partialRight(param, MESSAGE);
 
 test('param', () => {
-	expect(fooParamStartsWithBar(REQUEST)).toBe(true);
-	expect(fooParamEndsWith123(REQUEST)).toBe(true);
-	expect(bazParamStartsWithFoo(REQUEST)).toBe(false);
+	expect(applyParam('foo', startsWith('bar'))).toBe(true);
+	expect(applyParam('foo', endsWith('123'))).toBe(true);
+	expect(applyParam('baz', startsWith('foo'))).toBe(false);
 });

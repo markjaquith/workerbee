@@ -1,15 +1,12 @@
 import hasParam from './hasParam';
 
-const REQUEST = {
+const MESSAGE = {
 	url: new URL('https://x.co/?foo=bar&foo2&foo3=bar3'),
 };
 
-const hasFooParam = hasParam('foo');
-
 test('hasParam', () => {
-	expect(hasParam('foo', REQUEST)).toBe(true);
-	expect(hasFooParam(REQUEST)).toBe(true); // Curried.
-	expect(hasParam('foo2', REQUEST)).toBe(true);
-	expect(hasParam('foo3', REQUEST)).toBe(true);
-	expect(hasParam('foo4', REQUEST)).toBe(false);
+	expect(hasParam('foo', MESSAGE)).toBe(true);
+	expect(hasParam('foo2', MESSAGE)).toBe(true);
+	expect(hasParam('foo3', MESSAGE)).toBe(true);
+	expect(hasParam('foo4', MESSAGE)).toBe(false);
 });

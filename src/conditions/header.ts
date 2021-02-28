@@ -1,8 +1,8 @@
-import curry from 'lodash/curry';
 import { matchesValue } from '../utils';
+import type { ValueMatcher } from '../utils';
 
-export default curry(function (headerName, matcher, { current: { headers } }) {
+export default function (headerName, matcher: ValueMatcher, { headers }) {
 	const header = headers.get(headerName) || false;
 
 	return header && matchesValue(matcher, header);
-});
+}

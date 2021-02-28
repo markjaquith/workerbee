@@ -1,24 +1,22 @@
 import header from './header';
 import { all, contains, startsWith, endsWith } from '../logic';
+import { partialRight } from 'lodash';
 
-const fooHeaderContainsBar = header('foo', contains('bar'));
-const fooHeaderContainsBaz = header('foo', contains('baz'));
-const barHeaderContainsBar = header('bar', contains('bar'));
-const fooHeaderStartsWithContains = header('foo', startsWith('contains'));
-
-const current = new Request('https://example.com/', {
+const message = new Request('https://example.com/', {
 	headers: new Headers({
 		foo: 'contains bar in the middle',
 	}),
 });
 
+const applyHeader = partialRight(header, message);
+
 test('headers are matched', () => {
-	expect(fooHeaderContainsBar({ current })).toBe(true);
-	expect(fooHeaderContainsBaz({ current })).toBe(false);
-	expect(barHeaderContainsBar({ current })).toBe(false);
-	expect(fooHeaderStartsWithContains({ current })).toBe(true);
+	expect(applyHeader('foo', contains('bar'))).toBe(true);
+	expect(applyHeader('foo', contains('baz'))).toBe(false);
+	expect(applyHeader('bar', contains('bar'))).toBe(false);
+	expect(applyHeader('foo', startsWith('contains'))).toBe(true);
 	expect(
-		header(
+		applyHeader(
 			'foo',
 			all(
 				startsWith('contains bar'),
@@ -26,12 +24,6 @@ test('headers are matched', () => {
 				startsWith('c'),
 				endsWith('middle'),
 			),
-		)({ current }),
-	).toBe(true);
-	expect(
-		all(
-			header('foo', startsWith('contains bar')),
-			header('foo', endsWith('middle')),
-		)({ current }),
+		),
 	).toBe(true);
 });

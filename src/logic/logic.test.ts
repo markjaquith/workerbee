@@ -1,5 +1,4 @@
-import ifRequest from './ifRequest';
-import ifResponse from './ifResponse';
+import addHandlerIf from './addHandlerIf';
 import any from './any';
 import all from './all';
 import none from './none';
@@ -22,7 +21,7 @@ function makeEvent() {
 	};
 }
 
-test('ifRequest and ifResponse', async () => {
+test('addHandlerIf', async () => {
 	const trueRequestSpy = jest.fn();
 	const falseRequestSpy = jest.fn();
 	const trueResponseSpy = jest.fn();
@@ -30,12 +29,12 @@ test('ifRequest and ifResponse', async () => {
 
 	const manager = new RequestManager({
 		request: [
-			ifRequest(no, falseRequestSpy), // 0.
-			ifRequest(yes, trueRequestSpy), // 1.
+			addHandlerIf(no, falseRequestSpy), // 0.
+			addHandlerIf(yes, trueRequestSpy), // 1.
 		],
 		response: [
-			ifResponse(no, falseResponseSpy), // 0.
-			ifResponse(yes, trueResponseSpy), // 1.
+			addHandlerIf(no, falseResponseSpy), // 0.
+			addHandlerIf(yes, trueResponseSpy), // 1.
 		],
 	});
 
@@ -55,17 +54,17 @@ test('complex logic', async () => {
 
 	const manager = new RequestManager({
 		request: [
-			ifRequest(all(yes, yes, yes, yes), trueRequestSpy), // 1.
-			ifRequest(any(yes, no, no, no), trueRequestSpy), // 2.
-			ifRequest(none(no, no, no), trueRequestSpy), // 3.
-			ifRequest(none(no, no, yes), falseRequestSpy), // 0.
+			addHandlerIf(all(yes, yes, yes, yes), trueRequestSpy), // 1.
+			addHandlerIf(any(yes, no, no, no), trueRequestSpy), // 2.
+			addHandlerIf(none(no, no, no), trueRequestSpy), // 3.
+			addHandlerIf(none(no, no, yes), falseRequestSpy), // 0.
 		],
 		response: [
-			ifResponse(
+			addHandlerIf(
 				all(all(yes, yes), any(yes, no), none(all(yes, no))),
 				trueResponseSpy,
 			), // 1.
-			ifResponse(
+			addHandlerIf(
 				all(all(yes, yes), any(yes, no), none(all(yes, yes))),
 				falseResponseSpy,
 			), // 0.

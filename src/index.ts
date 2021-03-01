@@ -8,26 +8,21 @@ import RequestManager from './RequestManager';
 export { Router, RequestManager };
 
 // Make conditions act on current phase, curried.
-import { curryWithCurrent } from './utils';
+import { curryWithCurrent, curryWithRequest, curryWithResponse } from './utils';
 import * as conditions from './conditions';
 
-const [
-	header,
-	contentType,
-	isHtml,
-	hasParam,
-	hasRouteParam,
-	routeParam,
-	param,
-] = [
-	conditions.header,
-	conditions.contentType,
-	conditions.isHtml,
-	conditions.hasParam,
-	conditions.hasRouteParam,
-	conditions.routeParam,
+const [header] = [conditions.header].map(curryWithCurrent);
+
+const [param, hasParam, routeParam, hasRouteParam] = [
 	conditions.param,
-].map(curryWithCurrent);
+	conditions.hasParam,
+	conditions.routeParam,
+	conditions.hasRouteParam,
+].map(curryWithRequest);
+
+const [contentType, isHtml] = [conditions.contentType, conditions.isHtml].map(
+	curryWithResponse,
+);
 
 export {
 	header,

@@ -200,7 +200,23 @@ export function withCurrent(fn) {
 	return transformLastProperty((p) => p.current, fn);
 }
 
+export function withResponse(fn) {
+	return transformLastProperty((p) => p.response, fn);
+}
+
+export function withRequest(fn) {
+	return transformLastProperty((p) => p.request, fn);
+}
+
 // Curries the function after ensuring that its last passed argument digs into the current property.
 export function curryWithCurrent(fn) {
 	return curry(withCurrent(makeComplete(fn)));
+}
+
+export function curryWithRequest(fn) {
+	return curry(withRequest(makeComplete(fn)));
+}
+
+export function curryWithResponse(fn) {
+	return curry(withResponse(makeComplete(fn)));
 }

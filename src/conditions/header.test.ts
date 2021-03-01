@@ -14,6 +14,9 @@ test('headers are matched', () => {
 	expect(applyHeader('foo', contains('bar'))).toBe(true);
 	expect(applyHeader('foo', contains('baz'))).toBe(false);
 	expect(applyHeader('bar', contains('bar'))).toBe(false);
+});
+
+test('complex headers are matched', () => {
 	expect(applyHeader('foo', startsWith('contains'))).toBe(true);
 	expect(
 		applyHeader(

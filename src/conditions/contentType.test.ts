@@ -36,7 +36,7 @@ test('contentType', () => {
 	).toBe(false);
 });
 
-test('isHtml', () => {
+test('isHtml()', () => {
 	expect(isHtml()(makeTypeHeader('text/html; charset=utf-8'))).toBe(true);
 	expect(isHtml()(makeTypeHeader('text/plain'))).toBe(false);
 	expect(isHtml()(makeTypeHeader('   text/html   ; charset=utf-8   '))).toBe(

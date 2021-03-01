@@ -310,10 +310,13 @@ The following `ValueMatchingFunction`s are available:
 - `endsWith(value: string | NegatedString | CaseInsensitiveString | NegatedCaseInsensitiveString)`
 
 These functions can also accept insensitive strings and negated strings with the
-`i()` and `not()` helpers.
+`text('yourtext').i` and `text('yourtext).not` helpers.
 
 ```js
-addHandlerIf(header('User-Agent', startsWith(not(i('WordPress')))), forbidden);
+addHandlerIf(
+	header('User-Agent', startsWith(text('WordPress').not.i)),
+	forbidden,
+);
 ```
 
 Note that you can use logic functions to compose value matchers! So the example

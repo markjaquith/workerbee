@@ -3,6 +3,7 @@ export * from './handlers/index';
 export * from './utils';
 
 // Heavy lifting.
+import Text from './Text';
 import Router from './Router';
 import RequestManager from './RequestManager';
 export { Router, RequestManager };
@@ -33,6 +34,11 @@ export {
 	routeParam,
 	param,
 };
+
+// Text helper.
+export function text(input: string) {
+	return Text.from(input);
+}
 
 // The prestige.
 export function handleFetch(options: any = {}) {

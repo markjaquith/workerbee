@@ -51,10 +51,17 @@ test('complex logic', async () => {
 	const falseRequestSpy = jest.fn();
 	const trueResponseSpy = jest.fn();
 	const falseResponseSpy = jest.fn();
+	const firstResponseSpy = jest.fn();
+	const lastResponseSpy = jest.fn();
 
 	const manager = new RequestManager({
 		request: [
-			addHandlerIf(all(yes, yes, yes, yes), trueRequestSpy), // 1.
+			addHandlerIf(
+				all(yes, yes, yes, yes),
+				firstResponseSpy,
+				trueRequestSpy,
+				lastResponseSpy,
+			), // 1.
 			addHandlerIf(any(yes, no, no, no), trueRequestSpy), // 2.
 			addHandlerIf(none(no, no, no), trueRequestSpy), // 3.
 			addHandlerIf(none(no, no, yes), falseRequestSpy), // 0.
@@ -77,4 +84,11 @@ test('complex logic', async () => {
 	expect(trueResponseSpy).toHaveBeenCalledTimes(1);
 	expect(falseRequestSpy).not.toHaveBeenCalled();
 	expect(falseResponseSpy).not.toHaveBeenCalled();
+	expect(firstResponseSpy).toHaveBeenCalledTimes(1);
+	expect(lastResponseSpy).toHaveBeenCalledTimes(1);
+
+	// Make sure they were called in the right order.
+	expect(firstResponseSpy.mock.invocationCallOrder[0]).toBeLessThan(
+		lastResponseSpy.mock.invocationCallOrder[0],
+	);
 });

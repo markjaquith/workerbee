@@ -64,9 +64,7 @@ export default class RequestManager {
 	}
 
 	error(...args) {
-		if (!testing()) {
-			console.error(...args);
-		}
+		console.error(...args);
 	}
 
 	group(...args) {

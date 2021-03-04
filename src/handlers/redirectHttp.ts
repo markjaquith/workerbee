@@ -1,6 +1,6 @@
-import isHttps from '../conditions/isHttp';
+import isHttps from '../conditions/isHttps';
 import redirect from './redirect';
-import setHttp from './setHttps';
+import setHttp from './setHttp';
 import { incomplete } from '../utils';
 import { addHandlerIf } from '../logic';
 

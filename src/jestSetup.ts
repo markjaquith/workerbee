@@ -6,6 +6,6 @@ Response.redirect = (url: string, status: number = 302) =>
 	new Response(null, {
 		headers: new Headers({
 			Location: url,
-			Status: `${status}`,
 		}),
+		status,
 	});

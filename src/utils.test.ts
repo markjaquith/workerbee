@@ -42,7 +42,7 @@ test('withCurrent', () => {
 	expect(withCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
 });
 
-// test('curryWithCurrent', () => {
-// 	expect(curryWithCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
-// 	expect(curryWithCurrent(threeArgs)('one')('two')(INPUT)).toBe(CURRENT);
-// });
+test('curryWithCurrent', () => {
+	expect(curryWithCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
+	expect(curryWithCurrent(threeArgs)('one')('two')(INPUT)).toBe(CURRENT);
+});

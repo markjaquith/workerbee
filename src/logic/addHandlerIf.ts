@@ -8,7 +8,7 @@ import { makeComplete } from '../utils';
 export default function (condition, ...handlers) {
 	return async (manager) => {
 		if (makeComplete(condition)(manager)) {
-			for (const handler of handlers) {
+			for (const handler of handlers.reverse()) {
 				manager[
 					manager.phase === 'request'
 						? 'addRequestHandler'

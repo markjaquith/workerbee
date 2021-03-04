@@ -1,11 +1,13 @@
 import { STRIP_PARAMS } from '../config';
-import { setRequestUrl, isRedirect } from '../utils';
+import { setRequestUrl, isRedirect, incomplete } from '../utils';
 
 /**
  * Fetch and log a request
  * @param {Request} request
  */
-export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
+export default incomplete(function stripParamsForFetch(
+	params: string[] = STRIP_PARAMS,
+) {
 	return async ({ request, addResponseHandler }) => {
 		const url = new URL(request.url);
 
@@ -24,7 +26,7 @@ export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
 			return setRequestUrl(url, request);
 		}
 	};
-}
+});
 
 function getStrippableParams(url, params: string[] = []) {
 	const strippableParams = {};

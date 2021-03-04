@@ -5,6 +5,8 @@ import hasParam from './hasParam';
 import hasRouteParam from './hasRouteParam';
 import routeParam from './routeParam';
 import param from './param';
+import isHttp from './isHttp';
+import isHttps from './isHttps';
 
 export {
 	header,
@@ -14,4 +16,6 @@ export {
 	hasRouteParam,
 	routeParam,
 	param,
+	isHttp,
+	isHttps,
 };

@@ -1,21 +1,35 @@
+import setUrl from './setUrl';
+import setHost from './setHost';
+import setProtocol from './setProtocol';
+import setHttps from './setHttps';
+import setHttp from './setHttp';
+import forbidden from './forbidden';
 import appendResponseHeaders from './appendResponseHeaders';
 import copyResponseHeader from './copyResponseHeader';
-import forbidden from './forbidden';
-import forceHttps from './forceHttps';
 import lazyLoadImages from './lazyLoadImages';
+import prependPath from './prependPath';
+import removePathPrefix from './removePathPrefix';
+import redirect from './redirect';
+import redirectHttps from './redirectHttps';
+import redirectHttp from './redirectHttp';
 import removeResponseHeaders from './removeResponseHeaders';
 import requireCookieOrParam from './requireCookieOrParam';
-import setResponseHeaders from './setResponseHeaders';
-import stripParamsForFetch from './stripParamsForFetch';
 
 export {
+	setUrl,
+	setHost,
+	setProtocol,
+	setHttps,
+	setHttp,
+	forbidden,
 	appendResponseHeaders,
 	copyResponseHeader,
-	forbidden,
-	forceHttps,
 	lazyLoadImages,
+	prependPath,
+	removePathPrefix,
+	redirect,
+	redirectHttps,
+	redirectHttp,
 	removeResponseHeaders,
 	requireCookieOrParam,
-	setResponseHeaders,
-	stripParamsForFetch,
 };

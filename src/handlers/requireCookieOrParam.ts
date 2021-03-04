@@ -1,4 +1,4 @@
-import { getCookie, redirect } from '../utils';
+import { getCookie } from '../utils';
 import cookie from 'cookie';
 import forbidden from './forbidden';
 
@@ -8,7 +8,7 @@ export default function requireCookieOrParam(name, message = 'Access denied') {
 
 		if (url.searchParams.has(name)) {
 			url.searchParams.delete(name);
-			let response = redirect(url, 302);
+			let response = Response.redirect(url.toString(), 302);
 			response.headers.set(
 				'Set-Cookie',
 				cookie.serialize(name, '1', {

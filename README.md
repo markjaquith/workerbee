@@ -15,6 +15,9 @@ requests and responses.
 - [Lifecycle](#lifecycle)
 - [Routing](#routing)
 - [Handlers](#handlers)
+- [Bundled Handlers](#bundled-handlers)
+- [Logic](#logic)
+- [Conditions](#conditions)
 - [Best Practices](#best-practices)
 
 ## Concepts
@@ -246,6 +249,27 @@ Response handlers can return two things:
 2. A new `Response` object — this will get passed on to the rest of the request
    handlers.
 
+## Bundled Handlers
+
+The following handlers are included:
+
+- `setUrl(url: string)`
+- `setHost(host: string)`
+- `setProtocol(url: string)`
+- `setHttps()`
+- `setHttp()`
+- `forbidden()`
+- `appendResponseHeaders([header: string, value: string][])`
+- `copyResponseHeader(from: string, to: string)`
+- `lazyLoadImages()`
+- `prependPath(pathPrefix: string)`
+- `removePathPrefix(pathPrefix: string)`
+- `redirect(status: number)`
+- `redirectHttps()`
+- `redirectHttp()`
+- `removeResponseHeaders(headers: string[])`
+- `requireCookieOrParam(param: string, forbiddenMessage: string)`
+
 ## Logic
 
 Instead of bundling logic into custom handlers, you can also use
@@ -290,6 +314,8 @@ As hinted above, there are several built-in conditions for you to use:
 - `hasRouteParam(paramName: string)`
 - `param(paramName: string, matcher: ValueMatcher)`
 - `routeParam(paramName: string, matcher: ValueMatcher)`
+- `isHttps()`
+- `isHttps()`
 
 The ones that take a string (or nothing) are straightforward, but what's up with
 `ValueMatcher`?

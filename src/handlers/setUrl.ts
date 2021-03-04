@@ -2,7 +2,7 @@ type Stringable = {
 	toString(): string;
 };
 
-export default function setUrl(url: string | Stringable, options = {}) {
+export default function setUrl(url: string | Stringable) {
 	url = typeof url.toString === 'function' ? url.toString() : url;
 
 	return async ({ request }) => {
@@ -11,7 +11,6 @@ export default function setUrl(url: string | Stringable, options = {}) {
 			headers: request.headers,
 			method: request.method,
 			redirect: request.redirect,
-			...options,
 		});
 	};
 }

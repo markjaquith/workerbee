@@ -1,9 +1,8 @@
-import { curry } from '../utils';
 import setUrl from './setUrl';
 
-export default curry(async (protocol: string, { request }) => {
+export default (protocol: string) => async ({ request }) => {
 	const url = new URL(request.url);
-	url.protocol = protocol + ':';
+	url.protocol = protocol;
 
 	return setUrl(url)({ request });
-});
+};

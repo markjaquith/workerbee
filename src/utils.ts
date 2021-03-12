@@ -118,8 +118,8 @@ export function test(input: number | string): number | string {
 	return input;
 }
 
-// Runs a transformation on the last property passed to the underlying function.
-export function transformLastProperty(
+// Runs a transformation on the last argument passed to the underlying function.
+export function transformLastArgument(
 	transform: (any) => any,
 	fn: (a?: any, b?: any, c?: any, d?: any, z?: any) => any,
 ) {
@@ -137,25 +137,21 @@ export function transformLastProperty(
 		case 5:
 			return (a, b, c, d, z) => fn(a, b, c, d, transform(z));
 		default:
-			console.error(
-				`transformLastProperty only accepts functions with between 0 and 5 arguments. Your function had ${fn.length}`,
-				fn,
-			);
-			return () => undefined;
+			throw `transformLastArgument only accepts functions with between 0 and 5 arguments. Your function had ${fn.length}`;
 	}
 }
 
 // Passes the current property of the last passed argument to the underlying function.
 export function withCurrent(fn) {
-	return transformLastProperty((p) => p.current, fn);
+	return transformLastArgument((p) => p.current, fn);
 }
 
 export function withResponse(fn) {
-	return transformLastProperty((p) => p.response, fn);
+	return transformLastArgument((p) => p.response, fn);
 }
 
 export function withRequest(fn) {
-	return transformLastProperty((p) => p.request, fn);
+	return transformLastArgument((p) => p.request, fn);
 }
 
 // Curries the function after ensuring that its last passed argument digs into the current property.

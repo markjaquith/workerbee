@@ -4,6 +4,7 @@ import {
 	incomplete,
 	withCurrent,
 	curryWithCurrent,
+	transformLastArgument,
 } from './utils';
 
 const RESULT = 'result';
@@ -45,4 +46,36 @@ test('withCurrent', () => {
 test('curryWithCurrent', () => {
 	expect(curryWithCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
 	expect(curryWithCurrent(threeArgs)('one')('two')(INPUT)).toBe(CURRENT);
+});
+
+test('transformLastArgument()', () => {
+	const makeZ = () => 'z';
+	expect(transformLastArgument(makeZ, () => 'result')()).toBe('result');
+	expect(transformLastArgument(makeZ, (z) => z)('a')).toBe('z');
+	expect(transformLastArgument(makeZ, (_a, z) => z)('a', 'b')).toBe('z');
+	expect(transformLastArgument(makeZ, (_a, _b, z) => z)('a', 'b', 'c')).toBe(
+		'z',
+	);
+	expect(
+		transformLastArgument(makeZ, (_a, _b, _c, z) => z)('a', 'b', 'c', 'd'),
+	).toBe('z');
+	expect(
+		transformLastArgument(makeZ, (_a, _b, _c, _d, z) => z)(
+			'a',
+			'b',
+			'c',
+			'd',
+			'e',
+		),
+	).toBe('z');
+	// @ts-ignore
+	expect(() =>
+		transformLastArgument(makeZ, (_a, _b, _c, _d, _e, z) => z)(
+			'a',
+			'b',
+			'c',
+			'd',
+			'e',
+		),
+	).toThrow();
 });

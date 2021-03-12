@@ -11,6 +11,7 @@ const WILDCARD_HANDLER = makeHandler();
 const SANDWICH_HANDLER = makeHandler();
 const MOTHER_HANDLER = makeHandler();
 const VARIADIC_REQUEST_HANDLERS = [Symbol(), Symbol(), Symbol()];
+const MJ_POSTS_HANDLER = makeHandler();
 
 const DOMAIN = 'https://example.com';
 const GET = 'GET';
@@ -26,6 +27,9 @@ router.get('/wildcard/:extra*', WILDCARD_HANDLER);
 router.get('/bread/:meat+/bread', SANDWICH_HANDLER);
 router.get('/mother{-:type}?', MOTHER_HANDLER);
 router.get('/variadic-request-handlers', ...VARIADIC_REQUEST_HANDLERS);
+router.host('*.markjaquith.com', (router) => {
+	router.get('/posts', MJ_POSTS_HANDLER);
+});
 
 function makeGet(path) {
 	return new Request(DOMAIN + path, { method: GET });

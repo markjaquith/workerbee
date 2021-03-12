@@ -69,6 +69,8 @@ export class Router {
 		return this;
 	}
 
+	host(hostPattern: string, fn: (router: Router) => void) {}
+
 	getRoute(request) {
 		for (const route of this.routes) {
 			// If the method does not match, continue.

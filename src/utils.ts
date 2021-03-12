@@ -112,12 +112,6 @@ export function makeComplete(fn) {
 	return fn;
 }
 
-export function test(input: string): string;
-export function test(input: number): number;
-export function test(input: number | string): number | string {
-	return input;
-}
-
 // Runs a transformation on the last argument passed to the underlying function.
 export function transformLastArgument(
 	transform: (any) => any,

@@ -5,6 +5,9 @@ import {
 	withCurrent,
 	curryWithCurrent,
 	transformLastArgument,
+	matchesValue,
+	toArray,
+	getCookie,
 } from './utils';
 
 const RESULT = 'result';
@@ -78,4 +81,37 @@ test('transformLastArgument()', () => {
 			'e',
 		),
 	).toThrow();
+});
+
+test('matchesValue()', () => {
+	const startsWithA = (str) => str.startsWith('A');
+	const endsWithZ = (str) => str.endsWith('Z');
+	expect(matchesValue([startsWithA, endsWithZ], 'ABUZZ')).toBe(true);
+	expect(matchesValue([startsWithA, endsWithZ], 'ZEBRA')).toBe(false);
+});
+
+test('toArray()', () => {
+	expect(toArray([])).to;
+	expect(toArray(['foo', 'bar'])).toStrictEqual(['foo', 'bar']);
+	expect(toArray({ foo: 'bar' })).toStrictEqual([{ foo: 'bar' }]);
+	expect(toArray('foo')).toStrictEqual(['foo']);
+	expect(toArray(null)).toStrictEqual([]);
+	expect(toArray(undefined)).toStrictEqual([]);
+});
+
+test('getCookie()', () => {
+	const cookie = 'name=Mark; eyes=blue';
+	const headers = new Headers();
+	headers.set('cookie', cookie);
+	const request = new Request('https://example.com/', {
+		method: 'GET',
+		headers,
+	});
+
+	const requestWithNoCookies = new Request('https://example.com/');
+
+	expect(getCookie(request, 'eyes')).toBe('blue');
+	expect(getCookie(request, 'name')).toBe('Mark');
+	expect(getCookie(request, 'age')).toBeNull();
+	expect(getCookie(requestWithNoCookies, 'name')).toBeNull();
 });

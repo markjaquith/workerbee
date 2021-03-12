@@ -10,6 +10,7 @@ const OPTIONAL_PARAM_HANDLER = makeHandler();
 const WILDCARD_HANDLER = makeHandler();
 const SANDWICH_HANDLER = makeHandler();
 const MOTHER_HANDLER = makeHandler();
+const VARIADIC_REQUEST_HANDLERS = [Symbol(), Symbol(), Symbol()];
 
 const DOMAIN = 'https://example.com';
 const GET = 'GET';
@@ -24,6 +25,7 @@ router.get('/optional/:id?', OPTIONAL_PARAM_HANDLER);
 router.get('/wildcard/:extra*', WILDCARD_HANDLER);
 router.get('/bread/:meat+/bread', SANDWICH_HANDLER);
 router.get('/mother{-:type}?', MOTHER_HANDLER);
+router.get('/variadic-request-handlers', ...VARIADIC_REQUEST_HANDLERS);
 
 function makeGet(path) {
 	return new Request(DOMAIN + path, { method: GET });
@@ -86,5 +88,8 @@ test('Router', () => {
 	);
 	expect(router.getRoute(makeGet('/mothers'))).not.toMatchObject(
 		makeHandlerMatcher(GET, MOTHER_HANDLER),
+	);
+	expect(router.getRoute(makeGet('/variadic-request-handlers'))).toMatchObject(
+		makeHandlerMatcher(GET, { request: VARIADIC_REQUEST_HANDLERS }),
 	);
 });

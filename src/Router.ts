@@ -1,9 +1,15 @@
 import { partial } from './utils';
 import { match } from 'path-to-regexp';
+import { Handler, Handlers } from './RequestManager';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
 export interface Params {
 	[key: string]: string;
+}
+
+export interface HandlerMap {
+	request?: Handlers;
+	response?: Handlers;
 }
 
 const METHODS = [
@@ -41,11 +47,23 @@ export class Router {
 		this.all = partial(this.register, '*');
 	}
 
-	register(method: String, url: String, handlers) {
+	register(method: String, url: String, ...handlers) {
+		const firstHandlerIsMap = handlers[0].request || handlers[0].response;
+		let pushedHandlers: HandlerMap = {
+			request: [],
+			response: [],
+		};
+
+		if (handlers.length > 1 || !firstHandlerIsMap) {
+			pushedHandlers.request = handlers;
+		} else {
+			pushedHandlers = handlers[0];
+		}
+
 		this.routes.push({
 			method,
 			url,
-			handlers,
+			handlers: pushedHandlers,
 		});
 
 		return this;

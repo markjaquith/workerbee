@@ -8,6 +8,8 @@ import {
 	matchesValue,
 	toArray,
 	getCookie,
+	withRequest,
+	withResponse,
 } from './utils';
 
 const RESULT = 'result';
@@ -44,6 +46,20 @@ test('withCurrent', () => {
 	expect(threeArgs('one', 'two', INPUT)).not.toBe(CURRENT);
 	expect(withCurrent(inOut)(INPUT)).toBe(CURRENT);
 	expect(withCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
+});
+
+describe('withRequest()', () => {
+	test('returns request from the last argument called', () => {
+		const fn = (_a, b) => b;
+		expect(withRequest(fn)('a', { request: 'request' })).toBe('request');
+	});
+});
+
+describe('withResponse()', () => {
+	test('returns response from the last argument called', () => {
+		const fn = (_a, b) => b;
+		expect(withResponse(fn)('a', { response: 'response' })).toBe('response');
+	});
 });
 
 test('curryWithCurrent', () => {

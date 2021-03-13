@@ -1,7 +1,6 @@
 import BaseRouter from './BaseRouter';
-import type { RouterInterface, Route } from './BaseRouter';
 
-export default class HostRouter extends BaseRouter implements RouterInterface {
+export default class HostRouter extends BaseRouter {
 	private hostPattern: string;
 
 	constructor(hostPattern: string) {

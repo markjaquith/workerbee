@@ -43,57 +43,106 @@ function makeHandlerMatcher(method, handlers, params = {}) {
 	return { method, handlers, params };
 }
 
-test('Router', () => {
-	expect(new URL(makeGet('/').url).pathname).toBe('/');
-	expect(router.getRoute(makeGet('/'))).toMatchObject(
-		makeHandlerMatcher(GET, ROOT_HANDLER),
-	);
-	expect(router.getRoute(makeGet('/posts'))).toMatchObject(
-		makeHandlerMatcher(GET, POSTS_HANDLER),
-	);
-	expect(router.getRoute(makeGet('/posts/123'))).toMatchObject(
-		makeHandlerMatcher(GET, POST_HANDLER, ID_PARAM),
-	);
-	expect(router.getRoute(makePost('/posts/123'))).toMatchObject(
-		makeHandlerMatcher(POST, POST_UPDATE_HANDLER, ID_PARAM),
-	);
-	expect(router.getRoute(makeGet('/optional/123'))).toMatchObject(
-		makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER, ID_PARAM),
-	);
-	expect(router.getRoute(makeGet('/optional'))).toMatchObject(
-		makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER),
-	);
-	expect(router.getRoute(makeGet('/wildcard/with/more/stuff'))).toMatchObject(
-		makeHandlerMatcher(GET, WILDCARD_HANDLER, {
-			extra: ['with', 'more', 'stuff'],
-		}),
-	);
-	expect(router.getRoute(makeGet('/wildcard'))).toMatchObject(
-		makeHandlerMatcher(GET, WILDCARD_HANDLER, {}),
-	);
-	expect(
-		router.getRoute(makeGet('/bread/peanut-butter/jelly/bread')),
-	).toMatchObject(
-		makeHandlerMatcher(GET, SANDWICH_HANDLER, {
-			meat: ['peanut-butter', 'jelly'],
-		}),
-	);
-	expect(router.getRoute(makeGet('/bread/ham/bread'))).toMatchObject(
-		makeHandlerMatcher(GET, SANDWICH_HANDLER, { meat: ['ham'] }),
-	);
-	expect(router.getRoute(makeGet('/bread/bread'))).not.toMatchObject(
-		makeHandlerMatcher(GET, SANDWICH_HANDLER),
-	);
-	expect(router.getRoute(makeGet('/mother'))).toMatchObject(
-		makeHandlerMatcher(GET, MOTHER_HANDLER),
-	);
-	expect(router.getRoute(makeGet('/mother-in-law'))).toMatchObject(
-		makeHandlerMatcher(GET, MOTHER_HANDLER, { type: 'in-law' }),
-	);
-	expect(router.getRoute(makeGet('/mothers'))).not.toMatchObject(
-		makeHandlerMatcher(GET, MOTHER_HANDLER),
-	);
-	expect(router.getRoute(makeGet('/variadic-request-handlers'))).toMatchObject(
-		makeHandlerMatcher(GET, { request: VARIADIC_REQUEST_HANDLERS }),
-	);
+describe('Router', () => {
+	test('makeGet() returns the pathname we pass in', () => {
+		expect(new URL(makeGet('/').url).pathname).toBe('/');
+	});
+
+	test('GET /', () => {
+		expect(router.getRoute(makeGet('/'))).toMatchObject(
+			makeHandlerMatcher(GET, ROOT_HANDLER),
+		);
+	});
+
+	test('GET /posts', () => {
+		expect(router.getRoute(makeGet('/posts'))).toMatchObject(
+			makeHandlerMatcher(GET, POSTS_HANDLER),
+		);
+	});
+
+	test('GET /posts/123', () => {
+		expect(router.getRoute(makeGet('/posts/123'))).toMatchObject(
+			makeHandlerMatcher(GET, POST_HANDLER, ID_PARAM),
+		);
+	});
+
+	test('POST /posts/123', () => {
+		expect(router.getRoute(makePost('/posts/123'))).toMatchObject(
+			makeHandlerMatcher(POST, POST_UPDATE_HANDLER, ID_PARAM),
+		);
+	});
+
+	test('GET /optional/123', () => {
+		expect(router.getRoute(makeGet('/optional/123'))).toMatchObject(
+			makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER, ID_PARAM),
+		);
+	});
+
+	test('GET /optional', () => {
+		expect(router.getRoute(makeGet('/optional'))).toMatchObject(
+			makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER),
+		);
+	});
+
+	test('GET /wildcard/with/more-stuff', () => {
+		expect(router.getRoute(makeGet('/wildcard/with/more/stuff'))).toMatchObject(
+			makeHandlerMatcher(GET, WILDCARD_HANDLER, {
+				extra: ['with', 'more', 'stuff'],
+			}),
+		);
+	});
+
+	test('GET /wildcard', () => {
+		expect(router.getRoute(makeGet('/wildcard'))).toMatchObject(
+			makeHandlerMatcher(GET, WILDCARD_HANDLER, {}),
+		);
+	});
+
+	test('GET /bread/peanut-butter/jelly/bread', () => {
+		expect(
+			router.getRoute(makeGet('/bread/peanut-butter/jelly/bread')),
+		).toMatchObject(
+			makeHandlerMatcher(GET, SANDWICH_HANDLER, {
+				meat: ['peanut-butter', 'jelly'],
+			}),
+		);
+	});
+
+	test('GET /bread/ham/bread', () => {
+		expect(router.getRoute(makeGet('/bread/ham/bread'))).toMatchObject(
+			makeHandlerMatcher(GET, SANDWICH_HANDLER, { meat: ['ham'] }),
+		);
+	});
+
+	test('GET /bread/bread', () => {
+		expect(router.getRoute(makeGet('/bread/bread'))).not.toMatchObject(
+			makeHandlerMatcher(GET, SANDWICH_HANDLER),
+		);
+	});
+
+	test('GET /mother', () => {
+		expect(router.getRoute(makeGet('/mother'))).toMatchObject(
+			makeHandlerMatcher(GET, MOTHER_HANDLER),
+		);
+	});
+
+	test('GET /mother-in-law', () => {
+		expect(router.getRoute(makeGet('/mother-in-law'))).toMatchObject(
+			makeHandlerMatcher(GET, MOTHER_HANDLER, { type: 'in-law' }),
+		);
+	});
+
+	test('GET /mothers', () => {
+		expect(router.getRoute(makeGet('/mothers'))).not.toMatchObject(
+			makeHandlerMatcher(GET, MOTHER_HANDLER),
+		);
+	});
+
+	test('GET /variadic-request-handlers', () => {
+		expect(
+			router.getRoute(makeGet('/variadic-request-handlers')),
+		).toMatchObject(
+			makeHandlerMatcher(GET, { request: VARIADIC_REQUEST_HANDLERS }),
+		);
+	});
 });

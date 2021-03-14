@@ -31,8 +31,6 @@ export interface RouterHandlers {
 export interface RouterInterface {
 	getRoute(request: Request): Route | null;
 	addRouter(router: RouterInterface): this;
-	addResponseHandler(handler: Handler): this;
-	addRequestHandler(handler: Handler): this;
 	addCallback(fn: RouterCallback): this;
 	matches(request: Request): boolean;
 	setHandlers(handlers: RouterHandlers): this;
@@ -81,18 +79,6 @@ export default class BaseRouter implements RouterInterface {
 		return null;
 	}
 
-	addRequestHandler(handler: Handler): this {
-		this._handlers.request.push(handler);
-
-		return this;
-	}
-
-	addResponseHandler(handler: Handler): this {
-		this._handlers.response.push(handler);
-
-		return this;
-	}
-
 	setHandlers(handlers: RouterHandlers): this {
 		this._handlers = handlers;
 
@@ -118,7 +104,7 @@ export default class BaseRouter implements RouterInterface {
 	}
 
 	matches(_request: Request): boolean {
-		return false;
+		return true;
 	}
 
 	get routers(): RouterInterface[] {

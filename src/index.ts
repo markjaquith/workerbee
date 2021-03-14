@@ -47,14 +47,21 @@ export function handleFetch(options: any = {}) {
 		...options,
 	};
 
-	addEventListener('fetch', (event) => {
+	const listener = (event) => {
 		if (options.passThroughOnException) {
 			event.passThroughOnException();
 		}
 
 		const responder = new RequestManager(options);
-		event.respondWith(responder.makeResponse(event));
-	});
+		const response = responder.makeResponse(event);
+		event.respondWith(response);
+
+		return response;
+	};
+
+	addEventListener('fetch', listener);
+
+	return listener;
 }
 
 export default handleFetch;

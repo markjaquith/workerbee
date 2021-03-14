@@ -1,5 +1,4 @@
 import { partial } from './utils';
-import { match } from 'path-to-regexp';
 import { Handler, Handlers } from './RequestManager';
 import HostRouter from './HostRouter';
 import MethodRouter from './MethodRouter';
@@ -8,7 +7,6 @@ import BaseRouter, {
 	Route,
 	RouterCallback,
 	RouterHandlers,
-	RouterInterface,
 } from './BaseRouter';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
@@ -70,11 +68,6 @@ export class Router extends BaseRouter {
 		}
 
 		return pushedHandlers;
-	}
-
-	// This top level Router always matches, so that its underlying Routers are called.
-	matches(_request: Request): true {
-		return true;
 	}
 
 	register(method: string, pathPattern: string, ...handlers): this {

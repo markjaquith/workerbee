@@ -160,3 +160,7 @@ export function curryWithRequest(fn) {
 export function curryWithResponse(fn) {
 	return curry(withResponse(makeComplete(fn)));
 }
+
+export function escapeRegExp(string: string): string {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

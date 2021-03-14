@@ -1,7 +1,21 @@
 import Text from './Text';
 
-test('Text can be created using from()', () => {
+test('New Text represents an empty string', () => {
+	const text = new Text();
+	expect(text.toString()).toBe('');
+	expect(`${text}`).toBe('');
+	expect(text.convert('')).toBe('');
+});
+
+test('Text can be created using from(string)', () => {
 	const text = Text.from('FOO');
+	expect(text.value).toBe('FOO');
+	expect(text.insensitive).toBe(false);
+	expect(text.negated).toBe(false);
+});
+
+test('Text can be created using from(Text)', () => {
+	const text = Text.from(Text.from('FOO'));
 	expect(text.value).toBe('FOO');
 	expect(text.insensitive).toBe(false);
 	expect(text.negated).toBe(false);
@@ -46,4 +60,10 @@ test('Text can be seamlessly cast to a string', () => {
 	const text = Text.from('FOO');
 	expect(text.value).toBe('FOO');
 	expect(`${text}BAR`).toBe('FOOBAR');
+});
+
+test('Text can be matched', () => {
+	const text = Text.from('FOO').i;
+	const matcher = (a: string, b: string) => a === b;
+	expect(text.matches('foo', matcher));
 });

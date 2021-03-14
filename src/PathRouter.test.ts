@@ -16,20 +16,6 @@ function expectRoute(router: PathRouter, path: string, params: Params = {}) {
 }
 
 describe('PathRouter', () => {
-	const DOMAIN = 'https://example.com';
-	const GET = 'GET';
-	const POST = 'POST';
-	const ID_PARAM = { id: '123' };
-	// const router = new Router();
-	// router.get('/', ROOT_HANDLER);
-	// router.get('/posts', POSTS_HANDLER);
-	// router.get('/posts/:id', POST_HANDLER);
-	// router.get('/optional/:id?', OPTIONAL_PARAM_HANDLER);
-	// router.get('/wildcard/:extra*', WILDCARD_HANDLER);
-	// router.get('/bread/:meat+/bread', SANDWICH_HANDLER);
-	// router.get('/mother{-:type}?', MOTHER_HANDLER);
-	// router.get('/variadic-request-handlers', ...VARIADIC_REQUEST_HANDLERS);
-
 	test('/', () => {
 		const router = new PathRouter('/');
 		expectRoute(router, '/');

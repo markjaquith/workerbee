@@ -8,7 +8,7 @@ class MatchesRouter extends BaseRouter {
 
 class RouteRouter extends MatchesRouter {
 	getRoute(request) {
-		return this.getDefaultResponse(request);
+		return this.getNullRoute(request);
 	}
 }
 

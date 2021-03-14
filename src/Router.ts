@@ -1,6 +1,15 @@
 import { partial } from './utils';
 import { match } from 'path-to-regexp';
 import { Handler, Handlers } from './RequestManager';
+import HostRouter from './HostRouter';
+import MethodRouter from './MethodRouter';
+import PathRouter from './PathRouter';
+import BaseRouter, {
+	Route,
+	RouterCallback,
+	RouterHandlers,
+	RouterInterface,
+} from './BaseRouter';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
 export interface Params {
@@ -24,8 +33,7 @@ const METHODS = [
 	'TRACE',
 ];
 
-export class Router {
-	private routes: any[] = [];
+export class Router extends BaseRouter {
 	connect: MethodRegistrar;
 	delete: MethodRegistrar;
 	get: MethodRegistrar;
@@ -38,6 +46,7 @@ export class Router {
 	all: MethodRegistrar;
 
 	constructor() {
+		super();
 		this.register = this.register.bind(this);
 
 		for (const method of METHODS) {
@@ -47,58 +56,58 @@ export class Router {
 		this.all = partial(this.register, '*');
 	}
 
-	register(method: String, url: String, ...handlers) {
+	getPushedHandlers(handlers: HandlerMap | Handler[]) {
 		const firstHandlerIsMap = handlers[0].request || handlers[0].response;
-		let pushedHandlers: HandlerMap = {
+		let pushedHandlers: RouterHandlers = {
 			request: [],
 			response: [],
 		};
 
-		if (handlers.length > 1 || !firstHandlerIsMap) {
-			pushedHandlers.request = handlers;
+		if (!firstHandlerIsMap) {
+			pushedHandlers.request = handlers as Handler[];
 		} else {
 			pushedHandlers = handlers[0];
 		}
 
-		this.routes.push({
-			method,
-			url,
-			handlers: pushedHandlers,
-		});
+		return pushedHandlers;
+	}
+
+	// This top level Router always matches, so that its underlying Routers are called.
+	matches(): true {
+		return true;
+	}
+
+	register(method: string, pathPattern: string, ...handlers): this {
+		this.addRouter(
+			new MethodRouter(method).addRouter(
+				new PathRouter(pathPattern).setHandlers(
+					this.getPushedHandlers(handlers),
+				),
+			),
+		);
 
 		return this;
 	}
 
-	host(hostPattern: string, fn: (router: Router) => void) {}
-
-	getRoute(request) {
-		for (const route of this.routes) {
-			// If the method does not match, continue.
-			if (![request.method, '*'].includes(route.method)) {
-				continue;
-			}
-
-			const parsed = match(route.url)(new URL(request.url).pathname);
-
-			if (parsed) {
-				route.handlers = { request: null, response: null, ...route.handlers };
-				return {
-					...route,
-					params: parsed.params,
-				};
+	getRoute(request: Request): Route | null {
+		for (const router of this.routers) {
+			const route = router.getRoute(request);
+			if (route) {
+				return route;
 			}
 		}
 
-		// No match. Return a nulled out object.
-		return {
-			method: request.method,
-			url: null,
-			handlers: {
-				request: null,
-				response: null,
-			},
-			params: {},
-		};
+		return null;
+	}
+
+	host(hostPattern: string, fn: RouterCallback): this {
+		this.addRouter(
+			new HostRouter(hostPattern)
+				.setCallbackRouterCreator(() => new Router())
+				.addCallback(fn),
+		);
+
+		return this;
 	}
 }
 

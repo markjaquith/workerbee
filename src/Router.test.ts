@@ -12,12 +12,19 @@ const SANDWICH_HANDLER = makeHandler();
 const MOTHER_HANDLER = makeHandler();
 const VARIADIC_REQUEST_HANDLERS = [Symbol(), Symbol(), Symbol()];
 const MJ_POSTS_HANDLER = makeHandler();
+const WILDCARD_FOO_POSTS_HANDLER = makeHandler();
 
 const DOMAIN = 'https://example.com';
 const GET = 'GET';
 const POST = 'POST';
 const ID_PARAM = { id: '123' };
 const router = new Router();
+router.host('markjaquith.com', (router) => {
+	router.get('/posts', MJ_POSTS_HANDLER);
+});
+router.host('*foo.com', (router) => {
+	router.get('/posts', WILDCARD_FOO_POSTS_HANDLER);
+});
 router.get('/', ROOT_HANDLER);
 router.get('/posts', POSTS_HANDLER);
 router.get('/posts/:id', POST_HANDLER);
@@ -27,12 +34,13 @@ router.get('/wildcard/:extra*', WILDCARD_HANDLER);
 router.get('/bread/:meat+/bread', SANDWICH_HANDLER);
 router.get('/mother{-:type}?', MOTHER_HANDLER);
 router.get('/variadic-request-handlers', ...VARIADIC_REQUEST_HANDLERS);
-router.host('*.markjaquith.com', (router) => {
-	router.get('/posts', MJ_POSTS_HANDLER);
-});
 
 function makeGet(path) {
-	return new Request(DOMAIN + path, { method: GET });
+	return makeGetWithDomain(DOMAIN, path);
+}
+
+function makeGetWithDomain(domain: string, path: string) {
+	return new Request(domain + path, { method: GET });
 }
 
 function makePost(path) {
@@ -115,9 +123,7 @@ describe('Router', () => {
 	});
 
 	test('GET /bread/bread', () => {
-		expect(router.getRoute(makeGet('/bread/bread'))).not.toMatchObject(
-			makeHandlerMatcher(GET, SANDWICH_HANDLER),
-		);
+		expect(router.getRoute(makeGet('/bread/bread'))).toBeNull();
 	});
 
 	test('GET /mother', () => {
@@ -133,9 +139,7 @@ describe('Router', () => {
 	});
 
 	test('GET /mothers', () => {
-		expect(router.getRoute(makeGet('/mothers'))).not.toMatchObject(
-			makeHandlerMatcher(GET, MOTHER_HANDLER),
-		);
+		expect(router.getRoute(makeGet('/mothers'))).toBeNull();
 	});
 
 	test('GET /variadic-request-handlers', () => {
@@ -144,5 +148,17 @@ describe('Router', () => {
 		).toMatchObject(
 			makeHandlerMatcher(GET, { request: VARIADIC_REQUEST_HANDLERS }),
 		);
+	});
+
+	test('GET https://markjaquith.com/posts', () => {
+		expect(
+			router.getRoute(makeGetWithDomain('https://markjaquith.com', '/posts')),
+		).toMatchObject(makeHandlerMatcher(GET, MJ_POSTS_HANDLER));
+	});
+
+	test('GET https://anything.foo.com/posts', () => {
+		expect(
+			router.getRoute(makeGetWithDomain('https://anything.foo.com', '/posts')),
+		).toMatchObject(makeHandlerMatcher(GET, WILDCARD_FOO_POSTS_HANDLER));
 	});
 });

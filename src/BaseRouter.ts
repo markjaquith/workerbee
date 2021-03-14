@@ -1,10 +1,12 @@
 import { Handler, Handlers } from './RequestManager';
 
-type RouterCallback = (RouterInterface) => void;
+export type RouterCallback = (RouterInterface) => void;
 
 export interface Params {
 	[key: string]: string | string[];
 }
+
+export type RouterCreator = (router: RouterInterface) => RouterInterface;
 
 export interface Route {
 	method: string;
@@ -31,10 +33,12 @@ export interface RouterInterface {
 	addRouter(router: RouterInterface): this;
 	addResponseHandler(handler: Handler): this;
 	addRequestHandler(handler: Handler): this;
-	addCallback(RouterCallback): this;
+	addCallback(fn: RouterCallback): this;
 	matches(request: Request): boolean;
 	setHandlers(handlers: RouterHandlers): this;
+	setCallbackRouterCreator(fn: RouterCreator): this;
 	routers: RouterInterface[];
+	callbackRouters: RouterInterface[];
 	callbacks: RouterCallback[];
 	handlers: HandlerMap;
 }
@@ -42,12 +46,17 @@ export interface RouterInterface {
 export default class BaseRouter implements RouterInterface {
 	private _routers: RouterInterface[] = [];
 	private _callbacks: RouterCallback[] = [];
+	private _callbackRouterCreator: RouterCreator;
 	private _handlers: RouterHandlers = {
 		request: [],
 		response: [],
 	};
 
-	getDefaultResponse(request: Request): Route {
+	constructor() {
+		this.setCallbackRouterCreator((router) => router);
+	}
+
+	getNullRoute(request: Request): Route {
 		return {
 			method: request.method,
 			url: request.url,
@@ -61,7 +70,7 @@ export default class BaseRouter implements RouterInterface {
 
 	getRoute(request: Request): Route | null {
 		if (this.matches(request)) {
-			for (const router of this.routers) {
+			for (const router of [...this.routers, ...this.callbackRouters]) {
 				const route = router.getRoute(request);
 				if (route) {
 					return route;
@@ -97,7 +106,13 @@ export default class BaseRouter implements RouterInterface {
 	}
 
 	addCallback(fn: RouterCallback): this {
-		this.callbacks.push(fn);
+		this._callbacks.push(fn);
+
+		return this;
+	}
+
+	setCallbackRouterCreator(fn: RouterCreator): this {
+		this._callbackRouterCreator = fn;
 
 		return this;
 	}
@@ -108,6 +123,15 @@ export default class BaseRouter implements RouterInterface {
 
 	get routers(): RouterInterface[] {
 		return this._routers;
+	}
+
+	get callbackRouters(): RouterInterface[] {
+		const router = this._callbackRouterCreator(this);
+		for (const callback of this.callbacks) {
+			callback(router);
+		}
+
+		return router.routers;
 	}
 
 	get callbacks(): RouterCallback[] {

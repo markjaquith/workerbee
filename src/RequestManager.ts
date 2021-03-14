@@ -181,7 +181,7 @@ export default class RequestManager {
 		if (this.routes) {
 			const router = new Router();
 			this.routes(router);
-			const route = router.getRoute(request);
+			const route = router.getRoute(request) || router.getNullRoute(request);
 			routeRequestHandlers = toArray(route.handlers.request);
 			routeResponseHandlers = toArray(route.handlers.response);
 			params = route.params;

@@ -4,7 +4,7 @@ import { Handler, Handlers } from './RequestManager';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
 export interface Params {
-	[key: string]: string;
+	[key: string]: string | string[];
 }
 
 export interface HandlerMap {

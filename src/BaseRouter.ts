@@ -3,7 +3,7 @@ import { Handler, Handlers } from './RequestManager';
 type RouterCallback = (RouterInterface) => void;
 
 export interface Params {
-	[key: string]: string;
+	[key: string]: string | string[];
 }
 
 export interface Route {

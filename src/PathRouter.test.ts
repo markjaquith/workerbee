@@ -1,7 +1,18 @@
 import PathRouter from './PathRouter';
+import type { Params } from './Router';
 
 function makeGet(path: string): Request {
 	return new Request(`https://example.com${path}`);
+}
+
+function expectNoRoute(router: PathRouter, path: string) {
+	expect(router.matches(makeGet(path))).toBe(false);
+	expect(router.getRoute(makeGet(path))).toBeNull();
+}
+
+function expectRoute(router: PathRouter, path: string, params: Params = {}) {
+	expect(router.matches(makeGet(path))).toBe(true);
+	expect(router.getRoute(makeGet(path)).params).toEqual(params);
 }
 
 describe('PathRouter', () => {
@@ -21,53 +32,57 @@ describe('PathRouter', () => {
 
 	test('/', () => {
 		const router = new PathRouter('/');
-		expect(router.matches(makeGet('/'))).toBe(true);
-		expect(router.matches(makeGet('/foo'))).toBe(false);
+		expectRoute(router, '/');
+		expectNoRoute(router, '/foo');
 	});
 
 	test('/posts', () => {
 		const router = new PathRouter('/posts');
-		expect(router.matches(makeGet('/posts'))).toBe(true);
-		expect(router.matches(makeGet('/foo'))).toBe(false);
-		expect(router.matches(makeGet('/'))).toBe(false);
+		expectRoute(router, '/posts');
+		expectNoRoute(router, '/foo');
+		expectNoRoute(router, '/');
 	});
 
 	test('/posts/:id', () => {
 		const router = new PathRouter('/posts/:id');
-		expect(router.matches(makeGet('/posts/123'))).toBe(true);
-		expect(router.matches(makeGet('/foo'))).toBe(false);
-		expect(router.matches(makeGet('/'))).toBe(false);
-		expect(router.matches(makeGet('/posts/anything'))).toBe(true);
-		expect(router.matches(makeGet('/posts'))).toBe(false);
+		expectRoute(router, '/posts/123', { id: '123' });
+		expectRoute(router, '/posts/anything', { id: 'anything' });
+		expectNoRoute(router, '/foo');
+		expectNoRoute(router, '/');
+		expectNoRoute(router, '/posts');
 	});
 
 	test('/optional/:id?', () => {
 		const router = new PathRouter('/optional/:id?');
-		expect(router.matches(makeGet('/optional/123'))).toBe(true);
-		expect(router.matches(makeGet('/foo'))).toBe(false);
-		expect(router.matches(makeGet('/'))).toBe(false);
-		expect(router.matches(makeGet('/optional/anything'))).toBe(true);
-		expect(router.matches(makeGet('/optional'))).toBe(true);
+		expectRoute(router, '/optional/123', { id: '123' });
+		expectRoute(router, '/optional/anything', { id: 'anything' });
+		expectRoute(router, '/optional');
+		expectNoRoute(router, '/foo');
+		expectNoRoute(router, '/');
 	});
 
 	test('/wildcard/:extra*', () => {
 		const router = new PathRouter('/wildcard/:extra*');
-		expect(router.matches(makeGet('/wildcard/with/more/stuff'))).toBe(true);
-		expect(router.matches(makeGet('/wildcard'))).toBe(true);
+		expectRoute(router, '/wildcard/with/more/stuff', {
+			extra: ['with', 'more', 'stuff'],
+		});
+		expectRoute(router, '/wildcard');
+		expectNoRoute(router, '/foo');
+		expectNoRoute(router, '/');
 	});
 
 	test('/bread/:meat+/bread', () => {
 		const router = new PathRouter('/bread/:meat+/bread');
-		expect(router.matches(makeGet('/bread/peanut-butter/jelly/bread'))).toBe(
-			true,
-		);
-		expect(router.matches(makeGet('/bread/ham/bread'))).toBe(true);
-		expect(router.matches(makeGet('/bread/bread'))).toBe(false);
+		expectRoute(router, '/bread/peanut-butter/jelly/bread', {
+			meat: ['peanut-butter', 'jelly'],
+		});
+		expectRoute(router, '/bread/ham/bread', { meat: ['ham'] });
+		expectNoRoute(router, '/bread/bread');
 	});
 
 	test('/mother{-:type}?', () => {
 		const router = new PathRouter('/mother{-:type}?');
-		expect(router.matches(makeGet('/mother-in-law'))).toBe(true);
-		expect(router.matches(makeGet('/mothers'))).toBe(false);
+		expectRoute(router, '/mother-in-law', { type: 'in-law' });
+		expectNoRoute(router, '/mothers');
 	});
 });

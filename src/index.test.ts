@@ -45,3 +45,35 @@ test('handleFetch()', async () => {
 	expect(genericRequestHandler).toHaveBeenCalledTimes(1);
 	expect(requestHandler).toHaveBeenCalledTimes(1);
 });
+
+test('handleFetch() with passThroughOnException false', async () => {
+	const listener = handleFetch({
+		passThroughOnException: false,
+	});
+
+	const fetchEvent = {
+		respondWith: jest.fn(),
+		passThroughOnException: jest.fn(),
+		request: new Request('http://test.example.com/foo/bar/baz'),
+	};
+
+	await listener(fetchEvent);
+
+	expect(fetchEvent.respondWith).toHaveBeenCalledTimes(1);
+	expect(fetchEvent.passThroughOnException).not.toHaveBeenCalled();
+});
+
+test('handleFetch() with no arguments', async () => {
+	const listener = handleFetch();
+
+	const fetchEvent = {
+		respondWith: jest.fn(),
+		passThroughOnException: jest.fn(),
+		request: new Request('http://test.example.com/foo/bar/baz'),
+	};
+
+	await listener(fetchEvent);
+
+	expect(fetchEvent.respondWith).toHaveBeenCalledTimes(1);
+	expect(fetchEvent.passThroughOnException).toHaveBeenCalledTimes(1);
+});

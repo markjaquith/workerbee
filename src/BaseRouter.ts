@@ -28,11 +28,12 @@ export interface RouterHandlers {
 
 export interface RouterInterface {
 	getRoute(request: Request): Route | null;
-	addRouter(router: RouterInterface): void;
-	addResponseHandler(handler: Handler): void;
-	addRequestHandler(handler: Handler): void;
-	addCallback(RouterCallback): void;
+	addRouter(router: RouterInterface): this;
+	addResponseHandler(handler: Handler): this;
+	addRequestHandler(handler: Handler): this;
+	addCallback(RouterCallback): this;
 	matches(request: Request): boolean;
+	setHandlers(handlers: RouterHandlers): this;
 	routers: RouterInterface[];
 	callbacks: RouterCallback[];
 	handlers: HandlerMap;
@@ -71,20 +72,34 @@ export default class BaseRouter implements RouterInterface {
 		return null;
 	}
 
-	addRequestHandler(handler: Handler): void {
+	addRequestHandler(handler: Handler): this {
 		this._handlers.request.push(handler);
+
+		return this;
 	}
 
-	addResponseHandler(handler: Handler): void {
+	addResponseHandler(handler: Handler): this {
 		this._handlers.response.push(handler);
+
+		return this;
 	}
 
-	addRouter(router: RouterInterface): void {
+	setHandlers(handlers: RouterHandlers): this {
+		this._handlers = handlers;
+
+		return this;
+	}
+
+	addRouter(router: RouterInterface): this {
 		this._routers.push(router);
+
+		return this;
 	}
 
-	addCallback(fn: RouterCallback) {
+	addCallback(fn: RouterCallback): this {
 		this.callbacks.push(fn);
+
+		return this;
 	}
 
 	matches(_request: Request): boolean {

@@ -25,6 +25,7 @@ export default class RequestManager {
 	private originalRequestHandlers: Handler[];
 	private originalResponseHandlers: Handler[];
 	private routes: RouterCallback | undefined;
+	public testing = testing();
 
 	constructor(options: Options = {}) {
 		options = {
@@ -58,7 +59,7 @@ export default class RequestManager {
 	}
 
 	log(...args) {
-		if (!testing()) {
+		if (!this.testing) {
 			console.log(...args);
 		}
 	}
@@ -68,13 +69,13 @@ export default class RequestManager {
 	}
 
 	group(...args) {
-		if (!testing()) {
+		if (!this.testing) {
 			console.group(...args);
 		}
 	}
 
 	groupEnd() {
-		if (!testing()) {
+		if (!this.testing) {
 			console.groupEnd();
 		}
 	}
@@ -127,7 +128,7 @@ export default class RequestManager {
 				// We have a new request to pass to the next handler.
 				request = result;
 			} else if (typeof result !== 'undefined') {
-				console.error(
+				this.error(
 					'Your handler returned something other than a Request, a Response, or undefined',
 					result,
 				);
@@ -161,6 +162,11 @@ export default class RequestManager {
 			// If we receive a result, replace the response.
 			if (result instanceof Response) {
 				response = result;
+			} else if (result instanceof Request) {
+				this.error(
+					'Unexpectedly received a Request back from a Response handler',
+					result,
+				);
 			}
 		}
 
@@ -212,7 +218,7 @@ export default class RequestManager {
 		if (isRedirect(finalResponse)) {
 			this.log(
 				`⤴️ ${finalResponse.status}`,
-				finalResponse.headers.get('location') || '',
+				finalResponse.headers.get('location'),
 				finalResponse,
 			);
 		} else {

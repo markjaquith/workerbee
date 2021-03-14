@@ -44,7 +44,7 @@ export function toArray(mixed) {
  * @return boolean
  */
 export function isRedirect({ status, headers }: Response) {
-	return status >= 300 && status < 400 && headers.get('location');
+	return status >= 300 && status < 400 && headers.has('location');
 }
 
 export function setRequestUrl(url, request, options = {}) {

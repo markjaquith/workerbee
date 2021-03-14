@@ -12,6 +12,7 @@ test('setRequestHeaders()', async () => {
 	const result = await setRequestHeaders({
 		bar: 'bar',
 	})(REQUEST);
+	expect(result).toBeInstanceOf(Request);
 	expect(result.headers.get('foo')).toBe('foo');
 	expect(result.headers.get('bar')).toBe('bar');
 });

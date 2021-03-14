@@ -13,4 +13,5 @@ test('setResponseHeaders()', async () => {
 		bar: 'bar',
 	})(RESPONSE);
 	expect(result.headers.get('foo')).toBe('foo');
+	expect(result.headers.get('bar')).toBe('bar');
 });

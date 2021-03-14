@@ -56,6 +56,10 @@ describe('Router', () => {
 		expect(new URL(makeGet('/').url).pathname).toBe('/');
 	});
 
+	test('always matches', () => {
+		expect(router.matches(makeGet('/awoefiajwefoij'))).toBe(true);
+	});
+
 	test('GET /', () => {
 		expect(router.getRoute(makeGet('/'))).toMatchObject(
 			makeHandlerMatcher(GET, ROOT_HANDLER),

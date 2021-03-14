@@ -73,7 +73,7 @@ export class Router extends BaseRouter {
 	}
 
 	// This top level Router always matches, so that its underlying Routers are called.
-	matches(): true {
+	matches(_request: Request): true {
 		return true;
 	}
 

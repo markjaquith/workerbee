@@ -37,7 +37,7 @@ test('removeResponseHeaders() when headers are not present', async () => {
 });
 
 test('removeResponseHeaders() called without headers', async () => {
-	const removeNothing = removeResponseHeaders([]);
+	const removeNothing = removeResponseHeaders();
 	const response = new Response('Response', {
 		headers: new Headers({
 			baz: 'baz',
@@ -48,6 +48,6 @@ test('removeResponseHeaders() called without headers', async () => {
 	expect(response.headers.has('bar')).toBe(false);
 	expect(response.headers.has('baz')).toBe(true);
 
-	const result = await removeFooAndBarHeaders({ response });
+	const result = await removeNothing({ response });
 	expect(result).toBeUndefined(); // Because there was nothing to change.
 });

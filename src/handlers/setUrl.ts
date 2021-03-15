@@ -4,10 +4,8 @@ type Stringable = {
 	toString(): string;
 };
 
-export default function setUrl(url: string | Stringable) {
-	url = typeof url.toString === 'function' ? url.toString() : url;
-
+export default function setUrl(url: Stringable) {
 	return async ({ request }) => {
-		return setRequestUrl(url, request);
+		return setRequestUrl(url.toString(), request);
 	};
 }

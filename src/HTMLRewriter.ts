@@ -72,7 +72,7 @@ export default class HTMLRewriter {
 					if (child.nodeType === 3) {
 						handler.text && handler.text($child);
 					} else if (child.nodeType === 8) {
-						handler.comment && handler.comment($child);
+						handler.comments && handler.comments($child);
 					}
 				}
 			}

@@ -8,11 +8,25 @@ const REQUEST = {
 	}),
 };
 
-test('setRequestHeaders()', async () => {
-	const result = await setRequestHeaders({
-		bar: 'bar',
-	})(REQUEST);
-	expect(result).toBeInstanceOf(Request);
-	expect(result.headers.get('foo')).toBe('foo');
-	expect(result.headers.get('bar')).toBe('bar');
+describe('setRequestHeaders()', () => {
+	test('set headers with object', async () => {
+		const result = await setRequestHeaders({
+			bar: 'bar',
+		})(REQUEST);
+		expect(result).toBeInstanceOf(Request);
+		expect(result.headers.get('foo')).toBe('foo');
+		expect(result.headers.get('bar')).toBe('bar');
+	});
+
+	test('set headers with array', async () => {
+		const result = await setRequestHeaders([['bar', 'bar']])(REQUEST);
+		expect(result).toBeInstanceOf(Request);
+		expect(result.headers.get('foo')).toBe('foo');
+		expect(result.headers.get('bar')).toBe('bar');
+	});
+
+	test('set headers with current value', async () => {
+		const result = await setRequestHeaders([['foo', 'foo']])(REQUEST);
+		expect(result).toBeUndefined();
+	});
 });

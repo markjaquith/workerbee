@@ -29,4 +29,9 @@ describe('setRequestHeaders()', () => {
 		const result = await setRequestHeaders([['foo', 'foo']])(REQUEST);
 		expect(result).toBeUndefined();
 	});
+
+	test('set headers with no value', async () => {
+		const result = await setRequestHeaders()(REQUEST);
+		expect(result).toBeUndefined();
+	});
 });

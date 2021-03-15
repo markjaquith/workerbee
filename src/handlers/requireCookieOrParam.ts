@@ -19,7 +19,7 @@ export default function requireCookieOrParam(name, message = 'Access denied') {
 
 			return response;
 		} else if (!getCookie(request, name)) {
-			return forbidden(message);
+			return forbidden(message)();
 		}
 	};
 }

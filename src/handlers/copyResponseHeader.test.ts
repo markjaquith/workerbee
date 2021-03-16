@@ -4,9 +4,9 @@ const copyFooHeaderToBar = copyResponseHeader('foo', 'bar');
 
 test('copyResponseHeader()', async () => {
 	const response = new Response('Response', {
-		headers: new Headers({
+		headers: {
 			foo: 'foo',
-		}),
+		},
 	});
 
 	expect(response.headers.has('foo')).toBe(true);
@@ -28,10 +28,10 @@ test('copyResponseHeader() without any changes', async () => {
 
 test('copyResponseHeader() wtih existing target header', async () => {
 	const response = new Response('Response', {
-		headers: new Headers({
+		headers: {
 			foo: 'foo',
 			bar: 'bar',
-		}),
+		},
 	});
 
 	expect(response.headers.has('foo')).toBe(true);

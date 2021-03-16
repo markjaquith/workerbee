@@ -3,9 +3,9 @@ import { all, contains, startsWith, endsWith } from '../logic';
 import { partialRight } from '../utils';
 
 const message = new Request('https://example.com/', {
-	headers: new Headers({
+	headers: {
 		foo: 'contains bar in the middle',
-	}),
+	},
 });
 
 const applyHeader = partialRight(header, message);

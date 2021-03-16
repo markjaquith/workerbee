@@ -12,9 +12,9 @@ beforeAll(() => {
 	url = 'https://example.com/';
 	anonymousRequest = new Request(url);
 	requestWithCookie = new Request(url, {
-		headers: new Headers({
+		headers: {
 			cookie: 'anotherOne=foo; letmein=1; foo=bar',
-		}),
+		},
 	});
 	requestWithParam = new Request(url + '?letmein');
 	passwordProtected = requireCookieOrParam('letmein');

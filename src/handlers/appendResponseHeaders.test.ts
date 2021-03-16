@@ -9,11 +9,11 @@ const appendNothing = appendResponseHeaders();
 describe('appendResponseHeaders()', () => {
 	test('appends to existing values', async () => {
 		const response = new Response('Response', {
-			headers: new Headers({
+			headers: {
 				bar: 'bar',
 				zoo: 'zoo',
 				untouched: 'same',
-			}),
+			},
 		});
 		const result = await append({ response });
 		expect(result.headers.get('bar')).toBe('bar, foo');
@@ -23,9 +23,9 @@ describe('appendResponseHeaders()', () => {
 
 	test('writes new values', async () => {
 		const response = new Response('Response', {
-			headers: new Headers({
+			headers: {
 				untouched: 'same',
-			}),
+			},
 		});
 		const result = await append({ response });
 		expect(result.headers.get('bar')).toBe('foo');
@@ -35,9 +35,9 @@ describe('appendResponseHeaders()', () => {
 
 	test('does nothing when nothing passed', async () => {
 		const response = new Response('Response', {
-			headers: new Headers({
+			headers: {
 				untouched: 'same',
-			}),
+			},
 		});
 		const result = await appendNothing({ response });
 		expect(result).toBeUndefined();
@@ -45,11 +45,11 @@ describe('appendResponseHeaders()', () => {
 
 	test('does nothing when value already in header', async () => {
 		const response = new Response('Response', {
-			headers: new Headers({
+			headers: {
 				bar: 'foo',
 				zoo: 'boo',
 				untouched: 'same',
-			}),
+			},
 		});
 		const result = await append({ response });
 		expect(result).toBeUndefined();

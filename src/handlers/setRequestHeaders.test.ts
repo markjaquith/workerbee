@@ -2,9 +2,9 @@ import setRequestHeaders from './setRequestHeaders';
 
 const REQUEST = {
 	request: new Request('https://example.com/', {
-		headers: new Headers({
+		headers: {
 			foo: 'foo',
-		}),
+		},
 	}),
 };
 

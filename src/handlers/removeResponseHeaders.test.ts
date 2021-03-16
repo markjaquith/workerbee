@@ -4,11 +4,11 @@ const removeFooAndBarHeaders = removeResponseHeaders(['foo', 'bar']);
 
 test('removeResponseHeaders() for existing headers', async () => {
 	const response = new Response('Response', {
-		headers: new Headers({
+		headers: {
 			foo: 'foo',
 			bar: 'bar',
 			baz: 'baz',
-		}),
+		},
 	});
 
 	expect(response.headers.has('foo')).toBe(true);
@@ -23,9 +23,9 @@ test('removeResponseHeaders() for existing headers', async () => {
 
 test('removeResponseHeaders() when headers are not present', async () => {
 	const response = new Response('Response', {
-		headers: new Headers({
+		headers: {
 			baz: 'baz',
-		}),
+		},
 	});
 
 	expect(response.headers.has('foo')).toBe(false);
@@ -39,9 +39,9 @@ test('removeResponseHeaders() when headers are not present', async () => {
 test('removeResponseHeaders() called without headers', async () => {
 	const removeNothing = removeResponseHeaders();
 	const response = new Response('Response', {
-		headers: new Headers({
+		headers: {
 			baz: 'baz',
-		}),
+		},
 	});
 
 	expect(response.headers.has('foo')).toBe(false);

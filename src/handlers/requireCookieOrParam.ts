@@ -9,6 +9,8 @@ export default function requireCookieOrParam(name, message = 'Access denied') {
 		if (url.searchParams.has(name)) {
 			url.searchParams.delete(name);
 			let response = Response.redirect(url.toString(), 302);
+			// The headers are read-only, so we reconstruct the response.
+			response = new Response(response.body, response);
 			response.headers.set(
 				'Set-Cookie',
 				cookie.serialize(name, '1', {

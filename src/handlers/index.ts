@@ -1,35 +1,19 @@
-import setUrl from './setUrl';
-import setHost from './setHost';
-import setProtocol from './setProtocol';
-import setHttps from './setHttps';
-import setHttp from './setHttp';
-import forbidden from './forbidden';
-import appendResponseHeaders from './appendResponseHeaders';
-import copyResponseHeader from './copyResponseHeader';
-import lazyLoadImages from './lazyLoadImages';
-import prependPath from './prependPath';
-import removePathPrefix from './removePathPrefix';
-import redirect from './redirect';
-import redirectHttps from './redirectHttps';
-import redirectHttp from './redirectHttp';
-import removeResponseHeaders from './removeResponseHeaders';
-import requireCookieOrParam from './requireCookieOrParam';
-
-export {
-	setUrl,
-	setHost,
-	setProtocol,
-	setHttps,
-	setHttp,
-	forbidden,
-	appendResponseHeaders,
-	copyResponseHeader,
-	lazyLoadImages,
-	prependPath,
-	removePathPrefix,
-	redirect,
-	redirectHttps,
-	redirectHttp,
-	removeResponseHeaders,
-	requireCookieOrParam,
-};
+export { default as appendResponseHeaders } from './appendResponseHeaders';
+export { default as copyResponseHeader } from './copyResponseHeader';
+export { default as forbidden } from './forbidden';
+export { default as lazyLoadImages } from './lazyLoadImages';
+export { default as prependPath } from './prependPath';
+export { default as redirect } from './redirect';
+export { default as redirectHttp } from './redirectHttp';
+export { default as redirectHttps } from './redirectHttps';
+export { default as removePathPrefix } from './removePathPrefix';
+export { default as removeResponseHeaders } from './removeResponseHeaders';
+export { default as requireCookieOrParam } from './requireCookieOrParam';
+export { default as setHost } from './setHost';
+export { default as setHttp } from './setHttp';
+export { default as setHttps } from './setHttps';
+export { default as setProtocol } from './setProtocol';
+export { default as setRequestHeaders } from './setRequestHeaders';
+export { default as setResponseHeaders } from './setResponseHeaders';
+export { default as setUrl } from './setUrl';
+export { default as stripParamsForFetch } from './stripParamsForFetch';

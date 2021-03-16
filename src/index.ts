@@ -1,5 +1,5 @@
-export * from './logic/index';
-export * from './handlers/index';
+export * from './logic';
+export * from './handlers';
 export * from './utils';
 
 // Heavy lifting.

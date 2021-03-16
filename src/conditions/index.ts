@@ -1,21 +1,9 @@
-import header from './header';
-import contentType from './contentType';
-import isHtml from './isHtml';
-import hasParam from './hasParam';
-import hasRouteParam from './hasRouteParam';
-import routeParam from './routeParam';
-import param from './param';
-import isHttp from './isHttp';
-import isHttps from './isHttps';
-
-export {
-	header,
-	contentType,
-	isHtml,
-	hasParam,
-	hasRouteParam,
-	routeParam,
-	param,
-	isHttp,
-	isHttps,
-};
+export { default as header } from './header';
+export { default as contentType } from './contentType';
+export { default as isHtml } from './isHtml';
+export { default as hasParam } from './hasParam';
+export { default as hasRouteParam } from './hasRouteParam';
+export { default as routeParam } from './routeParam';
+export { default as param } from './param';
+export { default as isHttp } from './isHttp';
+export { default as isHttps } from './isHttps';

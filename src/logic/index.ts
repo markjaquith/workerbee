@@ -1,9 +1,7 @@
-import all from './all';
-import any from './any';
-import none from './none';
-import addHandlerIf from './addHandlerIf';
-import contains from './contains';
-import startsWith from './startsWith';
-import endsWith from './endsWith';
-
-export { all, any, none, addHandlerIf, contains, startsWith, endsWith };
+export { default as all } from './all';
+export { default as any } from './any';
+export { default as none } from './none';
+export { default as addHandlerIf } from './addHandlerIf';
+export { default as contains } from './contains';
+export { default as startsWith } from './startsWith';
+export { default as endsWith } from './endsWith';

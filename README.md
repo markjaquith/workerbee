@@ -154,7 +154,9 @@ Yes                 │                   │
 ## Routing
 
 The router has functions for all HTTP methods, plus `router.any()` which matches
-any method. The path argument uses the [path-to-regexp][path-to-regexp] library,
+any method. e.g. `router.get(path, handlers)`, `router.post(path, handlers)`.
+
+The path argument uses the [path-to-regexp][path-to-regexp] library,
 which has good support for positional path parameters. Here's what various
 routes would yield for a given request:
 
@@ -202,9 +204,30 @@ Go read the [path-to-regex documentation][path-to-regexp] for more information.
 
 [path-to-regexp]: https://github.com/pillarjs/path-to-regexp#readme
 
+You can also limit your routes to a specific host, like so:
+
+```js
+import handleFetch, { forbidden, setRequestHeaders } from 'cf-worker-utils';
+
+handleFetch({
+	routes: (router) => {
+		router.host('example.com', (router) => {
+			router.get('/', setRequestHeaders({ 'x-foo': 'bar' }));
+		});
+		router.host('*.blogs.example.com', (router) => {
+			router.any('/xmlrpc.php', forbidden);
+		});
+	},
+});
+```
+
+This makes it trivial to set up a Worker that services multiple subdomains and
+routes, instead of having to maintain a bunch of independent Workers.
+
 ## Handlers
 
-Handlers should be `async` functions. They are passed an object that contains:
+Handlers are functions (preferably `async` functions). They are passed an object
+that contains:
 
 ```js
 {
@@ -259,7 +282,10 @@ The following handlers are included:
 - `setHttps()`
 - `setHttp()`
 - `forbidden()`
-- `appendResponseHeaders([header: string, value: string][])`
+- `appendResponseHeaders([header: string, value: string][] | {[header: string]: string})`
+- `setRequestHeaders([header: string, value: string][] | {[header: string]: string})`
+- `setResponseHeaders([header: string, value: string][] | {[header: string]: string})`
+- `removeResponseHeaders(headers: string[])`
 - `copyResponseHeader(from: string, to: string)`
 - `lazyLoadImages()`
 - `prependPath(pathPrefix: string)`
@@ -267,7 +293,6 @@ The following handlers are included:
 - `redirect(status: number)`
 - `redirectHttps()`
 - `redirectHttp()`
-- `removeResponseHeaders(headers: string[])`
 - `requireCookieOrParam(param: string, forbiddenMessage: string)`
 
 ## Logic

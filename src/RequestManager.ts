@@ -58,19 +58,19 @@ export default class RequestManager {
 		}
 	}
 
-	log(...args) {
+	log(message?: any, ...optionalParams: any[]) {
 		if (!this.testing) {
-			console.log(...args);
+			console.log(message, ...optionalParams);
 		}
 	}
 
-	error(...args) {
-		console.error(...args);
+	error(message?: any, ...optionalParams: any[]) {
+		console.error(message, ...optionalParams);
 	}
 
-	group(...args) {
+	group(...label: any[]) {
 		if (!this.testing) {
-			console.group(...args);
+			console.group(...label);
 		}
 	}
 

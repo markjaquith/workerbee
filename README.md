@@ -366,7 +366,7 @@ These functions can also accept insensitive strings and negated strings with the
 ```js
 addHandlerIf(
 	header('User-Agent', startsWith(text('WordPress').not.i)),
-	forbidden,
+	forbidden(),
 );
 ```
 
@@ -433,7 +433,7 @@ import { hasParam } from 'cf-worker-utils/conditions';
 
 export default async function forbiddenIfFooParam({ request }) {
 	if (hasParam('foo', request)) {
-		return forbidden;
+		return forbidden();
 	}
 }
 ```

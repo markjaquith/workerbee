@@ -10,7 +10,7 @@ const MESSAGE = {
 	},
 };
 
-const applyRouteParam = partialRight(routeParam, MESSAGE);
+const applyRouteParam = partialRight(routeParam, [MESSAGE]);
 
 test('routeParam', () => {
 	expect(applyRouteParam('foo', contains('bar'))).toBe(true);

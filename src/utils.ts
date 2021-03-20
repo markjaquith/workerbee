@@ -1,11 +1,7 @@
 import cookie from 'cookie';
-
+import { curry, partial, partialRight } from 'ramda';
 import type { Handler } from './RequestManager';
 import Text from './Text';
-export interface IncompleteFunction {
-	(): Handler;
-	incomplete: true;
-}
 
 export type ValueMatchingFunction = (value: string) => boolean;
 export type ValueMatcher =
@@ -14,27 +10,28 @@ export type ValueMatcher =
 	| ValueMatchingFunction
 	| ValueMatchingFunction[];
 
-export const curry = (fn) => {
-	const expectedArgs = fn.length;
-	const curried = (...args) => {
-		return args.length >= expectedArgs
-			? fn(...args)
-			: (...args2) => curried(...args.concat(args2));
-	};
-	return curried;
-};
+export interface Stringable {
+	toString(): string;
+}
 
-export const partial = (fn, ...leftArgs) => (...args) =>
-	fn(...leftArgs, ...args);
-export const partialRight = (fn, ...rightArgs) => (...args) =>
-	fn(...args, ...rightArgs);
+export { partialRight };
+export { partial };
+export { curry };
 
-export function toArray(mixed) {
-	if (null === mixed || undefined === mixed) {
-		return [];
+type ForcedArray<T> = T extends null | undefined
+	? []
+	: T extends Array<unknown>
+	? T
+	: T[];
+
+export function toArray<T>(input?: T): ForcedArray<T> {
+	if (null == input) {
+		return [] as ForcedArray<T>;
+	} else if (Array.isArray(input)) {
+		return input as ForcedArray<T>;
+	} else {
+		return ([input] as unknown) as ForcedArray<T>;
 	}
-
-	return Array.isArray(mixed) ? mixed : [mixed];
 }
 
 /**
@@ -47,20 +44,14 @@ export function isRedirect({ status, headers }: Response) {
 	return status >= 300 && status < 400 && headers.has('location');
 }
 
-export function setRequestUrl(url, request, options = {}) {
-	return new Request(url, {
+export function setRequestUrl(url: Stringable, request: Request, options = {}) {
+	return new Request(url.toString(), {
 		...request,
 		...options,
 	});
 }
 
-/**
- * Gets the cookie with the name from the request headers
- *
- * @param {Request} request incoming Request
- * @param {string} name of the cookie to get
- */
-export function getCookie(request, name) {
+export function getCookie(request: Request, name: string) {
 	const cookies = cookie.parse(request.headers.get('cookie') || '');
 
 	return cookies[name] || null;
@@ -87,7 +78,9 @@ export function matchesValue(test: ValueMatcher, value: string) {
 	}
 }
 
-export function makeStringMethodMatcher(method: string) {
+export function makeStringMethodMatcher(
+	method: 'startsWith' | 'includes' | 'endsWith',
+) {
 	return curry((searchText: string | Text, value: string) => {
 		return Text.from(searchText).matches(value, (searchText, value) =>
 			value[method](searchText),
@@ -95,70 +88,65 @@ export function makeStringMethodMatcher(method: string) {
 	});
 }
 
-export function incomplete(fn) {
-	fn.incomplete = true;
-	return fn;
-}
-
-export function isIncomplete(fn): fn is IncompleteFunction {
-	return fn?.incomplete === true;
-}
-
-export function makeComplete(fn) {
-	while (isIncomplete(fn)) {
-		fn = fn();
-	}
-
-	return fn;
-}
+type AnyFunc = (...any: any[]) => any;
+type Transform = (any: any) => any;
 
 // Runs a transformation on the last argument passed to the underlying function.
-export function transformLastArgument(
-	transform: (any) => any,
-	fn: (a?: any, b?: any, c?: any, d?: any, z?: any) => any,
-) {
+export function transformLastArgument<F extends AnyFunc>(
+	transform: Transform,
+	fn: F,
+): AnyFunc {
 	switch (fn.length) {
 		case 0:
 			return fn;
 		case 1:
-			return (z) => fn(transform(z));
+			return (z: any) => fn(transform(z));
 		case 2:
-			return (a, z) => fn(a, transform(z));
+			return (a: any, z: any) => fn(a, transform(z));
 		case 3:
-			return (a, b, z) => fn(a, b, transform(z));
+			return (a: any, b: any, z: any) => fn(a, b, transform(z));
 		case 4:
-			return (a, b, c, z) => fn(a, b, c, transform(z));
+			return (a: any, b: any, c: any, z: any) => fn(a, b, c, transform(z));
 		case 5:
-			return (a, b, c, d, z) => fn(a, b, c, d, transform(z));
+			return (a: any, b: any, c: any, d: any, z: any) =>
+				fn(a, b, c, d, transform(z));
 		default:
 			throw `transformLastArgument only accepts functions with between 0 and 5 arguments. Your function had ${fn.length}`;
 	}
 }
 
+interface HandlerInput {
+	current: Request | Response;
+	request: Request;
+	response: Response;
+}
+
+type Condition = (input: HandlerInput) => boolean;
+
 // Passes the current property of the last passed argument to the underlying function.
-export function withCurrent(fn) {
-	return transformLastArgument((p) => p.current, fn);
+export function withCurrent<F extends Condition>(fn: F): F {
+	return transformLastArgument((p: HandlerInput) => p.current, fn) as F;
 }
 
-export function withResponse(fn) {
-	return transformLastArgument((p) => p.response, fn);
+export function withResponse<F extends Condition>(fn: F): F {
+	return transformLastArgument((p: HandlerInput) => p.response, fn) as F;
 }
 
-export function withRequest(fn) {
-	return transformLastArgument((p) => p.request, fn);
+export function withRequest<F extends Condition>(fn: F): F {
+	return transformLastArgument((p: HandlerInput) => p.request, fn) as F;
 }
 
 // Curries the function after ensuring that its last passed argument digs into the current property.
-export function curryWithCurrent(fn) {
-	return curry(withCurrent(makeComplete(fn)));
+export function curryWithCurrent(fn: (...any: any[]) => any) {
+	return curry(withCurrent(fn));
 }
 
-export function curryWithRequest(fn) {
-	return curry(withRequest(makeComplete(fn)));
+export function curryWithRequest(fn: (...any: any[]) => any) {
+	return curry(withRequest(fn));
 }
 
-export function curryWithResponse(fn) {
-	return curry(withResponse(makeComplete(fn)));
+export function curryWithResponse(fn: (...any: any[]) => any) {
+	return curry(withResponse(fn));
 }
 
 export function escapeRegExp(string: string): string {

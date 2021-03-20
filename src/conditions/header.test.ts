@@ -8,7 +8,7 @@ const message = new Request('https://example.com/', {
 	},
 });
 
-const applyHeader = partialRight(header, message);
+const applyHeader = partialRight(header, [message]);
 
 test('headers are matched', () => {
 	expect(applyHeader('foo', contains('bar'))).toBe(true);

@@ -9,7 +9,7 @@ const MESSAGE = {
 	},
 };
 
-const applyHasRouteParam = partialRight(hasRouteParam, MESSAGE);
+const applyHasRouteParam = partialRight(hasRouteParam, [MESSAGE]);
 
 test('hasRouteParam', () => {
 	expect(applyHasRouteParam('foo')).toBe(true);

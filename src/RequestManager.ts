@@ -1,11 +1,12 @@
 import { Router } from './Router';
-import { toArray, isRedirect, testing, makeComplete } from './utils';
-import type { IncompleteFunction } from './utils';
+import { toArray, isRedirect, testing } from './utils';
 
 import type { Params } from './Router';
 
 export type HandlerResult = void | Request | Response;
-export type Handler = (any) => void | Promise<HandlerResult>;
+export type Handler = (
+	manager: HandlerProcessor,
+) => void | Promise<HandlerResult>;
 export type Handlers = Handler | Handler[];
 export type RouterCallback = (router: Router) => void;
 
@@ -17,6 +18,23 @@ export interface Options {
 	request?: Handlers;
 	response?: Handlers;
 	routes?: RouterCallback;
+}
+
+export interface AddHandlerOptions {
+	immediate?: boolean;
+}
+
+type HandlerAdder = (handler: Handler, options: AddHandlerOptions) => void;
+
+export interface HandlerProcessor {
+	addRequestHandler?: HandlerAdder;
+	addResponseHandler: HandlerAdder;
+	request: Request;
+	current: Request | Response;
+	response: Response | null;
+	originalRequest: Request;
+	params: Params;
+	phase: string;
 }
 
 export default class RequestManager {
@@ -42,7 +60,10 @@ export default class RequestManager {
 		this.addResponseHandler = this.addResponseHandler.bind(this);
 	}
 
-	addRequestHandler(handler: Handler, options = { immediate: false }) {
+	addRequestHandler(
+		handler: Handler,
+		options: AddHandlerOptions = { immediate: false },
+	) {
 		if (options.immediate) {
 			this.requestHandlers.unshift(handler);
 		} else {
@@ -50,7 +71,10 @@ export default class RequestManager {
 		}
 	}
 
-	addResponseHandler(handler: Handler, options = { immediate: false }) {
+	addResponseHandler(
+		handler: Handler,
+		options: AddHandlerOptions = { immediate: false },
+	) {
 		if (options.immediate) {
 			this.responseHandlers.unshift(handler);
 		} else {
@@ -88,11 +112,13 @@ export default class RequestManager {
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
-			let requestHandler = this.requestHandlers.shift() as
-				| Handler
-				| IncompleteFunction;
+			let requestHandler = this.requestHandlers.shift();
 
-			const result = await makeComplete(requestHandler)({
+			if (!requestHandler) {
+				continue;
+			}
+
+			const result = await requestHandler({
 				addRequestHandler: this.addRequestHandler,
 				addResponseHandler: this.addResponseHandler,
 				request,
@@ -148,7 +174,12 @@ export default class RequestManager {
 	async getFinalResponse({ request, response, originalRequest, params }) {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
-			const responseHandler = this.responseHandlers.shift() as Handler;
+			const responseHandler = this.responseHandlers.shift();
+
+			if (!responseHandler) {
+				continue;
+			}
+
 			const result = await responseHandler({
 				addResponseHandler: this.addResponseHandler,
 				request,

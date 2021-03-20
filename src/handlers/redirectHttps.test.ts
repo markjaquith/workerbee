@@ -13,7 +13,7 @@ function makeEvent(url: string) {
 
 test('redirectHttps', async () => {
 	const manager = new RequestManager({
-		request: redirectHttps,
+		request: redirectHttps(),
 	});
 
 	const response = await manager.makeResponse(

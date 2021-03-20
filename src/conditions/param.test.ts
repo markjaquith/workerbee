@@ -6,7 +6,7 @@ const MESSAGE = {
 	url: new URL('https://x.co/?foo=bar-123&foo2&foo3=bar3-123'),
 };
 
-const applyParam = partialRight(param, MESSAGE);
+const applyParam = partialRight(param, [MESSAGE]);
 
 test('param', () => {
 	expect(applyParam('foo', startsWith('bar'))).toBe(true);

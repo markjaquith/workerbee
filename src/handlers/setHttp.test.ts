@@ -1,4 +1,3 @@
-import { makeComplete } from '../utils';
 import setHttp from './setHttp';
 
 const REQUEST = {
@@ -8,7 +7,7 @@ const REQUEST = {
 const HTTP = 'http';
 
 test('setProtocol()', async () => {
-	const result = await makeComplete(setHttp)(REQUEST);
+	const result = await setHttp()(REQUEST);
 	const url = new URL(result.url);
 	expect(url.protocol).toBe(`${HTTP}:`);
 });

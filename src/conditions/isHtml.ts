@@ -1,4 +1,4 @@
 import contentType from './contentType';
-import { incomplete, partial } from '../utils';
+import { partial } from '../utils';
 
-export default incomplete(() => partial(contentType, 'text/html'));
+export default () => partial(contentType, ['text/html']);

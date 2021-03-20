@@ -1,6 +1,6 @@
 import Router from './Router';
 
-const makeHandler = () => ({ request: Symbol(), response: Symbol() });
+const makeHandler = () => ({ request: [Symbol()], response: [Symbol()] });
 
 const ROOT_HANDLER = makeHandler();
 const POSTS_HANDLER = makeHandler();

@@ -13,7 +13,7 @@ function makeEvent(url: string) {
 
 test('redirectHttp on https URLs', async () => {
 	const manager = new RequestManager({
-		request: redirectHttp,
+		request: redirectHttp(),
 	});
 
 	const response = await manager.makeResponse(
@@ -24,7 +24,7 @@ test('redirectHttp on https URLs', async () => {
 
 test('redirectHttp does nothing on http URLs', async () => {
 	const manager = new RequestManager({
-		request: redirectHttp,
+		request: redirectHttp(),
 	});
 
 	const response = await manager.makeResponse(

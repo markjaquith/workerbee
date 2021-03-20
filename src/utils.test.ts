@@ -1,7 +1,4 @@
 import {
-	isIncomplete,
-	makeComplete,
-	incomplete,
 	withCurrent,
 	curryWithCurrent,
 	transformLastArgument,
@@ -12,122 +9,192 @@ import {
 	withResponse,
 } from './utils';
 
-const RESULT = 'result';
+const RESULT = new Request('https://example.com/');
 
-test('incomplete functions', () => {
-	const fn = () => RESULT;
-	const incompleteFn = incomplete(() => fn);
-	const doubleWrappedIncompleteFn = incomplete(() => incompleteFn);
+describe('with*() and curryWithCurrent()', () => {
+	let CURRENT, INPUT, inOut, threeArgs;
 
-	expect(isIncomplete(fn)).toBe(false);
-	expect(isIncomplete(incompleteFn)).toBe(true);
-	expect(isIncomplete(doubleWrappedIncompleteFn)).toBe(true);
-	expect(isIncomplete(makeComplete(incompleteFn))).toBe(false);
-	expect(isIncomplete(makeComplete(doubleWrappedIncompleteFn))).toBe(false);
-	expect(makeComplete(incompleteFn)()).toBe(RESULT);
-	expect(makeComplete(doubleWrappedIncompleteFn)()).toBe(RESULT);
-});
+	beforeAll(() => {
+		CURRENT = new Request('https://example.com/');
+		INPUT = {
+			current: CURRENT,
+			request: new Request('https://no.com/'),
+			response: new Response('no'),
+		};
 
-const CURRENT = 'current';
-const INPUT = {
-	current: CURRENT,
-};
+		inOut = async function (input) {
+			return input;
+		};
 
-function inOut(input) {
-	return input;
-}
+		threeArgs = async function (
+			_one: any,
+			_two: any,
+			current: any,
+		): Promise<Request> {
+			return current;
+		};
+	});
 
-function threeArgs(_one, _two, input) {
-	return input;
-}
+	test('withCurrent() returns request from the last argument called', async () => {
+		expect(await inOut(INPUT)).not.toBe(CURRENT);
+		expect(await threeArgs('one', 'two', INPUT)).not.toBe(CURRENT);
+		expect(await withCurrent(inOut)(INPUT)).toBe(CURRENT);
+		expect(await withCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
+	});
 
-test('withCurrent', () => {
-	expect(inOut(INPUT)).not.toBe(CURRENT);
-	expect(threeArgs('one', 'two', INPUT)).not.toBe(CURRENT);
-	expect(withCurrent(inOut)(INPUT)).toBe(CURRENT);
-	expect(withCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
-});
-
-describe('withRequest()', () => {
-	test('returns request from the last argument called', () => {
-		const fn = (_a, b) => b;
+	test('withRequest() returns request from the last argument called', () => {
+		const fn = (_a: any, b: any) => b;
 		expect(withRequest(fn)('a', { request: 'request' })).toBe('request');
 	});
-});
 
-describe('withResponse()', () => {
-	test('returns response from the last argument called', () => {
-		const fn = (_a, b) => b;
+	test('withResponse() returns response from the last argument called', () => {
+		const fn = (_a: any, b: any) => b;
 		expect(withResponse(fn)('a', { response: 'response' })).toBe('response');
 	});
+
+	test('curryWithCurrent() returns current fron the last arg, with currying', async () => {
+		expect(await curryWithCurrent(threeArgs)('one', 'two', INPUT)).toBe(
+			CURRENT,
+		);
+		expect(await curryWithCurrent(threeArgs)('one')('two')(INPUT)).toBe(
+			CURRENT,
+		);
+	});
 });
 
-test('curryWithCurrent', () => {
-	expect(curryWithCurrent(threeArgs)('one', 'two', INPUT)).toBe(CURRENT);
-	expect(curryWithCurrent(threeArgs)('one')('two')(INPUT)).toBe(CURRENT);
-});
-
-test('transformLastArgument()', () => {
+describe('transformLastArgument()', () => {
 	const makeZ = () => 'z';
-	expect(transformLastArgument(makeZ, () => 'result')()).toBe('result');
-	expect(transformLastArgument(makeZ, (z) => z)('a')).toBe('z');
-	expect(transformLastArgument(makeZ, (_a, z) => z)('a', 'b')).toBe('z');
-	expect(transformLastArgument(makeZ, (_a, _b, z) => z)('a', 'b', 'c')).toBe(
-		'z',
-	);
-	expect(
-		transformLastArgument(makeZ, (_a, _b, _c, z) => z)('a', 'b', 'c', 'd'),
-	).toBe('z');
-	expect(
-		transformLastArgument(makeZ, (_a, _b, _c, _d, z) => z)(
-			'a',
-			'b',
-			'c',
-			'd',
-			'e',
-		),
-	).toBe('z');
-	// @ts-ignore
-	expect(() =>
-		transformLastArgument(makeZ, (_a, _b, _c, _d, _e, z) => z)(
-			'a',
-			'b',
-			'c',
-			'd',
-			'e',
-		),
-	).toThrow();
-});
 
-test('matchesValue()', () => {
-	const startsWithA = (str) => str.startsWith('A');
-	const endsWithZ = (str) => str.endsWith('Z');
-	expect(matchesValue([startsWithA, endsWithZ], 'ABUZZ')).toBe(true);
-	expect(matchesValue([startsWithA, endsWithZ], 'ZEBRA')).toBe(false);
-});
-
-test('toArray()', () => {
-	expect(toArray([])).to;
-	expect(toArray(['foo', 'bar'])).toStrictEqual(['foo', 'bar']);
-	expect(toArray({ foo: 'bar' })).toStrictEqual([{ foo: 'bar' }]);
-	expect(toArray('foo')).toStrictEqual(['foo']);
-	expect(toArray(null)).toStrictEqual([]);
-	expect(toArray(undefined)).toStrictEqual([]);
-});
-
-test('getCookie()', () => {
-	const cookie = 'name=Mark; eyes=blue';
-	const headers = new Headers();
-	headers.set('cookie', cookie);
-	const request = new Request('https://example.com/', {
-		method: 'GET',
-		headers,
+	test('0 args', () => {
+		expect(transformLastArgument(makeZ, () => 'result')()).toBe('result');
 	});
 
-	const requestWithNoCookies = new Request('https://example.com/');
+	test('1 arg', () => {
+		expect(transformLastArgument(makeZ, (z) => z)('a')).toBe('z');
+	});
 
-	expect(getCookie(request, 'eyes')).toBe('blue');
-	expect(getCookie(request, 'name')).toBe('Mark');
-	expect(getCookie(request, 'age')).toBeNull();
-	expect(getCookie(requestWithNoCookies, 'name')).toBeNull();
+	test('2 args', () => {
+		expect(transformLastArgument(makeZ, (_a, z) => z)('a', 'b')).toBe('z');
+	});
+
+	test('3 args', () => {
+		expect(transformLastArgument(makeZ, (_a, _b, z) => z)('a', 'b', 'c')).toBe(
+			'z',
+		);
+	});
+
+	test('4 args', () => {
+		expect(
+			transformLastArgument(makeZ, (_a, _b, _c, z) => z)('a', 'b', 'c', 'd'),
+		).toBe('z');
+	});
+
+	test('5 args', () => {
+		expect(
+			transformLastArgument(makeZ, (_a, _b, _c, _d, z) => z)(
+				'a',
+				'b',
+				'c',
+				'd',
+				'e',
+			),
+		).toBe('z');
+	});
+
+	test('6 args (throws exception)', () => {
+		// @ts-ignore
+		expect(() =>
+			// @ts-ignore (I am adding an extra argument on purpose).
+			transformLastArgument(
+				makeZ,
+				(_a: any, _b: any, _c: any, _d: any, _e: any, z: any) => z,
+			)('a', 'b', 'c', 'd', 'e'),
+		).toThrow();
+	});
+});
+
+describe('matchesValue()', () => {
+	test('can match a single value matcher', () => {
+		const startsWithA = (str: string) => str.startsWith('A');
+		const endsWithZ = (str: string) => str.endsWith('Z');
+		expect(matchesValue(startsWithA, 'ABUZZ')).toBe(true);
+		expect(matchesValue(endsWithZ, 'ABUZZ')).toBe(true);
+		expect(matchesValue(startsWithA, 'ZEBRA')).toBe(false);
+		expect(matchesValue(endsWithZ, 'ZEBRA')).toBe(false);
+	});
+
+	test('can match two combined value matchers', () => {
+		const startsWithA = (str: string) => str.startsWith('A');
+		const endsWithZ = (str: string) => str.endsWith('Z');
+		expect(matchesValue([startsWithA, endsWithZ], 'ABUZZ')).toBe(true);
+		expect(matchesValue([startsWithA, endsWithZ], 'ZEBRA')).toBe(false);
+	});
+});
+
+describe('toArray()', () => {
+	test('[]', () => {
+		expect(toArray([])).toStrictEqual([]);
+	});
+
+	test('string[]', () => {
+		expect(toArray(['foo', 'bar'])).toStrictEqual(['foo', 'bar']);
+	});
+
+	test('{}', () => {
+		expect(toArray({ foo: 'bar' })).toStrictEqual([{ foo: 'bar' }]);
+	});
+
+	test('string', () => {
+		expect(toArray('foo')).toStrictEqual(['foo']);
+	});
+
+	test('null', () => {
+		expect(toArray(null)).toStrictEqual([]);
+	});
+
+	test('undefined', () => {
+		expect(toArray(undefined)).toStrictEqual([]);
+	});
+
+	test('()', () => {
+		expect(toArray()).toStrictEqual([]);
+	});
+
+	test('{}.bar', () => {
+		const foo = {};
+		// @ts-ignore
+		expect(toArray(foo.bar)).toStrictEqual([]);
+	});
+});
+
+describe('getCookie()', () => {
+	let cookie, headers, request, requestWithNoCookies;
+
+	beforeAll(() => {
+		cookie = 'name=Mark; eyes=blue';
+		headers = new Headers();
+		headers.set('cookie', cookie);
+		request = new Request('https://example.com/', {
+			method: 'GET',
+			headers,
+		});
+
+		requestWithNoCookies = new Request('https://example.com/');
+	});
+
+	test('leading cookie', () => {
+		expect(getCookie(request, 'eyes')).toBe('blue');
+	});
+
+	test('ending cookie', () => {
+		expect(getCookie(request, 'name')).toBe('Mark');
+	});
+
+	test('missing cookie', () => {
+		expect(getCookie(request, 'age')).toBeNull();
+	});
+
+	test('request with no cookie header', () => {
+		expect(getCookie(requestWithNoCookies, 'name')).toBeNull();
+	});
 });

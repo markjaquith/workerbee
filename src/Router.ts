@@ -1,4 +1,4 @@
-import { partial } from './utils';
+import { partial, toArray } from './utils';
 import { Handler, Handlers } from './RequestManager';
 import HostRouter from './HostRouter';
 import MethodRouter from './MethodRouter';
@@ -7,16 +7,12 @@ import BaseRouter, {
 	Route,
 	RouterCallback,
 	RouterHandlers,
+	HandlerMap,
 } from './BaseRouter';
 
 export type MethodRegistrar = (pattern: string, ...Handler) => Router;
 export interface Params {
 	[key: string]: string | string[];
-}
-
-export interface HandlerMap {
-	request?: Handlers;
-	response?: Handlers;
 }
 
 const METHODS = [
@@ -48,33 +44,46 @@ export class Router extends BaseRouter {
 		this.register = this.register.bind(this);
 
 		for (const method of METHODS) {
-			this[method.toLowerCase()] = partial(this.register, method);
+			this[method.toLowerCase()] = partial(this.register, [method]);
 		}
 
-		this.all = partial(this.register, '*');
+		this.all = partial(this.register, ['*']);
 	}
 
-	getPushedHandlers(handlers: HandlerMap | Handler[]) {
-		const firstHandlerIsMap = handlers[0].request || handlers[0].response;
+	isHandlerMap(handler: HandlerMap | Handler): handler is HandlerMap {
+		return (
+			handler.hasOwnProperty('request') || handler.hasOwnProperty('response')
+		);
+	}
+
+	makeHandlers(
+		handler: Handler | HandlerMap,
+		...otherHandlers: Handler[]
+	): RouterHandlers {
 		let pushedHandlers: RouterHandlers = {
 			request: [],
 			response: [],
 		};
 
-		if (!firstHandlerIsMap) {
-			pushedHandlers.request = handlers as Handler[];
+		if (this.isHandlerMap(handler)) {
+			Object.assign(pushedHandlers, handler);
 		} else {
-			pushedHandlers = handlers[0];
+			pushedHandlers.request = [handler, ...otherHandlers] as Handler[];
 		}
 
 		return pushedHandlers;
 	}
 
-	register(method: string, pathPattern: string, ...handlers): this {
+	register(
+		method: string,
+		pathPattern: string,
+		handler: HandlerMap | Handler,
+		...otherHandlers: Handler[]
+	): this {
 		this.addRouter(
 			new MethodRouter(method).addRouter(
 				new PathRouter(pathPattern).setHandlers(
-					this.getPushedHandlers(handlers),
+					this.makeHandlers(handler, ...otherHandlers),
 				),
 			),
 		);

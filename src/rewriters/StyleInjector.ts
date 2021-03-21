@@ -1,11 +1,11 @@
 export default class StyleInjector {
 	private cssString: string;
 
-	constructor(cssString) {
+	constructor(cssString: string) {
 		this.cssString = cssString;
 	}
 
-	element(el) {
+	element(el: Element) {
 		el.append(`<style>${this.cssString}</style>`, { html: true });
 	}
 }

@@ -1,12 +1,17 @@
 import { STRIP_PARAMS } from '../config';
+import { HandlerProcessor } from '../RequestManager';
 import { setRequestUrl, isRedirect } from '../utils';
+
+interface ParamMap {
+	[param: string]: string;
+}
 
 /**
  * Fetch and log a request
  * @param {Request} request
  */
 export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
-	return async ({ request, addResponseHandler }) => {
+	return async ({ request, addResponseHandler }: HandlerProcessor) => {
 		const url = new URL(request.url);
 
 		const strippableParams = getStrippableParams(url, params);
@@ -26,22 +31,22 @@ export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
 	};
 }
 
-function getStrippableParams(url, params: string[] = []) {
-	const strippableParams = {};
+function getStrippableParams(url: URL, params: string[] = []): ParamMap {
+	const strippableParams: ParamMap = {};
 
 	for (const param of params) {
 		if (url.searchParams.has(param)) {
-			strippableParams[param] = url.searchParams.get(param);
+			strippableParams[param] = url.searchParams.get(param) ?? '';
 		}
 	}
 
 	return strippableParams;
 }
 
-function restoreStrippedParamsOnRedirect(params = {}) {
-	return async ({ response }) => {
-		if (isRedirect(response)) {
-			const redirectLocation = new URL(response.headers.get('location'));
+function restoreStrippedParamsOnRedirect(params: ParamMap = {}) {
+	return async ({ response }: HandlerProcessor) => {
+		if (response instanceof Response && isRedirect(response)) {
+			const redirectLocation = new URL(response.headers.get('location') ?? '');
 			if (Object.keys(params).length) {
 				for (const param in params) {
 					console.log('🕊 Restore param', param, params[param]);

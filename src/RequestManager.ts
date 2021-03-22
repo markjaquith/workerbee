@@ -24,7 +24,7 @@ export interface AddHandlerOptions {
 	immediate?: boolean;
 }
 
-type HandlerAdder = (handler: Handler, options: AddHandlerOptions) => void;
+type HandlerAdder = (handler: Handler, options?: AddHandlerOptions) => void;
 
 export interface HandlerProcessor {
 	addRequestHandler?: HandlerAdder;

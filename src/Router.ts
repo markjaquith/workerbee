@@ -10,22 +10,14 @@ import BaseRouter, {
 	HandlerMap,
 } from './BaseRouter';
 
-export type MethodRegistrar = (pattern: string, ...Handler) => Router;
+export type MethodRegistrar = (
+	pathPattern: string,
+	handler: HandlerMap | Handler,
+	...otherHandlers: Handler[]
+) => Router;
 export interface Params {
 	[key: string]: string | string[];
 }
-
-const METHODS = [
-	'CONNECT',
-	'DELETE',
-	'GET',
-	'HEAD',
-	'OPTIONS',
-	'PATCH',
-	'POST',
-	'PUT',
-	'TRACE',
-];
 
 export class Router extends BaseRouter {
 	connect: MethodRegistrar;
@@ -43,10 +35,18 @@ export class Router extends BaseRouter {
 		super();
 		this.register = this.register.bind(this);
 
-		for (const method of METHODS) {
-			this[method.toLowerCase()] = partial(this.register, [method]);
-		}
+		// Normal HTTP methods.
+		this.connect = partial(this.register, ['CONNECT']);
+		this.delete = partial(this.register, ['DELETE']);
+		this.get = partial(this.register, ['GET']);
+		this.head = partial(this.register, ['HEAD']);
+		this.options = partial(this.register, ['OPTIONS']);
+		this.patch = partial(this.register, ['PATCH']);
+		this.post = partial(this.register, ['POST']);
+		this.put = partial(this.register, ['PUT']);
+		this.trace = partial(this.register, ['TRACE']);
 
+		// Special one to match all HTTP methods.
 		this.all = partial(this.register, ['*']);
 	}
 

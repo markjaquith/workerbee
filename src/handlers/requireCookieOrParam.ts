@@ -1,9 +1,13 @@
 import { getCookie } from '../utils';
 import cookie from 'cookie';
 import forbidden from './forbidden';
+import { HandlerProcessor } from '../RequestManager';
 
-export default function requireCookieOrParam(name, message = 'Access denied') {
-	return async function ({ request }) {
+export default function requireCookieOrParam(
+	name: string,
+	message = 'Access denied',
+) {
+	return async function ({ request }: HandlerProcessor) {
 		const url = new URL(request.url);
 
 		if (url.searchParams.has(name)) {

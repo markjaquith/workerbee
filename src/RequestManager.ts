@@ -14,6 +14,14 @@ interface FinalRequestOptions {
 	request: Request;
 	params: Params;
 }
+
+interface FinalResponseOptions {
+	request: Request;
+	response: Response;
+	originalRequest: Request;
+	params: Params;
+}
+
 export interface Options {
 	request?: Handlers;
 	response?: Handlers;
@@ -27,11 +35,11 @@ export interface AddHandlerOptions {
 type HandlerAdder = (handler: Handler, options?: AddHandlerOptions) => void;
 
 export interface HandlerProcessor {
-	addRequestHandler?: HandlerAdder;
+	addRequestHandler: HandlerAdder;
 	addResponseHandler: HandlerAdder;
 	request: Request;
 	current: Request | Response;
-	response: Response | null;
+	response: Response;
 	originalRequest: Request;
 	params: Params;
 	phase: string;
@@ -104,11 +112,15 @@ export default class RequestManager {
 		}
 	}
 
-	async getFinalRequest({ request, params }: FinalRequestOptions) {
+	async getFinalRequest({
+		request,
+		params,
+	}: FinalRequestOptions): Promise<[Request, Response | null]> {
 		const originalRequest = request;
 
 		// Response starts null.
 		let response: Response | null = null;
+		const dummyResponse = new Response();
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
@@ -123,7 +135,7 @@ export default class RequestManager {
 				addResponseHandler: this.addResponseHandler,
 				request,
 				current: request,
-				response,
+				response: response ?? dummyResponse,
 				originalRequest,
 				params,
 				phase: 'request',
@@ -164,14 +176,19 @@ export default class RequestManager {
 		return [request, response];
 	}
 
-	async fetch(request) {
+	async fetch(request: Request) {
 		this.log('➡️', request.url);
 		const response = await fetch(request);
 		this.log('⬅️', response);
 		return response;
 	}
 
-	async getFinalResponse({ request, response, originalRequest, params }) {
+	async getFinalResponse({
+		request,
+		response,
+		originalRequest,
+		params,
+	}: FinalResponseOptions) {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
 			const responseHandler = this.responseHandlers.shift();
@@ -181,6 +198,7 @@ export default class RequestManager {
 			}
 
 			const result = await responseHandler({
+				addRequestHandler: this.addRequestHandler,
 				addResponseHandler: this.addResponseHandler,
 				request,
 				response,
@@ -204,7 +222,7 @@ export default class RequestManager {
 		return response;
 	}
 
-	async makeResponse(event) {
+	async makeResponse(event: FetchEvent) {
 		const { request } = event;
 
 		this.group(request.url);
@@ -238,7 +256,7 @@ export default class RequestManager {
 			request,
 			params,
 		});
-		const response = earlyResponse || (await this.fetch(finalRequest));
+		const response = earlyResponse ?? (await this.fetch(finalRequest));
 		const finalResponse = await this.getFinalResponse({
 			response,
 			request,

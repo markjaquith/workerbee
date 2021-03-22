@@ -1,3 +1,5 @@
+import { HandlerProcessor } from '../RequestManager';
+
 export type Header = [key: string, value: string];
 export interface HeaderMap {
 	[header: string]: string;
@@ -5,7 +7,7 @@ export interface HeaderMap {
 export type Headers = Header[] | HeaderMap;
 
 export default function setResponseHeaders(headers: Headers = []) {
-	return async function ({ request }) {
+	return async function ({ request }: HandlerProcessor) {
 		const newRequest = new Request(request);
 		let changed = false;
 

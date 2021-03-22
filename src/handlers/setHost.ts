@@ -1,10 +1,11 @@
+import { HandlerProcessor } from '../RequestManager';
 import setUrl from './setUrl';
 
 export default function setHost(newHost: string) {
-	return async ({ request }) => {
-		const url = new URL(request.url);
+	return async (processor: HandlerProcessor) => {
+		const url = new URL(processor.request.url);
 		url.host = newHost;
 
-		return setUrl(url)({ request });
+		return setUrl(url)(processor);
 	};
 }

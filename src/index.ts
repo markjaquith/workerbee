@@ -47,7 +47,7 @@ export function handleFetch(options: any = {}) {
 		...options,
 	};
 
-	const listener = (event) => {
+	const listener = (event: FetchEvent) => {
 		if (options.passThroughOnException) {
 			event.passThroughOnException();
 		}

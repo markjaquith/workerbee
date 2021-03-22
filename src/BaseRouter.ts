@@ -1,6 +1,6 @@
 import { Handler, Handlers } from './RequestManager';
 
-export type RouterCallback = (RouterInterface) => void;
+export type RouterCallback = (router: RouterInterface) => void;
 
 export interface Params {
 	[key: string]: string | string[];

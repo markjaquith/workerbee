@@ -1,1 +1,2 @@
-export default (param, { url }) => new URL(url).searchParams.has(param);
+export default (param: string, { url }: Request) =>
+	new URL(url).searchParams.has(param);

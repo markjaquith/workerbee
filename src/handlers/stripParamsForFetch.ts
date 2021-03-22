@@ -45,7 +45,7 @@ function getStrippableParams(url: URL, params: string[] = []): ParamMap {
 
 function restoreStrippedParamsOnRedirect(params: ParamMap = {}) {
 	return async ({ response }: HandlerProcessor) => {
-		if (response instanceof Response && isRedirect(response)) {
+		if (isRedirect(response)) {
 			const redirectLocation = new URL(response.headers.get('location') ?? '');
 			if (Object.keys(params).length) {
 				for (const param in params) {

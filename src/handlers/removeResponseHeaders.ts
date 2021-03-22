@@ -1,5 +1,7 @@
+import { HandlerProcessor } from '../RequestManager';
+
 export default function removeResponseHeaders(headers = []) {
-	return async function ({ response }) {
+	return async function ({ response }: HandlerProcessor) {
 		const newResponse = new Response(response.body, response);
 		let removedAny = false;
 

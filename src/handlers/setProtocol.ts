@@ -1,9 +1,9 @@
 import { HandlerProcessor } from '../RequestManager';
 import setUrl from './setUrl';
 
-export default (protocol: string) => async ({ request }: HandlerProcessor) => {
-	const url = new URL(request.url);
+export default (protocol: string) => async (processor: HandlerProcessor) => {
+	const url = new URL(processor.request.url);
 	url.protocol = protocol;
 
-	return setUrl(url)({ request });
+	return setUrl(url)(processor);
 };

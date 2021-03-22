@@ -1,11 +1,14 @@
-export default function all(...conditions) {
+import { HandlerProcessor } from '../RequestManager';
+import { Condition } from '../utils';
+
+export default function all(...conditions: Condition[]) {
 	if (!conditions.length) {
 		return () => false;
 	}
 
-	return (message) => {
+	return (processor: HandlerProcessor) => {
 		for (const condition of conditions) {
-			if (!condition(message)) {
+			if (!condition(processor)) {
 				return false;
 			}
 		}

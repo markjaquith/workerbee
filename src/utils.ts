@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import { curry, partial, partialRight } from 'ramda';
-import type { Handler } from './RequestManager';
+import type { HandlerProcessor } from './RequestManager';
 import Text from './Text';
 
 export type ValueMatchingFunction = (value: string) => boolean;
@@ -115,13 +115,13 @@ export function transformLastArgument<F extends AnyFunc>(
 	}
 }
 
-interface HandlerInput {
+export interface HandlerInput {
 	current: Request | Response;
 	request: Request;
 	response: Response;
 }
 
-type Condition = (input: HandlerInput) => boolean;
+export type Condition = (manager: HandlerProcessor) => boolean;
 
 // Passes the current property of the last passed argument to the underlying function.
 export function withCurrent<F extends Condition>(fn: F): F {

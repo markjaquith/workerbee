@@ -19,4 +19,7 @@ test('routeParam', () => {
 	expect(routeParam('foo', contains('bar'), managerData)).toBe(true);
 	expect(routeParam('foo', startsWith('bar'), managerData)).toBe(true);
 	expect(routeParam('foo2', contains('bar'), managerData)).toBe(false);
+	expect(routeParam('foo4', contains('four'), managerData)).toBe(false);
+	expect(routeParam('foo4', contains('two'), managerData)).toBe(true);
+	expect(routeParam('foo4', startsWith('thr'), managerData)).toBe(true);
 });

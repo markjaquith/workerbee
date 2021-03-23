@@ -6,12 +6,19 @@ export default function (
 	matcher: ValueMatcher,
 	{ params }: ManagerData,
 ) {
-	let paramValue = params[param] || false;
+	const paramValue = params[param] || false;
 
-	// TODO: handle multiple values.
-	if (Array.isArray(paramValue)) {
-		paramValue = paramValue[0];
+	// If we got a single param, run the comparison on that.
+	if (!Array.isArray(paramValue)) {
+		return paramValue && matchesValue(matcher, paramValue);
 	}
 
-	return paramValue && matchesValue(matcher, paramValue);
+	for (const eachParamValue of paramValue) {
+		const result = eachParamValue && matchesValue(matcher, eachParamValue);
+		if (result) {
+			return result;
+		}
+	}
+
+	return false;
 }

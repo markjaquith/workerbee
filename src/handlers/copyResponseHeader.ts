@@ -1,7 +1,7 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 
 export default function copyResponseHeader(from: string, to: string) {
-	return async function ({ response }: HandlerProcessor) {
+	return async function ({ response }: ManagerData) {
 		const { headers } = response;
 
 		if (headers.has(from)) {

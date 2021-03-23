@@ -1,13 +1,13 @@
 import { Router } from './Router';
 import { toArray, isRedirect, testing } from './utils';
-
 import type { Params } from './Router';
 
 export type HandlerResult = void | Request | Response;
-export type Handler = (
-	manager: HandlerProcessor,
-) => void | Promise<HandlerResult>;
+
+export type Handler = (manager: ManagerData) => void | Promise<HandlerResult>;
+
 export type Handlers = Handler | Handler[];
+
 export type RouterCallback = (router: Router) => void;
 
 interface FinalRequestOptions {
@@ -32,9 +32,12 @@ export interface AddHandlerOptions {
 	immediate?: boolean;
 }
 
-type HandlerAdder = (handler: Handler, options?: AddHandlerOptions) => void;
+export type HandlerAdder = (
+	handler: Handler,
+	options?: AddHandlerOptions,
+) => void;
 
-export interface HandlerProcessor {
+export interface ManagerData {
 	addRequestHandler: HandlerAdder;
 	addResponseHandler: HandlerAdder;
 	request: Request;
@@ -66,6 +69,26 @@ export default class RequestManager {
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
+	}
+
+	makeData(data: Partial<ManagerData>): ManagerData {
+		const request = new Request('');
+		const response = new Response();
+		const defaults = {
+			addRequestHandler: this.addRequestHandler,
+			addResponseHandler: this.addResponseHandler,
+			phase: 'request',
+			request: request,
+			response: response,
+			current: request,
+			originalRequest: request,
+			params: {},
+		};
+
+		return {
+			...defaults,
+			...data,
+		};
 	}
 
 	addRequestHandler(
@@ -120,7 +143,6 @@ export default class RequestManager {
 
 		// Response starts null.
 		let response: Response | null = null;
-		const dummyResponse = new Response();
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
@@ -130,16 +152,15 @@ export default class RequestManager {
 				continue;
 			}
 
-			const result = await requestHandler({
-				addRequestHandler: this.addRequestHandler,
-				addResponseHandler: this.addResponseHandler,
-				request,
-				current: request,
-				response: response ?? dummyResponse,
-				originalRequest,
-				params,
-				phase: 'request',
-			});
+			const result = await requestHandler(
+				this.makeData({
+					request,
+					current: request,
+					originalRequest,
+					params,
+					phase: 'request',
+				}),
+			);
 
 			if (result instanceof Response) {
 				// Request handlers can bail early and return a response.
@@ -197,16 +218,16 @@ export default class RequestManager {
 				continue;
 			}
 
-			const result = await responseHandler({
-				addRequestHandler: this.addRequestHandler,
-				addResponseHandler: this.addResponseHandler,
-				request,
-				response,
-				current: response,
-				originalRequest,
-				phase: 'response',
-				params,
-			});
+			const result = await responseHandler(
+				this.makeData({
+					request,
+					response,
+					current: response,
+					originalRequest,
+					phase: 'response',
+					params,
+				}),
+			);
 
 			// If we receive a result, replace the response.
 			if (result instanceof Response) {

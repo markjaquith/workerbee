@@ -1,4 +1,4 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 import { setRequestUrl } from '../utils';
 
 type Stringable = {
@@ -6,7 +6,7 @@ type Stringable = {
 };
 
 export default function setUrl(url: Stringable) {
-	return async ({ request }: HandlerProcessor) => {
+	return async ({ request }: ManagerData) => {
 		return setRequestUrl(url.toString(), request);
 	};
 }

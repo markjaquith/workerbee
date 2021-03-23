@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import { curry, partial, partialRight } from 'ramda';
-import type { HandlerProcessor } from './RequestManager';
+import type { ManagerData } from './RequestManager';
 import Text from './Text';
 
 export type ValueMatchingFunction = (value: string) => boolean;
@@ -121,7 +121,7 @@ export interface HandlerInput {
 	response: Response;
 }
 
-export type Condition = (manager: HandlerProcessor) => boolean;
+export type Condition = (manager: ManagerData) => boolean;
 
 // Passes the current property of the last passed argument to the underlying function.
 export function withCurrent<F extends Condition>(fn: F): F {

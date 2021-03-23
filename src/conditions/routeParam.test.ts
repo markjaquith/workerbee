@@ -1,19 +1,22 @@
-import { partialRight } from '../utils';
 import { contains, startsWith } from '../logic';
+import RequestManager from '../RequestManager';
 import routeParam from './routeParam';
 
-const MESSAGE = {
+const request = new Request('https://example.com/');
+
+const managerData = new RequestManager().makeData({
+	current: request,
+	request,
 	params: {
 		foo: 'bar 123',
 		foo2: '',
 		foo3: 'bar3 123',
+		foo4: ['one', 'two', 'three'],
 	},
-};
-
-const applyRouteParam = partialRight(routeParam, [MESSAGE]);
+});
 
 test('routeParam', () => {
-	expect(applyRouteParam('foo', contains('bar'))).toBe(true);
-	expect(applyRouteParam('foo', startsWith('bar'))).toBe(true);
-	expect(applyRouteParam('foo2', contains('bar'))).toBe(false);
+	expect(routeParam('foo', contains('bar'), managerData)).toBe(true);
+	expect(routeParam('foo', startsWith('bar'), managerData)).toBe(true);
+	expect(routeParam('foo2', contains('bar'), managerData)).toBe(false);
 });

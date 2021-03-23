@@ -1,7 +1,7 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 
 export default function removeResponseHeaders(headers = []) {
-	return async function ({ response }: HandlerProcessor) {
+	return async function ({ response }: ManagerData) {
 		const newResponse = new Response(response.body, response);
 		let removedAny = false;
 

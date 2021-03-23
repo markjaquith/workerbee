@@ -1,10 +1,10 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 import { matchesValue, ValueMatcher } from '../utils';
 
 export default function (
 	param: string,
 	matcher: ValueMatcher,
-	{ params }: HandlerProcessor,
+	{ params }: ManagerData,
 ) {
 	let paramValue = params[param] || false;
 

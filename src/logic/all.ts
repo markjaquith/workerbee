@@ -1,4 +1,4 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 import { Condition } from '../utils';
 
 export default function all(...conditions: Condition[]) {
@@ -6,7 +6,7 @@ export default function all(...conditions: Condition[]) {
 		return () => false;
 	}
 
-	return (processor: HandlerProcessor) => {
+	return (processor: ManagerData) => {
 		for (const condition of conditions) {
 			if (!condition(processor)) {
 				return false;

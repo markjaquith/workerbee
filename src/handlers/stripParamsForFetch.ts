@@ -1,5 +1,5 @@
 import { STRIP_PARAMS } from '../config';
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 import { setRequestUrl, isRedirect } from '../utils';
 
 interface ParamMap {
@@ -11,7 +11,7 @@ interface ParamMap {
  * @param {Request} request
  */
 export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
-	return async ({ request, addResponseHandler }: HandlerProcessor) => {
+	return async ({ request, addResponseHandler }: ManagerData) => {
 		const url = new URL(request.url);
 
 		const strippableParams = getStrippableParams(url, params);
@@ -44,7 +44,7 @@ function getStrippableParams(url: URL, params: string[] = []): ParamMap {
 }
 
 function restoreStrippedParamsOnRedirect(params: ParamMap = {}) {
-	return async ({ response }: HandlerProcessor) => {
+	return async ({ response }: ManagerData) => {
 		if (isRedirect(response)) {
 			const redirectLocation = new URL(response.headers.get('location') ?? '');
 			if (Object.keys(params).length) {

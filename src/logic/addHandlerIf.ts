@@ -1,4 +1,4 @@
-import type { Handler, HandlerProcessor } from '../RequestManager';
+import type { Handler, ManagerData } from '../RequestManager';
 import type { Condition } from '../utils';
 
 /**
@@ -7,7 +7,7 @@ import type { Condition } from '../utils';
  * when applied to the Request object.
  */
 export default function (condition: Condition, ...handlers: Handler[]) {
-	return async (manager: HandlerProcessor) => {
+	return async (manager: ManagerData) => {
 		if (condition(manager)) {
 			for (const handler of handlers.reverse()) {
 				const adder =

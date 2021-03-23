@@ -1,5 +1,5 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 
-export default () => ({ request: { url } }: HandlerProcessor) => {
+export default () => ({ request: { url } }: ManagerData) => {
 	return new URL(url).protocol === 'https:';
 };

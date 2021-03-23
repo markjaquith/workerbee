@@ -1,8 +1,8 @@
-import { HandlerProcessor } from '../RequestManager';
+import { ManagerData } from '../RequestManager';
 import type { Headers } from './setResponseHeaders';
 
 export default function appendResponseHeaders(headers: Headers = []) {
-	return async function ({ response }: HandlerProcessor) {
+	return async function ({ response }: ManagerData) {
 		let newResponse;
 
 		if (!Array.isArray(headers)) {

@@ -1,15 +1,30 @@
 import StyleInjector from './StyleInjector';
+import HTMLRewriter from '../HTMLRewriter';
 
-const STYLE = 'div { color: pink; }';
+let style, response, handler;
 
-test('StyleInjector', () => {
-	const head = {
-		append: jest.fn(),
+beforeAll(() => {
+	response = new Response('<div></div><p>Pink</p>', {
+		headers: new Headers({
+			'Content-Type': 'text/html',
+		}),
+	});
+
+	style = 'p { color: pink; }';
+
+	const pinkInjector = new StyleInjector(style);
+
+	handler = async ({ response }) => {
+		return new HTMLRewriter().on('div', pinkInjector).transform(response);
 	};
+});
 
-	const styleInjector = new StyleInjector(STYLE);
-
-	styleInjector.element(head);
-	expect(head.append).toHaveBeenCalledTimes(1);
-	expect(head.append).lastCalledWith(`<style>${STYLE}</style>`, { html: true });
+describe('StyleInjector', () => {
+	test('Injects styles', async () => {
+		const result = await handler({ response });
+		document.body.innerHTML = await result.text();
+		const div = document.body.querySelector('div');
+		expect(div.firstElementChild).toBeInstanceOf(HTMLStyleElement);
+		expect((div.firstElementChild as HTMLStyleElement).innerHTML).toBe(style);
+	});
 });

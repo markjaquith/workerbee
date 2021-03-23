@@ -40,6 +40,7 @@ export type HandlerAdder = (
 export interface ManagerData {
 	addRequestHandler: HandlerAdder;
 	addResponseHandler: HandlerAdder;
+	log: (message?: any, ...optionalParams: any[]) => void;
 	request: Request;
 	current: Request | Response;
 	response: Response;
@@ -69,6 +70,7 @@ export default class RequestManager {
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
+		this.log = this.log.bind(this);
 	}
 
 	makeData(data: Partial<ManagerData>): ManagerData {
@@ -77,6 +79,7 @@ export default class RequestManager {
 		const defaults = {
 			addRequestHandler: this.addRequestHandler,
 			addResponseHandler: this.addResponseHandler,
+			log: this.log,
 			phase: 'request',
 			request: request,
 			response: response,
@@ -146,11 +149,7 @@ export default class RequestManager {
 
 		// Loop through request handlers.
 		while (this.requestHandlers.length > 0 && !response) {
-			let requestHandler = this.requestHandlers.shift();
-
-			if (!requestHandler) {
-				continue;
-			}
+			let requestHandler = this.requestHandlers.shift()!;
 
 			const result = await requestHandler(
 				this.makeData({
@@ -212,11 +211,7 @@ export default class RequestManager {
 	}: FinalResponseOptions) {
 		// If there are response handlers, loop through them.
 		while (this.responseHandlers.length > 0) {
-			const responseHandler = this.responseHandlers.shift();
-
-			if (!responseHandler) {
-				continue;
-			}
+			const responseHandler = this.responseHandlers.shift()!;
 
 			const result = await responseHandler(
 				this.makeData({

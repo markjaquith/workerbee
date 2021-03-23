@@ -11,16 +11,14 @@ interface ParamMap {
  * @param {Request} request
  */
 export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
-	return async ({ request, addResponseHandler }: ManagerData) => {
+	return async ({ request, addResponseHandler, log }: ManagerData) => {
 		const url = new URL(request.url);
 
 		const strippableParams = getStrippableParams(url, params);
 
 		for (const param in strippableParams) {
-			if (url.searchParams.has(param)) {
-				console.log('✂️ Remove param', param);
-				url.searchParams.delete(param);
-			}
+			log('✂️ Remove param', param);
+			url.searchParams.delete(param);
 		}
 
 		// We changed the URL.
@@ -31,33 +29,31 @@ export default function stripParamsForFetch(params: string[] = STRIP_PARAMS) {
 	};
 }
 
-function getStrippableParams(url: URL, params: string[] = []): ParamMap {
+function getStrippableParams(url: URL, params: string[]): ParamMap {
 	const strippableParams: ParamMap = {};
 
 	for (const param of params) {
 		if (url.searchParams.has(param)) {
-			strippableParams[param] = url.searchParams.get(param) ?? '';
+			strippableParams[param] = url.searchParams.get(param)!;
 		}
 	}
 
 	return strippableParams;
 }
 
-function restoreStrippedParamsOnRedirect(params: ParamMap = {}) {
-	return async ({ response }: ManagerData) => {
+function restoreStrippedParamsOnRedirect(params: ParamMap) {
+	return async ({ response, log }: ManagerData) => {
 		if (isRedirect(response)) {
-			const redirectLocation = new URL(response.headers.get('location') ?? '');
-			if (Object.keys(params).length) {
-				for (const param in params) {
-					console.log('🕊 Restore param', param, params[param]);
-					redirectLocation.searchParams.set(param, params[param]);
-				}
-
-				const newResponse = new Response(response.body, response);
-				newResponse.headers.set('location', redirectLocation.toString());
-
-				return newResponse;
+			const redirectLocation = new URL(response.headers.get('location')!);
+			for (const param in params) {
+				log('🕊 Restore param', param, params[param]);
+				redirectLocation.searchParams.set(param, params[param]);
 			}
+
+			const newResponse = new Response(response.body, response);
+			newResponse.headers.set('location', redirectLocation.toString());
+
+			return newResponse;
 		}
 	};
 }

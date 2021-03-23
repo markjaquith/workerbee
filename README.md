@@ -231,10 +231,11 @@ that contains:
 
 ```js
 {
-  handlers,
+  addRequestHandler(),
+  addResponseHandler(),
   originalRequest,
   request,
-  response, // Only for response handlers.
+  response,
   current,
   params,
   phase,

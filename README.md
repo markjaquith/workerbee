@@ -233,6 +233,7 @@ that contains:
 {
   addRequestHandler(),
   addResponseHandler(),
+  addCfPropertiesHandler(),
   originalRequest,
   request,
   response,
@@ -246,6 +247,9 @@ that contains:
   handler (pass `{immediate: true}` to add it as the first or next handler).
 - `addResponseHandler(handler, options)` — dynamically adds another response
   handler (pass `{immediate: true}` to add it as the first or next handler).
+- `addCfPropertiesHandler(handler)` — adds a callback that receives and returns
+  new properties to pass to `fetch()` on the `cf` key (see [Cloudflare
+  documentation][cfpropertieshandlerdocs])
 - `request` — A `Request` object representing the current state of the request.
 - `originalRequest` — The original `Request` object (might be different if other
   handlers returned a new request).
@@ -256,6 +260,8 @@ that contains:
   responses, as both have headers. Thus it looks at `{ current: { headers } }`.
 - `params` — An object containing any param matches from the route.
 - `phase` — One of `"request"` or `"response"`.
+
+[cfpropertieshandlerdocs]: https://developers.cloudflare.com/workers/runtime-apis/request#requestinitcfproperties
 
 Request handlers can return three things:
 

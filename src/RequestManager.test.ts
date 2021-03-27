@@ -239,3 +239,25 @@ test('Response handler returning something other than Response or undefined trig
 		badRequestResponse,
 	);
 });
+
+test('Adding a cfPropertiesHandler results in fetch() called appropriately', async () => {
+	const originalFetch = global.fetch;
+	global.fetch = jest.fn(global.fetch);
+	const additionalCfProperties = { foo: 'bar' };
+	const manager = new RequestManager({
+		request: async ({ addCfPropertiesHandler }) => {
+			addCfPropertiesHandler((cfProperties) => ({
+				...cfProperties,
+				...additionalCfProperties,
+			}));
+		},
+	});
+	const event = makeEvent();
+	const request = event.request;
+	await manager.makeResponse(makeEvent());
+	expect(global.fetch).toHaveBeenCalledTimes(1);
+	expect(global.fetch).toHaveBeenLastCalledWith(request, {
+		cf: additionalCfProperties,
+	});
+	global.fetch = originalFetch;
+});

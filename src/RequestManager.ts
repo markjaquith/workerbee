@@ -37,9 +37,15 @@ export type HandlerAdder = (
 	options?: AddHandlerOptions,
 ) => void;
 
+export type CfPropertiesHandler = (
+	cf: RequestInitCfProperties,
+) => RequestInitCfProperties | Promise<RequestInitCfProperties>;
+export type CfPropertiesHandlerAdder = (handler: CfPropertiesHandler) => void;
+
 export interface ManagerData {
 	addRequestHandler: HandlerAdder;
 	addResponseHandler: HandlerAdder;
+	addCfPropertiesHandler: CfPropertiesHandlerAdder;
 	log: (message?: any, ...optionalParams: any[]) => void;
 	request: Request;
 	current: Request | Response;
@@ -52,6 +58,7 @@ export interface ManagerData {
 export default class RequestManager {
 	private requestHandlers: Handler[] = [];
 	private responseHandlers: Handler[] = [];
+	private cfPropertiesHandlers: CfPropertiesHandler[] = [];
 	private originalRequestHandlers: Handler[];
 	private originalResponseHandlers: Handler[];
 	private routes: RouterCallback | undefined;
@@ -70,6 +77,7 @@ export default class RequestManager {
 		this.makeResponse = this.makeResponse.bind(this);
 		this.addRequestHandler = this.addRequestHandler.bind(this);
 		this.addResponseHandler = this.addResponseHandler.bind(this);
+		this.addCfPropertiesHandler = this.addCfPropertiesHandler.bind(this);
 		this.log = this.log.bind(this);
 	}
 
@@ -79,6 +87,7 @@ export default class RequestManager {
 		const defaults = {
 			addRequestHandler: this.addRequestHandler,
 			addResponseHandler: this.addResponseHandler,
+			addCfPropertiesHandler: this.addCfPropertiesHandler,
 			log: this.log,
 			phase: 'request',
 			request: request,
@@ -114,6 +123,10 @@ export default class RequestManager {
 		} else {
 			this.responseHandlers.push(handler);
 		}
+	}
+
+	addCfPropertiesHandler(handler: CfPropertiesHandler) {
+		this.cfPropertiesHandlers.push(handler);
 	}
 
 	log(message?: any, ...optionalParams: any[]) {
@@ -197,8 +210,14 @@ export default class RequestManager {
 	}
 
 	async fetch(request: Request) {
+		let cfProperties = {};
+		while (this.cfPropertiesHandlers.length > 0) {
+			const cfPropertiesHandler = this.cfPropertiesHandlers.shift()!;
+			cfProperties = await cfPropertiesHandler(cfProperties);
+		}
+
 		this.log('➡️', request.url);
-		const response = await fetch(request);
+		const response = await fetch(request, { cf: cfProperties });
 		this.log('⬅️', response);
 		return response;
 	}

@@ -8,6 +8,7 @@ export { default as redirect } from './redirect';
 export { default as redirectHttp } from './redirectHttp';
 export { default as redirectHttps } from './redirectHttps';
 export { default as removePathPrefix } from './removePathPrefix';
+export { default as removeRequestHeaders } from './removeRequestHeaders';
 export { default as removeResponseHeaders } from './removeResponseHeaders';
 export { default as requireCookieOrParam } from './requireCookieOrParam';
 export { default as setHost } from './setHost';

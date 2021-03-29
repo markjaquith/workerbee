@@ -1,4 +1,5 @@
 export { default as appendResponseHeaders } from './appendResponseHeaders';
+export { default as appendRequestHeaders } from './appendRequestHeaders';
 export { default as copyResponseHeader } from './copyResponseHeader';
 export { default as forbidden } from './forbidden';
 export { default as lazyLoadImages } from './lazyLoadImages';

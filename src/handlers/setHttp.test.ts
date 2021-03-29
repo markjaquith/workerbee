@@ -1,13 +1,14 @@
+import RequestManager from '../RequestManager';
 import setHttp from './setHttp';
 
-const REQUEST = {
+const manager = new RequestManager().makeData({
 	request: new Request('https://example.com/'),
-};
+});
 
 const HTTP = 'http';
 
 test('setProtocol()', async () => {
-	const result = await setHttp()(REQUEST);
+	const result = await setHttp()(manager);
 	const url = new URL(result.url);
 	expect(url.protocol).toBe(`${HTTP}:`);
 });

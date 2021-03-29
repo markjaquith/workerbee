@@ -4,9 +4,23 @@
 size](https://img.shields.io/bundlephobia/minzip/cf-worker-utils)
 ![Tests](https://github.com/markjaquith/cf-worker-utils/actions/workflows/tests.yml/badge.svg)
 
-This is a simple package for composing Cloudflare Workers, focused on the use
+Toolkit for composing Cloudflare Workers, focused on the use
 case of having an upstream server, and wanting to conditionally manipulate
 requests and responses.
+
+## Example Uses
+
+- All requests to `/landing-page/` should strip that subdirectory and proxy from
+  Netlify instead of your normal server.
+- Requests from the `googleweblight` user agent should have `Cache-Control: no-transform`
+  set on the response.
+- Cookies should be stripped for requests to the `/shop/` section of your site.
+- UTM parameters and Facebook click IDs should be removed from requests to your
+  server to increase cacheability.
+- WordPress users should not be logged in on the front of the site unless they're
+  previewing a post.
+- Make your entire site HTTPS except for one section.
+- Make all images use browser-native lazy loading.
 
 ## Table of Contents
 
@@ -22,19 +36,22 @@ requests and responses.
 
 ## Concepts
 
-- **Handler** — An async function that is run when a request is being received,
+Cloudflare Worker Utilities is based around two main concepts
+
+- **Handler** — A function that is run when a request is being received,
   and/or a response from the server/cache is coming back. It can change the
   request/response, deliver a new request/response altogether, or conditionally
   add other handlers.
 - **Route** — A request path pattern with handlers thare are only added only for
   requests that match the pattern.
+- **Condition** — A function which determines whether a handler should be applied.
 
 ## Usage
 
-1. Bootstrap your Cloudflare worker, [using wrangler][wrangler]. Make sure
+1. Bootstrap your Cloudflare Worker, [using wrangler][wrangler]. Make sure
    you&#8217;re using Webpack.
 2. `npm i cf-worker-utils` from your Worker directory.
-3. In your worker, import `handleFetch` and provide an array of request/response
+3. In your Worker, import `handleFetch` and provide an array of request/response
    handlers, and/or route-limited request/response handlers.
 
 Example:
@@ -63,7 +80,8 @@ Top level request and response handlers will be run on every route, _before_ any
 route-specific handlers.
 
 For all places where you specify handlers, you can provide one handler, an array
-of handlers, or no handlers (null, or empty array).
+of handlers, or no handlers (null, or empty array). Routes can also accept
+variadic handlers, which will be assumed to be request handlers.
 
 ## Lifecycle
 
@@ -160,45 +178,39 @@ The path argument uses the [path-to-regexp][path-to-regexp] library,
 which has good support for positional path parameters. Here's what various
 routes would yield for a given request:
 
-- `/posts/:id`
-  - ✅ `/posts/123` ➡️ `{id: "123"}`
-  - ✅ `/posts/123/` ➡️ `{id: "123"}`
-  - ✅ `/posts/hello` ➡️ `{id: "hello"}`
-  - ❌ `/posts/123/more`
-  - ❌ `/posts/`
-  - ❌ `/posts`
-- `/posts/:id(\\d+)`
-  - ✅ `/posts/123` ➡️ `{id: "123"}`
-  - ❌ `/posts/word`
-- `/posts/:id?`
+- `/posts/:id` — Single required segment
   - ✅ `/posts/123` ➡️ `{id: "123"}`
   - ✅ `/posts/hello` ➡️ `{id: "hello"}`
-  - ✅ `/posts/` ➡️ `{}`
-  - ✅ `/posts` => `{}`
-  - ❌ `/posts/123/more`
-- `/posts/:id+`
+  - ❌ `/posts` _Segment is required_
+- `/posts/:id?` — Single optional segment
+  - ✅ `/posts/123` ➡️ `{id: "123"}`
+  - ✅ `/posts/hello` ➡️ `{id: "hello"}`
+  - ✅ `/posts` ➡️ `{}`
+  - ❌ `/posts/hello/another` _Only zero or one segments are allowed_
+- `/posts/:id(\\d+)/:action` — Two segments, one with regex filter
+  - ✅ `/posts/123/edit` ➡️ `{id: "123", action: "edit"}`
+  - ❌ `/posts/hello/edit` _First segment was not numeric_
+- `/posts/:id+` — One or more segments
+  - ✅ `/posts/123` ➡️ `{id: ["123"]}`
+  - ✅ `/posts/123/hello/there` ➡️ `{id: ["123", "hello", "there"]}`
+- `/posts/:id*` — Zero or more segments
+  - ✅ `/posts` ➡️ `{}`
   - ✅ `/posts/123` ➡️ `{id: ["123"]}`
   - ✅ `/posts/123/456` ➡️ `{id: ["123", "456"]}`
   - ✅ `/posts/123/hello` ➡️ `{id: ["123", "hello"]}`
-  - ❌ `/posts/`
-  - ❌ `/posts`
-- `/posts/:id(\\d+)+`
-  - ✅ `/posts/123` ➡️ `{id: ["123"]}`
-  - ✅ `/posts/123/456` ➡️ `{id: ["123", "456"]}`
-  - ❌ `/posts/123/hello`
-  - ❌ `/posts/`
-  - ❌ `/posts`
-- `/bread/:meat+/bread`
+- `/bread/:meat+/bread` — One or more middle segments
   - ✅ `/bread/turkey/bread` ➡️ `{meat: ["turkey"]}`
   - ✅ `/bread/peanut-butter/jelly/bread` ➡️ `{meat: ["peanut-butter", "jelly"]}`
   - ❌ `/bread/bread`
-- `/mother{-:type}?`
+- `/mother{-:type}?` — Partial segment with required character
   - ✅ `/mother` ➡️ `{}`
   - ✅ `/mother-in-law` ➡️ `{type: "in-law"}`
   - ❌ `/mothers`
 
 If you want to match a path prefix and everything after it, just use a wildcard
-matcher: `/prefix/:any*`.
+matcher like `/prefix/:any*` (and then just ignore what gets matched by `:any*`).
+
+Note that a trailing slash will match, so `/posts/` will match `/posts`.
 
 Go read the [path-to-regex documentation][path-to-regexp] for more information.
 

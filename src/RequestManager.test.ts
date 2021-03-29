@@ -1,6 +1,7 @@
 import RequestManager from './RequestManager';
 import setRequestHeaders from './handlers/setRequestHeaders';
 import setResponseHeaders from './handlers/setResponseHeaders';
+import { delayUntilResponsePhase } from './utils';
 
 const DOMAIN = 'https://example.com';
 const GET = 'GET';
@@ -121,7 +122,7 @@ test('Adding handlers with { immediate: true } prepends', async () => {
 			addRequestHandler(fooHandler);
 			addRequestHandler(barHandler, { immediate: true });
 			addResponseHandler(bazHandler);
-			addResponseHandler(boofHandler, { immedate: true });
+			addResponseHandler(boofHandler, { immediate: true });
 		},
 	});
 
@@ -134,8 +135,8 @@ test('Adding handlers with { immediate: true } prepends', async () => {
 
 	expect(bazHandler).toHaveBeenCalledTimes(1);
 	expect(boofHandler).toHaveBeenCalledTimes(1);
-	expect(bazHandler.mock.invocationCallOrder[0]).toBeLessThan(
-		boofHandler.mock.invocationCallOrder[0],
+	expect(boofHandler.mock.invocationCallOrder[0]).toBeLessThan(
+		bazHandler.mock.invocationCallOrder[0],
 	);
 });
 
@@ -260,4 +261,22 @@ test('Adding a cfPropertiesHandler results in fetch() called appropriately', asy
 		cf: additionalCfProperties,
 	});
 	global.fetch = originalFetch;
+});
+
+test('Adding a responseHandler in the request phase results in it being deferred to the response phase', async () => {
+	const handler = jest.fn(async ({ response }) => {
+		const newResponse = new Response(response.body, response);
+		newResponse.headers.set('foo', 'bar');
+		return newResponse;
+	});
+	const handlerThatIsDelayedToResponsePhase = jest.fn(
+		delayUntilResponsePhase(handler),
+	);
+	const manager = new RequestManager({
+		request: handlerThatIsDelayedToResponsePhase,
+	});
+	const response = await manager.makeResponse(makeEvent());
+	expect(handlerThatIsDelayedToResponsePhase).toHaveBeenCalledTimes(1);
+	expect(handler).toHaveBeenCalledTimes(1);
+	expect(response.headers.get('foo')).toBe('bar');
 });

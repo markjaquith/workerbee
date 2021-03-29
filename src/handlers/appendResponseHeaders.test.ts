@@ -1,3 +1,4 @@
+import RequestManager from '../RequestManager';
 import appendResponseHeaders from './appendResponseHeaders';
 
 const append = appendResponseHeaders({
@@ -6,52 +7,53 @@ const append = appendResponseHeaders({
 });
 const appendNothing = appendResponseHeaders();
 
+function makeManager(headers: { [header: string]: string }) {
+	return new RequestManager().makeData({
+		response: new Response('Response', {
+			headers,
+		}),
+		phase: 'response',
+	});
+}
+
 describe('appendResponseHeaders()', () => {
 	test('appends to existing values', async () => {
-		const response = new Response('Response', {
-			headers: {
-				bar: 'bar',
-				zoo: 'zoo',
-				untouched: 'same',
-			},
+		const manager = makeManager({
+			bar: 'bar',
+			zoo: 'zoo',
+			untouched: 'same',
 		});
-		const result = await append({ response });
+		const result = (await append(manager)) as Response;
 		expect(result.headers.get('bar')).toBe('bar, foo');
 		expect(result.headers.get('zoo')).toBe('zoo, boo');
 		expect(result.headers.get('untouched')).toBe('same');
 	});
 
 	test('writes new values', async () => {
-		const response = new Response('Response', {
-			headers: {
-				untouched: 'same',
-			},
+		const manager = makeManager({
+			untouched: 'same',
 		});
-		const result = await append({ response });
+		const result = (await append(manager)) as Response;
 		expect(result.headers.get('bar')).toBe('foo');
 		expect(result.headers.get('zoo')).toBe('boo');
 		expect(result.headers.get('untouched')).toBe('same');
 	});
 
 	test('does nothing when nothing passed', async () => {
-		const response = new Response('Response', {
-			headers: {
-				untouched: 'same',
-			},
+		const manager = makeManager({
+			untouched: 'same',
 		});
-		const result = await appendNothing({ response });
+		const result = await appendNothing(manager);
 		expect(result).toBeUndefined();
 	});
 
 	test('does nothing when value already in header', async () => {
-		const response = new Response('Response', {
-			headers: {
-				bar: 'foo',
-				zoo: 'boo',
-				untouched: 'same',
-			},
+		const manager = makeManager({
+			bar: 'foo',
+			zoo: 'boo',
+			untouched: 'same',
 		});
-		const result = await append({ response });
+		const result = await append(manager);
 		expect(result).toBeUndefined();
 	});
 });

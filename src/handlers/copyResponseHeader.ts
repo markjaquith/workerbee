@@ -1,7 +1,8 @@
 import { ManagerData } from '../RequestManager';
+import { delayUntilResponsePhase } from '../utils';
 
 export default function copyResponseHeader(from: string, to: string) {
-	return async function ({ response }: ManagerData) {
+	const handler = async function ({ response }: ManagerData) {
 		const { headers } = response;
 
 		if (headers.has(from)) {
@@ -13,4 +14,6 @@ export default function copyResponseHeader(from: string, to: string) {
 			}
 		}
 	};
+
+	return delayUntilResponsePhase(handler);
 }

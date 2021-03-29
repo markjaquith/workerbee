@@ -1,8 +1,9 @@
 import { ManagerData } from '../RequestManager';
 import type { Headers } from './setResponseHeaders';
+import { delayUntilResponsePhase } from '../utils';
 
 export default function appendResponseHeaders(headers: Headers = []) {
-	return async function ({ response }: ManagerData) {
+	const handler = async function ({ response }: ManagerData) {
 		let newResponse;
 
 		if (!Array.isArray(headers)) {
@@ -27,4 +28,6 @@ export default function appendResponseHeaders(headers: Headers = []) {
 			return newResponse;
 		}
 	};
+
+	return delayUntilResponsePhase(handler);
 }

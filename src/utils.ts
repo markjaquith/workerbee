@@ -159,9 +159,6 @@ export function delayUntilResponsePhase(handler: Handler) {
 			return handler(manager);
 		}
 
-		console.log(manager.phase);
-		console.log(typeof manager.addResponseHandler);
-
 		manager.addResponseHandler(handler, { immediate: true });
 	};
 }

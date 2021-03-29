@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import { curry, partial, partialRight } from 'ramda';
-import type { ManagerData } from './RequestManager';
+import type { ManagerData, Handler } from './RequestManager';
 import Text from './Text';
 
 export type ValueMatchingFunction = (value: string) => boolean;
@@ -151,4 +151,17 @@ export function curryWithResponse(fn: (...any: any[]) => any) {
 
 export function escapeRegExp(string: string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function delayUntilResponsePhase(handler: Handler) {
+	return async function (manager: ManagerData) {
+		if ('response' === manager.phase) {
+			return handler(manager);
+		}
+
+		console.log(manager.phase);
+		console.log(typeof manager.addResponseHandler);
+
+		manager.addResponseHandler(handler, { immediate: true });
+	};
 }

@@ -1,4 +1,5 @@
 import { ManagerData } from '../RequestManager';
+import { delayUntilResponsePhase } from '../utils';
 
 export type Header = [key: string, value: string];
 export interface HeaderMap {
@@ -7,7 +8,7 @@ export interface HeaderMap {
 export type Headers = Header[] | HeaderMap;
 
 export default function setResponseHeaders(headers: Headers = []) {
-	return async function ({ response }: ManagerData) {
+	const handler = async function ({ response }: ManagerData) {
 		const newResponse = new Response(response.body, response);
 		let changed = false;
 
@@ -26,4 +27,6 @@ export default function setResponseHeaders(headers: Headers = []) {
 			return newResponse;
 		}
 	};
+
+	return delayUntilResponsePhase(handler);
 }

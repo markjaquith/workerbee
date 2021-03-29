@@ -285,13 +285,16 @@ The following handlers are included:
 
 - `setUrl(url: string)`
 - `setHost(host: string)`
-- `setProtocol(url: string)`
+- `setPath(path: string)`
+- `setProtocol(protocol: string)`
 - `setHttps()`
 - `setHttp()`
 - `forbidden()`
-- `appendResponseHeaders([header: string, value: string][] | {[header: string]: string})`
 - `setRequestHeaders([header: string, value: string][] | {[header: string]: string})`
+- `appendRequestHeaders([header: string, value: string][] | {[header: string]: string})`
+- `removeRequestHeaders(headers: string[])`
 - `setResponseHeaders([header: string, value: string][] | {[header: string]: string})`
+- `appendResponseHeaders([header: string, value: string][] | {[header: string]: string})`
 - `removeResponseHeaders(headers: string[])`
 - `copyResponseHeader(from: string, to: string)`
 - `lazyLoadImages()`

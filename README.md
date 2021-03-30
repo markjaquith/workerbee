@@ -17,7 +17,7 @@ requests and responses.
 - Cookies should be stripped for requests to the `/shop/` section of your site.
 - UTM parameters and Facebook click IDs should be removed from requests to your
   server to increase cacheability.
-- WordPress users should not be logged in on the front of the site unless they're
+- WordPress users should not be logged in on the front of the site unless they’re
   previewing a post.
 - Make your entire site HTTPS except for one section.
 - Make all images use browser-native lazy loading.
@@ -36,20 +36,20 @@ requests and responses.
 
 ## Concepts
 
-Cloudflare Worker Utilities is based around two main concepts
+Cloudflare Worker Utilities is based around three main concepts:
 
-- **Handler** — A function that is run when a request is being received,
-  and/or a response from the server/cache is coming back. It can change the
+- **Handlers** — Functions that are run when a request is being received,
+  and/or a response from the server/cache is coming back. They can change the
   request/response, deliver a new request/response altogether, or conditionally
   add other handlers.
-- **Route** — A request path pattern with handlers thare are only added only for
+- **Routes** — Host/route request path patterns with handlers thare are only added only for
   requests that match the pattern.
-- **Condition** — A function which determines whether a handler should be applied.
+- **Conditions** — Functions that determine whether a handler should be applied.
 
 ## Usage
 
 1. Bootstrap your Cloudflare Worker, [using wrangler][wrangler]. Make sure
-   you&#8217;re using Webpack.
+   you’re using Webpack.
 2. `npm i cf-worker-utils` from your Worker directory.
 3. In your Worker, import `handleFetch` and provide an array of request/response
    handlers, and/or route-limited request/response handlers.
@@ -89,7 +89,7 @@ It goes like this:
 
 1. `Request` is received.
 2. The `Request` loops through all request handlers (global, and then route).
-3. If early `Response` wasn't received, the resulting `Request` object is
+3. If early `Response` wasn’t received, the resulting `Request` object is
    fetched (from the cache or the server).
 4. The resulting `Response` object is passed through the response handlers
    (global, and then route).
@@ -175,7 +175,7 @@ The router has functions for all HTTP methods, plus `router.any()` which matches
 any method. e.g. `router.get(path, handlers)`, `router.post(path, handlers)`.
 
 The path argument uses the [path-to-regexp][path-to-regexp] library,
-which has good support for positional path parameters. Here's what various
+which has good support for positional path parameters. Here’s what various
 routes would yield for a given request:
 
 | Pattern                    | 🆗  | URL                                | Params                               |
@@ -228,7 +228,7 @@ handleFetch({
 			router.get('/', setRequestHeaders({ 'x-foo': 'bar' }));
 		});
 		router.host('*.blogs.example.com', (router) => {
-			router.any('/xmlrpc.php', forbidden);
+			router.any('/xmlrpc.php', forbidden());
 		});
 	},
 });
@@ -322,7 +322,7 @@ The following handlers are included:
 
 Instead of bundling logic into custom handlers, you can also use
 `addHandlerIf(condition, ...handlers)` together with the `any()`, `all()` and
-`none()` gates to specify the logic outside of the handler. Here's an example:
+`none()` gates to specify the logic outside of the handler. Here’s an example:
 
 ```js
 import {
@@ -365,7 +365,7 @@ As hinted above, there are several built-in conditions for you to use:
 - `isHttps()`
 - `isHttps()`
 
-The ones that take a string (or nothing) are straightforward, but what's up with
+The ones that take a string (or nothing) are straightforward, but what’s up with
 `ValueMatcher`?
 
 A `ValueMatcher` is flexible. It can be:
@@ -445,7 +445,7 @@ handleFetch({
 
 2. The built-in conditionals automatically apply to `current`. So if you run
    them as a request handler, header inspection will look at the request. As a
-   response handler, it'll look at response. But you can also use the raw
+   response handler, it’ll look at response. But you can also use the raw
    conditionals while creating your own handlers. For instance, in a response
    handler you might want to look at the request that went to the server, or the
    originalRequest that came to Cloudflare.
@@ -470,7 +470,7 @@ have to pass a request or response to them as their last argument.
 ## Best Practices
 
 1. Always return a new Request or Response object if you want to change things.
-2. Don't return anything if your handler is declining to act.
+2. Don’t return anything if your handler is declining to act.
 3. If you have a response handler that is only needed based on what a request
    handler does, conditionally add that response handler on the fly in the
    request handler.
@@ -495,5 +495,5 @@ Copyright &copy; 2021 Tobias Schneider\
 (MIT License)
 
 [pillarjs/path-to-regexp](https://github.com/pillarjs/path-to-regexp#readme)\
-Copyright &copy; 2014 Blake Embrey
+Copyright &copy; 2014 Blake Embrey\
 (MIT LICENSE)

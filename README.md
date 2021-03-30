@@ -178,34 +178,35 @@ The path argument uses the [path-to-regexp][path-to-regexp] library,
 which has good support for positional path parameters. Here's what various
 routes would yield for a given request:
 
-- `/posts/:id` — Single required segment
-  - ✅ `/posts/123` ➡️ `{id: "123"}`
-  - ✅ `/posts/hello` ➡️ `{id: "hello"}`
-  - ❌ `/posts` _Segment is required_
-- `/posts/:id?` — Single optional segment
-  - ✅ `/posts/123` ➡️ `{id: "123"}`
-  - ✅ `/posts/hello` ➡️ `{id: "hello"}`
-  - ✅ `/posts` ➡️ `{}`
-  - ❌ `/posts/hello/another` _Only zero or one segments are allowed_
-- `/posts/:id(\\d+)/:action` — Two segments, one with regex filter
-  - ✅ `/posts/123/edit` ➡️ `{id: "123", action: "edit"}`
-  - ❌ `/posts/hello/edit` _First segment was not numeric_
-- `/posts/:id+` — One or more segments
-  - ✅ `/posts/123` ➡️ `{id: ["123"]}`
-  - ✅ `/posts/123/hello/there` ➡️ `{id: ["123", "hello", "there"]}`
-- `/posts/:id*` — Zero or more segments
-  - ✅ `/posts` ➡️ `{}`
-  - ✅ `/posts/123` ➡️ `{id: ["123"]}`
-  - ✅ `/posts/123/456` ➡️ `{id: ["123", "456"]}`
-  - ✅ `/posts/123/hello` ➡️ `{id: ["123", "hello"]}`
-- `/bread/:meat+/bread` — One or more middle segments
-  - ✅ `/bread/turkey/bread` ➡️ `{meat: ["turkey"]}`
-  - ✅ `/bread/peanut-butter/jelly/bread` ➡️ `{meat: ["peanut-butter", "jelly"]}`
-  - ❌ `/bread/bread`
-- `/mother{-:type}?` — Partial segment with required character
-  - ✅ `/mother` ➡️ `{}`
-  - ✅ `/mother-in-law` ➡️ `{type: "in-law"}`
-  - ❌ `/mothers`
+| Pattern                    | 🆗  | URL                                | Params                               |
+| -------------------------- | --- | ---------------------------------- | ------------------------------------ |
+| `/posts/:id`               |     |                                    |                                      |
+|                            | ✅  | `/posts/123`                       | `{id: "123"}`                        |
+|                            | ✅  | `/posts/hello`                     | `{id: "hello"}`                      |
+|                            | ❌  | `/posts`                           |                                      |
+| `/posts/:id?`              |     |                                    |                                      |
+|                            | ✅  | `/posts/123`                       | `{id: "123"}`                        |
+|                            | ✅  | `/posts/hello`                     | `{id: "hello"}`                      |
+|                            | ✅  | `/posts`                           | `{}`                                 |
+|                            | ❌  | `/posts/hello/another`             |                                      |
+| `/posts/:id(\\d+)/:action` |     |                                    |                                      |
+|                            | ✅  | `/posts/123/edit`                  | `{id: "123", action: "edit"}`        |
+|                            | ❌  | `/posts/hello/edit`                |                                      |
+| `/posts/:id+`              |     |                                    |                                      |
+|                            | ✅  | `/posts/123`                       | `{id: ["123"]}`                      |
+|                            | ✅  | `/posts/123/hello/there`           | `{id: ["123", "hello", "there"]}`    |
+| `/posts/:id*`              |     |                                    |                                      |
+|                            | ✅  | `/posts`                           | `{}`                                 |
+|                            | ✅  | `/posts/123`                       | `{id: ["123"]}`                      |
+|                            | ✅  | `/posts/123/hello`                 | `{id: ["123", "hello"]}`             |
+| `/bread/:meat+/bread`      |     |                                    |                                      |
+|                            | ✅  | `/bread/turkey/bread`              | `{meat: ["turkey"]}`                 |
+|                            | ✅  | `/bread/peanut-butter/jelly/bread` | `{meat: ["peanut-butter", "jelly"]}` |
+|                            | ❌  | `/bread/bread`                     |                                      |
+| `/mother{-:type}?`         |     |                                    |                                      |
+|                            | ✅  | `/mother`                          | `{}`                                 |
+|                            | ✅  | `/mother-in-law`                   | `{type: "in-law"}`                   |
+|                            | ❌  | `/mothers`                         |                                      |
 
 If you want to match a path prefix and everything after it, just use a wildcard
 matcher like `/prefix/:any*` (and then just ignore what gets matched by `:any*`).

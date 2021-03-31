@@ -48,7 +48,7 @@ Cloudflare Worker Utilities is based around three main concepts:
 
 ## Usage
 
-1. Bootstrap your Cloudflare Worker, [using wrangler][wrangler]. Make sure
+1. Bootstrap your Cloudflare Worker, [using Wrangler][wrangler]. Make sure
    you’re using Webpack.
 2. `npm i cf-worker-utils` from your Worker directory.
 3. In your Worker, import `handleFetch` and provide an array of request/response

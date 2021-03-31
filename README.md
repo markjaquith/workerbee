@@ -22,6 +22,8 @@ requests and responses.
 - Make your entire site HTTPS except for one section.
 - Make all images use browser-native lazy loading.
 
+If you'd like, jump straight to [the examples](docs/examples.md).
+
 ## Table of Contents
 
 - [Concepts](#concepts)

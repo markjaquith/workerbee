@@ -1,3 +1,3 @@
-import { makeStringMethodMatcher } from '../utils';
+import { makeStringMethodMatcher } from '../utils'
 
-export default makeStringMethodMatcher('endsWith');
+export default makeStringMethodMatcher('endsWith')

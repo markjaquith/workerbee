@@ -1,3 +1,3 @@
-import { makeStringMethodMatcher } from '../utils';
+import { makeStringMethodMatcher } from '../utils'
 
-export default makeStringMethodMatcher('includes');
+export default makeStringMethodMatcher('includes')

@@ -1,8 +1,8 @@
-import endsWith from './endsWith';
+import endsWith from './endsWith'
 
-const STRING = 'string with foo';
+const STRING = 'string with foo'
 
 test('endsWith', () => {
-	expect(endsWith('foo')(STRING)).toBe(true);
-	expect(endsWith('bar')(STRING)).toBe(false);
-});
+	expect(endsWith('foo')(STRING)).toBe(true)
+	expect(endsWith('bar')(STRING)).toBe(false)
+})

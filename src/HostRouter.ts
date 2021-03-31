@@ -1,14 +1,14 @@
-import BaseRouter from './BaseRouter';
-import { escapeRegExp } from './utils';
+import BaseRouter from './BaseRouter'
+import { escapeRegExp } from './utils'
 
-const WILDCARD = '::WILDCARD::';
+const WILDCARD = '::WILDCARD::'
 
 export default class HostRouter extends BaseRouter {
-	private hostPattern: string;
+	private hostPattern: string
 
 	constructor(hostPattern: string) {
-		super();
-		this.hostPattern = hostPattern;
+		super()
+		this.hostPattern = hostPattern
 	}
 
 	private makeRegex(hostPattern: string): RegExp {
@@ -19,13 +19,13 @@ export default class HostRouter extends BaseRouter {
 					'(.*?)',
 				) +
 				'$',
-		);
+		)
 	}
 
 	matches(request: Request): boolean {
-		const url = new URL(request.url);
-		const regex = this.makeRegex(this.hostPattern);
+		const url = new URL(request.url)
+		const regex = this.makeRegex(this.hostPattern)
 
-		return regex.test(url.hostname);
+		return regex.test(url.hostname)
 	}
 }

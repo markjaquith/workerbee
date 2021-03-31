@@ -1,14 +1,14 @@
-import addHandlerIf from './addHandlerIf';
-import any from './any';
-import all from './all';
-import none from './none';
-import RequestManager from '../RequestManager';
+import addHandlerIf from './addHandlerIf'
+import any from './any'
+import all from './all'
+import none from './none'
+import RequestManager from '../RequestManager'
 
-const DOMAIN = 'https://example.com';
-const GET = 'GET';
+const DOMAIN = 'https://example.com'
+const GET = 'GET'
 
-const yes = () => true;
-const no = () => false;
+const yes = () => true
+const no = () => false
 
 function makeEvent() {
 	return {
@@ -18,14 +18,14 @@ function makeEvent() {
 				foo: 'bar',
 			},
 		}),
-	};
+	}
 }
 
 test('addHandlerIf', async () => {
-	const trueRequestSpy = jest.fn();
-	const falseRequestSpy = jest.fn();
-	const trueResponseSpy = jest.fn();
-	const falseResponseSpy = jest.fn();
+	const trueRequestSpy = jest.fn()
+	const falseRequestSpy = jest.fn()
+	const trueResponseSpy = jest.fn()
+	const falseResponseSpy = jest.fn()
 
 	const manager = new RequestManager({
 		request: [
@@ -36,23 +36,23 @@ test('addHandlerIf', async () => {
 			addHandlerIf(no, falseResponseSpy), // 0.
 			addHandlerIf(yes, trueResponseSpy), // 1.
 		],
-	});
+	})
 
-	await manager.makeResponse(makeEvent());
+	await manager.makeResponse(makeEvent())
 
-	expect(trueRequestSpy).toHaveBeenCalledTimes(1);
-	expect(trueResponseSpy).toHaveBeenCalledTimes(1);
-	expect(falseRequestSpy).not.toHaveBeenCalled();
-	expect(falseResponseSpy).not.toHaveBeenCalled();
-});
+	expect(trueRequestSpy).toHaveBeenCalledTimes(1)
+	expect(trueResponseSpy).toHaveBeenCalledTimes(1)
+	expect(falseRequestSpy).not.toHaveBeenCalled()
+	expect(falseResponseSpy).not.toHaveBeenCalled()
+})
 
 test('complex logic', async () => {
-	const trueRequestSpy = jest.fn();
-	const falseRequestSpy = jest.fn();
-	const trueResponseSpy = jest.fn();
-	const falseResponseSpy = jest.fn();
-	const firstResponseSpy = jest.fn();
-	const lastResponseSpy = jest.fn();
+	const trueRequestSpy = jest.fn()
+	const falseRequestSpy = jest.fn()
+	const trueResponseSpy = jest.fn()
+	const falseResponseSpy = jest.fn()
+	const firstResponseSpy = jest.fn()
+	const lastResponseSpy = jest.fn()
 
 	const manager = new RequestManager({
 		request: [
@@ -76,19 +76,19 @@ test('complex logic', async () => {
 				falseResponseSpy,
 			), // 0.
 		],
-	});
+	})
 
-	await manager.makeResponse(makeEvent());
+	await manager.makeResponse(makeEvent())
 
-	expect(trueRequestSpy).toHaveBeenCalledTimes(3);
-	expect(trueResponseSpy).toHaveBeenCalledTimes(1);
-	expect(falseRequestSpy).not.toHaveBeenCalled();
-	expect(falseResponseSpy).not.toHaveBeenCalled();
-	expect(firstResponseSpy).toHaveBeenCalledTimes(1);
-	expect(lastResponseSpy).toHaveBeenCalledTimes(1);
+	expect(trueRequestSpy).toHaveBeenCalledTimes(3)
+	expect(trueResponseSpy).toHaveBeenCalledTimes(1)
+	expect(falseRequestSpy).not.toHaveBeenCalled()
+	expect(falseResponseSpy).not.toHaveBeenCalled()
+	expect(firstResponseSpy).toHaveBeenCalledTimes(1)
+	expect(lastResponseSpy).toHaveBeenCalledTimes(1)
 
 	// Make sure they were called in the right order.
 	expect(firstResponseSpy.mock.invocationCallOrder[0]).toBeLessThan(
 		lastResponseSpy.mock.invocationCallOrder[0],
-	);
-});
+	)
+})

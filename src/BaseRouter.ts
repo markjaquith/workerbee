@@ -1,57 +1,57 @@
-import { Handler, Handlers } from './RequestManager';
+import { Handler, Handlers } from './RequestManager'
 
-export type RouterCallback = (router: RouterInterface) => void;
+export type RouterCallback = (router: RouterInterface) => void
 
 export interface Params {
-	[key: string]: string | string[];
+	[key: string]: string | string[]
 }
 
-export type RouterCreator = (router: RouterInterface) => RouterInterface;
+export type RouterCreator = (router: RouterInterface) => RouterInterface
 
 export interface Route {
-	method: string;
-	url: string;
+	method: string
+	url: string
 	handlers: {
-		request: Handlers | null;
-		response: Handlers | null;
-	};
-	params: Params;
+		request: Handlers | null
+		response: Handlers | null
+	}
+	params: Params
 }
 
 export interface HandlerMap {
-	request?: Handlers;
-	response?: Handlers;
+	request?: Handlers
+	response?: Handlers
 }
 
 export interface RouterHandlers {
-	request: Handler[];
-	response: Handler[];
+	request: Handler[]
+	response: Handler[]
 }
 
 export interface RouterInterface {
-	getRoute(request: Request): Route | null;
-	addRouter(router: RouterInterface): this;
-	addCallback(fn: RouterCallback): this;
-	matches(request: Request): boolean;
-	setHandlers(handlers: RouterHandlers): this;
-	setCallbackRouterCreator(fn: RouterCreator): this;
-	routers: RouterInterface[];
-	callbackRouters: RouterInterface[];
-	callbacks: RouterCallback[];
-	handlers: HandlerMap;
+	getRoute(request: Request): Route | null
+	addRouter(router: RouterInterface): this
+	addCallback(fn: RouterCallback): this
+	matches(request: Request): boolean
+	setHandlers(handlers: RouterHandlers): this
+	setCallbackRouterCreator(fn: RouterCreator): this
+	routers: RouterInterface[]
+	callbackRouters: RouterInterface[]
+	callbacks: RouterCallback[]
+	handlers: HandlerMap
 }
 
 export default class BaseRouter implements RouterInterface {
-	private _routers: RouterInterface[] = [];
-	private _callbacks: RouterCallback[] = [];
-	private _callbackRouterCreator: RouterCreator;
+	private _routers: RouterInterface[] = []
+	private _callbacks: RouterCallback[] = []
+	private _callbackRouterCreator: RouterCreator
 	private _handlers: RouterHandlers = {
 		request: [],
 		response: [],
-	};
+	}
 
 	constructor() {
-		this.setCallbackRouterCreator((router) => router);
+		this.setCallbackRouterCreator((router) => router)
 	}
 
 	getNullRoute(request: Request): Route {
@@ -63,68 +63,68 @@ export default class BaseRouter implements RouterInterface {
 				response: null,
 			},
 			params: {},
-		};
+		}
 	}
 
 	getRoute(request: Request): Route | null {
 		if (this.matches(request)) {
 			for (const router of [...this.routers, ...this.callbackRouters]) {
-				const route = router.getRoute(request);
+				const route = router.getRoute(request)
 				if (route) {
-					return route;
+					return route
 				}
 			}
 		}
 
-		return null;
+		return null
 	}
 
 	setHandlers(handlers: RouterHandlers): this {
-		this._handlers = handlers;
+		this._handlers = handlers
 
-		return this;
+		return this
 	}
 
 	addRouter(router: RouterInterface): this {
-		this._routers.push(router);
+		this._routers.push(router)
 
-		return this;
+		return this
 	}
 
 	addCallback(fn: RouterCallback): this {
-		this._callbacks.push(fn);
+		this._callbacks.push(fn)
 
-		return this;
+		return this
 	}
 
 	setCallbackRouterCreator(fn: RouterCreator): this {
-		this._callbackRouterCreator = fn;
+		this._callbackRouterCreator = fn
 
-		return this;
+		return this
 	}
 
 	matches(_request: Request): boolean {
-		return true;
+		return true
 	}
 
 	get routers(): RouterInterface[] {
-		return this._routers;
+		return this._routers
 	}
 
 	get callbackRouters(): RouterInterface[] {
-		const router = this._callbackRouterCreator(this);
+		const router = this._callbackRouterCreator(this)
 		for (const callback of this.callbacks) {
-			callback(router);
+			callback(router)
 		}
 
-		return router.routers;
+		return router.routers
 	}
 
 	get callbacks(): RouterCallback[] {
-		return this._callbacks;
+		return this._callbacks
 	}
 
 	get handlers(): RouterHandlers {
-		return this._handlers;
+		return this._handlers
 	}
 }

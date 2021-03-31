@@ -1,9 +1,9 @@
-import fetchMock from 'jest-fetch-mock';
-import HTMLRewriter from './HTMLRewriter';
+import fetchMock from 'jest-fetch-mock'
+import HTMLRewriter from './HTMLRewriter'
 
-const globalAny: any = global;
+const globalAny: any = global
 
-fetchMock.enableMocks();
+fetchMock.enableMocks()
 
 Response.redirect = (url: string, status: number = 302) =>
 	new Response(null, {
@@ -11,6 +11,6 @@ Response.redirect = (url: string, status: number = 302) =>
 			Location: url,
 		},
 		status,
-	});
+	})
 
-globalAny.HTMLRewriter = HTMLRewriter;
+globalAny.HTMLRewriter = HTMLRewriter

@@ -1,5 +1,5 @@
-import { matchesValue } from '../utils';
-import type { ValueMatcher } from '../utils';
+import { matchesValue } from '../utils'
+import type { ValueMatcher } from '../utils'
 
 export default function (matcher: ValueMatcher, response: Response) {
 	return (
@@ -9,5 +9,5 @@ export default function (matcher: ValueMatcher, response: Response) {
 			matcher,
 			response.headers.get('content-type')!.split(';')[0].trim(),
 		)
-	);
+	)
 }

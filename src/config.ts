@@ -32,4 +32,4 @@ export const STRIP_PARAMS = [
 	'usqp',
 	'cn-reloaded',
 	'_ke',
-];
+]

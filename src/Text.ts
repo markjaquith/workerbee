@@ -1,36 +1,36 @@
 export default class Text {
-	private _value: string | undefined;
-	public insensitive: boolean = false;
-	public negated: boolean = false;
+	private _value: string | undefined
+	public insensitive: boolean = false
+	public negated: boolean = false
 
 	constructor(value?: string) {
-		this._value = value;
+		this._value = value
 	}
 
 	static from(input?: string | Text) {
-		return input instanceof Text ? input : new Text(input);
+		return input instanceof Text ? input : new Text(input)
 	}
 
 	get not() {
-		this.negated = !this.negated;
-		return this;
+		this.negated = !this.negated
+		return this
 	}
 
 	get i() {
-		this.insensitive = true;
-		return this;
+		this.insensitive = true
+		return this
 	}
 
 	get value() {
-		return this._value || '';
+		return this._value || ''
 	}
 
 	toString() {
-		return this.value;
+		return this.value
 	}
 
 	convert(text: string) {
-		return this.insensitive ? text.toLowerCase() : text;
+		return this.insensitive ? text.toLowerCase() : text
 	}
 
 	matches(
@@ -39,6 +39,6 @@ export default class Text {
 	) {
 		return (
 			this.negated !== matcher(this.convert(this.value), this.convert(test))
-		);
+		)
 	}
 }

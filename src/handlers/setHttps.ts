@@ -1,3 +1,3 @@
-import setProtocol from './setProtocol';
+import setProtocol from './setProtocol'
 
-export default () => setProtocol('https');
+export default () => setProtocol('https')

@@ -1,5 +1,5 @@
-import type { Handler, ManagerData } from '../RequestManager';
-import type { Condition } from '../utils';
+import type { Handler, ManagerData } from '../RequestManager'
+import type { Condition } from '../utils'
 
 /**
  * Takes a condition (a function which receives a Request or a Response and returns a boolean)
@@ -13,9 +13,9 @@ export default function (condition: Condition, ...handlers: Handler[]) {
 				const adder =
 					manager.phase === 'request' && manager.addRequestHandler
 						? manager.addRequestHandler
-						: manager.addResponseHandler;
-				adder(handler, { immediate: true });
+						: manager.addResponseHandler
+				adder(handler, { immediate: true })
 			}
 		}
-	};
+	}
 }

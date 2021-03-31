@@ -1,7 +1,7 @@
-import { ManagerData } from '../RequestManager';
+import { ManagerData } from '../RequestManager'
 
 export default function redirect(code = 302) {
 	return async ({ request }: ManagerData) => {
-		return Response.redirect(request.url, code);
-	};
+		return Response.redirect(request.url, code)
+	}
 }

@@ -7,3 +7,11 @@
   background-color: #313131;
   background-image: linear-gradient(110deg, #fffb00, #313131 20%, #313131 80%, #fffb00 100%);
 }
+
+.main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 {
+  color: #333;
+}
+
+.site-footer-credits {
+  display: none;
+}

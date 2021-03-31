@@ -3,7 +3,7 @@
 ## Blocking access to XML-RPC (WordPress)
 
 ```js
-import handleFetch, { forbidden } from 'cf-worker-utls'
+import handleFetch, { forbidden } from 'workerbee'
 
 handleFetch({
 	routes: (router) => {
@@ -21,7 +21,7 @@ import handleFetch, {
 	header,
 	contains,
 	forbidden,
-} from 'cf-worker-utils'
+} from 'workerbee'
 
 const userAgent = header('User-Agent')
 const blockedUserAgent = 'BadBot'

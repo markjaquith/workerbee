@@ -1,8 +1,8 @@
-# cf-worker-utils: Cloudflare Worker Utilities
+# Worker Bee: Cloudflare Worker Composer
 
 ![minified and zipped
-size](https://img.shields.io/bundlephobia/minzip/cf-worker-utils)
-![Tests](https://github.com/markjaquith/cf-worker-utils/actions/workflows/tests.yml/badge.svg)
+size](https://img.shields.io/bundlephobia/minzip/workerbee)
+![Tests](https://github.com/markjaquith/workerbee/actions/workflows/tests.yml/badge.svg)
 
 Toolkit for composing Cloudflare Workers, focused on the use
 case of having an upstream server, and wanting to conditionally manipulate
@@ -52,14 +52,14 @@ Cloudflare Worker Utilities is based around three main concepts:
 
 1. Bootstrap your Cloudflare Worker, [using Wrangler][wrangler]. Make sure
    you’re using Webpack.
-2. `npm i cf-worker-utils` from your Worker directory.
+2. `npm i workerbee` from your Worker directory.
 3. In your Worker, import `handleFetch` and provide an array of request/response
    handlers, and/or route-limited request/response handlers.
 
 Example:
 
 ```js
-import handleFetch from 'cf-worker-utils'
+import handleFetch from 'workerbee'
 
 handleFetch({
 	request: requestHandlers, // Run on every request.
@@ -222,7 +222,7 @@ Go read the [path-to-regex documentation][path-to-regexp] for more information.
 You can also limit your routes to a specific host, like so:
 
 ```js
-import handleFetch, { forbidden, setRequestHeaders } from 'cf-worker-utils'
+import handleFetch, { forbidden, setRequestHeaders } from 'workerbee'
 
 handleFetch({
 	routes: (router) => {
@@ -333,7 +333,7 @@ import {
 	contains,
 	header,
 	forbidden,
-} from 'cf-worker-utils'
+} from 'workerbee'
 
 handleFetch({
 	request: [
@@ -405,7 +405,7 @@ import {
 	contains,
 	header,
 	forbidden,
-} from 'cf-worker-utils'
+} from 'workerbee'
 
 handleFetch({
 	request: [
@@ -453,8 +453,8 @@ handleFetch({
    originalRequest that came to Cloudflare.
 
 ```js
-import forbidden from 'cf-worker-utils'
-import { hasParam } from 'cf-worker-utils/conditions'
+import forbidden from 'workerbee'
+import { hasParam } from 'workerbee/conditions'
 
 export default async function forbiddenIfFooParam({ request }) {
 	if (hasParam('foo', request)) {

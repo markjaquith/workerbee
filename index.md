@@ -1,6 +1,7 @@
-## Worker Bee
+## Cloudflare Workers can be intimidating
 
-A lovely tool for composing Cloudflare Workers.
+They're super powerful, but writing and managing them can feel overwhelming.
+Worker Bee is here to help make composing Cloudflare Workers fast and fun.
 
 ## It's This Easy
 

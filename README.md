@@ -57,7 +57,7 @@ Cloudflare Worker Utilities is based around three main concepts:
 Example:
 
 ```js
-import handleFetch from 'cf-worker-utils';
+import handleFetch from 'cf-worker-utils'
 
 handleFetch({
 	request: requestHandlers, // Run on every request.
@@ -66,14 +66,14 @@ handleFetch({
 		router.get('/test', {
 			request: requestHandlers, // Run on matching requests.
 			response: responseHanders, // Run on responses from matching requests.
-		});
+		})
 
 		router.get('/posts/:id', {
 			request: requestHandlers, // Run on matching requests.
 			response: responseHandlers, // Run on responses from matching requests.
-		});
+		})
 	},
-});
+})
 ```
 
 Top level request and response handlers will be run on every route, _before_ any
@@ -220,18 +220,18 @@ Go read the [path-to-regex documentation][path-to-regexp] for more information.
 You can also limit your routes to a specific host, like so:
 
 ```js
-import handleFetch, { forbidden, setRequestHeaders } from 'cf-worker-utils';
+import handleFetch, { forbidden, setRequestHeaders } from 'cf-worker-utils'
 
 handleFetch({
 	routes: (router) => {
 		router.host('example.com', (router) => {
-			router.get('/', setRequestHeaders({ 'x-foo': 'bar' }));
-		});
+			router.get('/', setRequestHeaders({ 'x-foo': 'bar' }))
+		})
 		router.host('*.blogs.example.com', (router) => {
-			router.any('/xmlrpc.php', forbidden());
-		});
+			router.any('/xmlrpc.php', forbidden())
+		})
 	},
-});
+})
 ```
 
 This makes it trivial to set up a Worker that services multiple subdomains and
@@ -331,7 +331,7 @@ import {
 	contains,
 	header,
 	forbidden,
-} from 'cf-worker-utils';
+} from 'cf-worker-utils'
 
 handleFetch({
 	request: [
@@ -344,7 +344,7 @@ handleFetch({
 			someCustomHandler(),
 		),
 	],
-});
+})
 ```
 
 `addHandlerIf()` takes a single condition as its first argument, but you can
@@ -390,7 +390,7 @@ These functions can also accept insensitive strings and negated strings with the
 addHandlerIf(
 	header('User-Agent', startsWith(text('WordPress').not.i)),
 	forbidden(),
-);
+)
 ```
 
 Note that you can use logic functions to compose value matchers! So the example
@@ -403,7 +403,7 @@ import {
 	contains,
 	header,
 	forbidden,
-} from 'cf-worker-utils';
+} from 'cf-worker-utils'
 
 handleFetch({
 	request: [
@@ -416,7 +416,7 @@ handleFetch({
 			someCustomHandler(),
 		),
 	],
-});
+})
 ```
 
 Two more points:
@@ -424,7 +424,7 @@ Two more points:
 1. The built-in conditionals support partial application. So you can do this:
 
 ```js
-const userAgent = header('user-agent');
+const userAgent = header('user-agent')
 ```
 
 Now, `userAgent` is a **function** that accepts a `ValueMatcher`.
@@ -432,7 +432,7 @@ Now, `userAgent` is a **function** that accepts a `ValueMatcher`.
 You could take this further and do:
 
 ```js
-const isGoogle = userAgent(startsWith('Googlebot'));
+const isGoogle = userAgent(startsWith('Googlebot'))
 ```
 
 Now you could just add a handler like:
@@ -440,7 +440,7 @@ Now you could just add a handler like:
 ```js
 handleFetch({
 	request: [addHandlerIf(isGoogle, forbiddden)],
-});
+})
 ```
 
 2. The built-in conditionals automatically apply to `current`. So if you run
@@ -451,12 +451,12 @@ handleFetch({
    originalRequest that came to Cloudflare.
 
 ```js
-import forbidden from 'cf-worker-utils';
-import { hasParam } from 'cf-worker-utils/conditions';
+import forbidden from 'cf-worker-utils'
+import { hasParam } from 'cf-worker-utils/conditions'
 
 export default async function forbiddenIfFooParam({ request }) {
 	if (hasParam('foo', request)) {
-		return forbidden();
+		return forbidden()
 	}
 }
 ```

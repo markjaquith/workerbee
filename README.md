@@ -1,4 +1,4 @@
-# Worker Bee: Cloudflare Worker Composer
+# Worker Bee: 🐝 Cloudflare Worker Composer ☁️
 
 ![minified and zipped
 size](https://img.shields.io/bundlephobia/minzip/workerbee)

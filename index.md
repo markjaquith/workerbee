@@ -22,12 +22,15 @@ handleFetch({
 ```js
 import handleFetch, { setHost, removePathPrefix, redirect } from 'workerbee'
 
+const redirectToNewBlogWithoutPathPrefix = [
+  setHost('newblog.example.com'),
+  removePathPrefix('/oldblog'),
+  redirect(301),
+]
+
 handleFetch({
   routes: router => {
-    router.get(
-      '/oldblog/:any*',
-      setHost('newblog.example.com'), removePathPrefix('/oldblog'), redirect(301)
-    )
+    router.get('/oldblog/:any*', ...redirectToNewBlogWithoutPathPrefix)
   }
 })
 ```

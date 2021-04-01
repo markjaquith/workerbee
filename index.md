@@ -31,3 +31,24 @@ handleFetch({
   }
 })
 ```
+
+### Blocking user agents from your site completely
+
+```js
+import handleFetch, {
+	addHandlerIf,
+	any,
+	header,
+	contains,
+	forbidden,
+} from 'workerbee'
+
+const userAgent = header('User-Agent')
+const blockedAgents = ['BadBot', 'Annoying Slurper']
+const containsBlockedAgent = any(...blockedAgents.map(contains))
+const userAgentIsBlocked = userAgent(containsBlockedAgent)
+
+handleFetch({
+	request: addHandlerIf(userAgentIsBlocked, forbidden('Go away')),
+})
+```

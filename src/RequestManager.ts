@@ -52,7 +52,7 @@ export interface ManagerData {
 	response: Response
 	originalRequest: Request
 	params: Params
-	phase: string
+	phase: 'request' | 'response'
 }
 
 export default class RequestManager {
@@ -84,7 +84,7 @@ export default class RequestManager {
 	makeData(data: Partial<ManagerData>): ManagerData {
 		const request = new Request('')
 		const response = new Response()
-		const defaults = {
+		const defaults: ManagerData = {
 			addRequestHandler: this.addRequestHandler,
 			addResponseHandler: this.addResponseHandler,
 			addCfPropertiesHandler: this.addCfPropertiesHandler,

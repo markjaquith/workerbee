@@ -22,7 +22,7 @@ type ForcedArray<T> = T extends null | undefined
 	? []
 	: T extends Array<unknown>
 	? T
-	: T[]
+	: [T]
 
 export function toArray<T>(input?: T): ForcedArray<T> {
 	if (null == input) {
@@ -30,7 +30,7 @@ export function toArray<T>(input?: T): ForcedArray<T> {
 	} else if (Array.isArray(input)) {
 		return input as ForcedArray<T>
 	} else {
-		return ([input] as unknown) as ForcedArray<T>
+		return [input] as ForcedArray<T>
 	}
 }
 

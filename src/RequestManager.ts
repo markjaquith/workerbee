@@ -97,9 +97,19 @@ export default class RequestManager {
 			params: {},
 		}
 
-		return {
+		const result: ManagerData = {
 			...defaults,
 			...data,
+		}
+
+		return {
+			...result,
+			addRequestHandler:
+				result[
+					'response' === result.phase
+						? 'addResponseHandler'
+						: 'addRequestHandler'
+				],
 		}
 	}
 

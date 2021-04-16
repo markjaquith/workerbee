@@ -63,7 +63,7 @@ export function handleFetch(options: any = {}) {
 				try {
 					return makeResponse()
 				} catch (error) {
-					return options.onError(error)
+					return options.onError({ error, event })
 				}
 			}
 		}

@@ -43,6 +43,7 @@ export function text(input: string) {
 // The prestige.
 export function handleFetch(options: any = {}) {
 	options = {
+		onError: null,
 		passThroughOnException: true,
 		...options,
 	}
@@ -52,8 +53,23 @@ export function handleFetch(options: any = {}) {
 			event.passThroughOnException()
 		}
 
-		const responder = new RequestManager(options)
-		const response = responder.makeResponse(event)
+		let makeResponse = () => {
+			const responder = new RequestManager(options)
+			return responder.makeResponse(event)
+		}
+
+		if (options.onError) {
+			makeResponse = () => {
+				try {
+					return makeResponse()
+				} catch (error) {
+					return options.onError(error)
+				}
+			}
+		}
+
+		const response = makeResponse()
+
 		event.respondWith(response)
 
 		return response

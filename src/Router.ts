@@ -1,5 +1,5 @@
-import { partial, toArray } from './utils'
-import { Handler, Handlers } from './RequestManager'
+import { partial } from './utils'
+import { Handler } from './RequestManager'
 import HostRouter from './HostRouter'
 import MethodRouter from './MethodRouter'
 import PathRouter from './PathRouter'

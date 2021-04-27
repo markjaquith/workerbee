@@ -173,7 +173,7 @@ Yes                 │                   │
 
 ## Routing
 
-The router has functions for all HTTP methods, plus `router.any()` which matches
+The router has functions for all HTTP methods, plus `router.all()` which matches
 any method. e.g. `router.get(path, handlers)`, `router.post(path, handlers)`.
 
 The path argument uses the [path-to-regexp][path-to-regexp] library,
@@ -230,7 +230,7 @@ handleFetch({
 			router.get('/', setRequestHeaders({ 'x-foo': 'bar' }))
 		})
 		router.host('*.blogs.example.com', (router) => {
-			router.any('/xmlrpc.php', forbidden())
+			router.all('/xmlrpc.php', forbidden())
 		})
 	},
 })

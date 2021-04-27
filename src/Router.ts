@@ -47,7 +47,7 @@ export class Router extends BaseRouter {
 		this.trace = partial(this.register, ['TRACE'])
 
 		// Special one to match all HTTP methods.
-		this.all = partial(this.register, ['*'])
+		this.all = partial(this.register, ['ALL'])
 	}
 
 	isHandlerMap(handler: HandlerMap | Handler): handler is HandlerMap {

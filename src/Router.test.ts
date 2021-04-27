@@ -7,6 +7,7 @@ const POSTS_HANDLER = makeHandler()
 const POST_HANDLER = makeHandler()
 const POST_UPDATE_HANDLER = makeHandler()
 const OPTIONAL_PARAM_HANDLER = makeHandler()
+const OPTIONAL_PARAM_POST_HANDLER = makeHandler()
 const WILDCARD_HANDLER = makeHandler()
 const SANDWICH_HANDLER = makeHandler()
 const MOTHER_HANDLER = makeHandler()
@@ -30,6 +31,7 @@ router.get('/posts', POSTS_HANDLER)
 router.get('/posts/:id', POST_HANDLER)
 router.post('/posts/:id(\\d+)', POST_UPDATE_HANDLER)
 router.get('/optional/:id?', OPTIONAL_PARAM_HANDLER)
+router.all('/optional/:id?', OPTIONAL_PARAM_POST_HANDLER)
 router.get('/wildcard/:extra*', WILDCARD_HANDLER)
 router.get('/bread/:meat+/bread', SANDWICH_HANDLER)
 router.get('/mother{-:type}?', MOTHER_HANDLER)
@@ -93,6 +95,12 @@ describe('Router', () => {
 	test('GET /optional', () => {
 		expect(router.getRoute(makeGet('/optional'))).toMatchObject(
 			makeHandlerMatcher(GET, OPTIONAL_PARAM_HANDLER),
+		)
+	})
+
+	test('POST /optional', () => {
+		expect(router.getRoute(makePost('/optional'))).toMatchObject(
+			makeHandlerMatcher(POST, OPTIONAL_PARAM_POST_HANDLER),
 		)
 	})
 

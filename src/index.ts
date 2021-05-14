@@ -48,7 +48,7 @@ export function handleFetch(options: any = {}) {
 		...options,
 	}
 
-	const listener = (event: FetchEvent) => {
+	const listener = async (event: FetchEvent) => {
 		if (options.passThroughOnException) {
 			event.passThroughOnException()
 		}
@@ -68,7 +68,7 @@ export function handleFetch(options: any = {}) {
 			}
 		}
 
-		const response = makeResponse()
+		const response = await makeResponse()
 
 		event.respondWith(response)
 

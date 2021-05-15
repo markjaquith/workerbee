@@ -226,8 +226,20 @@ export default class RequestManager {
 			cfProperties = await cfPropertiesHandler(cfProperties)
 		}
 
+		const hasCfProperties = Object.keys(cfProperties).length > 0
+		if (hasCfProperties) {
+			this.log(
+				'ℹ️',
+				'Using cf RequestInit properties, which prevents APO from working',
+				cfProperties,
+			)
+		}
+
 		this.log('➡️', request.url)
-		const response = await fetch(request, { cf: cfProperties })
+		const response = await fetch(
+			request,
+			hasCfProperties ? { cf: cfProperties } : undefined,
+		)
 		this.log('⬅️', response)
 		return response
 	}

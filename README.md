@@ -249,6 +249,7 @@ that contains:
   addRequestHandler(),
   addResponseHandler(),
   addCfPropertiesHandler(),
+	setRedirectMode(),
   originalRequest,
   request,
   response,
@@ -264,7 +265,8 @@ that contains:
   handler (pass `{immediate: true}` to add it as the first or next handler).
 - `addCfPropertiesHandler(handler)` — adds a callback that receives and returns
   new properties to pass to `fetch()` on the `cf` key (see [Cloudflare
-  documentation][cfpropertieshandlerdocs])
+  documentation][cfpropertieshandlerdocs]).
+- `setRedirectMode(mode)` — sets the redirect mode for the main fetch. Default is 'manual', but you can set 'follow' or 'error'.
 - `request` — A `Request` object representing the current state of the request.
 - `originalRequest` — The original `Request` object (might be different if other
   handlers returned a new request).

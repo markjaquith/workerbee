@@ -46,6 +46,7 @@ export interface ManagerData {
 	addRequestHandler: HandlerAdder
 	addResponseHandler: HandlerAdder
 	addCfPropertiesHandler: CfPropertiesHandlerAdder
+	setRedirectMode: (mode: RequestRedirect) => void
 	log: (message?: any, ...optionalParams: any[]) => void
 	request: Request
 	current: Request | Response
@@ -59,6 +60,7 @@ export default class RequestManager {
 	private requestHandlers: Handler[] = []
 	private responseHandlers: Handler[] = []
 	private cfPropertiesHandlers: CfPropertiesHandler[] = []
+	private redirectMode: RequestRedirect = 'manual'
 	private originalRequestHandlers: Handler[]
 	private originalResponseHandlers: Handler[]
 	private routes: RouterCallback | undefined
@@ -78,6 +80,7 @@ export default class RequestManager {
 		this.addRequestHandler = this.addRequestHandler.bind(this)
 		this.addResponseHandler = this.addResponseHandler.bind(this)
 		this.addCfPropertiesHandler = this.addCfPropertiesHandler.bind(this)
+		this.setRedirectMode = this.setRedirectMode.bind(this)
 		this.log = this.log.bind(this)
 	}
 
@@ -88,6 +91,7 @@ export default class RequestManager {
 			addRequestHandler: this.addRequestHandler,
 			addResponseHandler: this.addResponseHandler,
 			addCfPropertiesHandler: this.addCfPropertiesHandler,
+			setRedirectMode: this.setRedirectMode,
 			log: this.log,
 			phase: 'request',
 			request: request,
@@ -137,6 +141,10 @@ export default class RequestManager {
 
 	addCfPropertiesHandler(handler: CfPropertiesHandler) {
 		this.cfPropertiesHandlers.push(handler)
+	}
+
+	setRedirectMode(mode: RequestRedirect) {
+		this.redirectMode = mode
 	}
 
 	log(message?: any, ...optionalParams: any[]) {
@@ -236,10 +244,10 @@ export default class RequestManager {
 		}
 
 		this.log('➡️', request.url)
-		const response = await fetch(
-			request,
-			hasCfProperties ? { cf: cfProperties } : undefined,
-		)
+		const response = await fetch(request, {
+			...(hasCfProperties ? { cf: cfProperties } : {}),
+			redirect: this.redirectMode,
+		})
 		this.log('⬅️', response)
 		return response
 	}

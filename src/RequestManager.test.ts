@@ -261,6 +261,25 @@ test('Adding a cfPropertiesHandler results in fetch() called appropriately', asy
 	expect(global.fetch).toHaveBeenCalledTimes(1)
 	expect(global.fetch).toHaveBeenLastCalledWith(request, {
 		cf: additionalCfProperties,
+		redirect: 'manual',
+	})
+	global.fetch = originalFetch
+})
+
+test('Changing the redirect mode results in fetch() called appropriately', async () => {
+	const originalFetch = global.fetch
+	global.fetch = jest.fn(global.fetch)
+	const manager = new RequestManager({
+		request: async ({ setRedirectMode }) => {
+			setRedirectMode('follow')
+		},
+	})
+	const event = makeEvent()
+	const request = event.request
+	await manager.makeResponse(makeEvent())
+	expect(global.fetch).toHaveBeenCalledTimes(1)
+	expect(global.fetch).toHaveBeenLastCalledWith(request, {
+		redirect: 'follow',
 	})
 	global.fetch = originalFetch
 })

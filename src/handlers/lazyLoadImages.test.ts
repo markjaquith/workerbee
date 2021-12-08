@@ -5,7 +5,7 @@ let response: Response, textResponse: Response
 
 beforeAll(() => {
 	response = new Response(
-		'<img src="test.jpg" /><p src="no.jpg" /><img src="test.gif" />',
+		'<img data-loading="lazy" src="test.jpg" /><p src="no.jpg" /><img data-loading="lazy" src="test.gif" /><img data-loading="eager" loading="eager" src="test.gif" />',
 		{
 			headers: new Headers({
 				'Content-Type': 'text/html',
@@ -28,8 +28,11 @@ describe('lazyLoadImages()', () => {
 			new RequestManager().makeData({ response }),
 		)
 		document.body.innerHTML = await result.text()
-		document.querySelectorAll('img').forEach((img) => {
+		document.querySelectorAll('img[data-loading="lazy"]').forEach((img) => {
 			expect(img.getAttribute('loading')).toBe('lazy')
+		})
+		document.querySelectorAll('img[data-loading="eager"]').forEach((img) => {
+			expect(img.getAttribute('loading')).toBe('eager')
 		})
 		expect(document.querySelector('p').getAttribute('loading')).toBeNull()
 	})

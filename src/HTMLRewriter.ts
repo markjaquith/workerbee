@@ -1,4 +1,5 @@
-import cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
+import { composeP } from 'ramda'
 
 /**
  * TODO: This code is not optimized for production!
@@ -80,7 +81,13 @@ export default class HTMLRewriter {
 	}
 
 	wrapElement($, node) {
-		const $node = $(node)
+		let $node
+		try {
+			$node = $(node)
+		} catch (e) {
+			$node = node
+		}
+
 		$node.tagName = node.name
 
 		$node.hasAttribute = hasAttribute.bind($node)
@@ -91,7 +98,12 @@ export default class HTMLRewriter {
 	}
 
 	wrapOther($, node, lastInNode) {
-		const $node = $(node)
+		let $node
+		try {
+			$node = $(node)
+		} catch (e) {
+			$node = node
+		}
 
 		$node.text = node.nodeValue
 		$node.replace = replace.bind($node)

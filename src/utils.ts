@@ -58,7 +58,9 @@ export function getCookie(request: Request, name: string) {
 }
 
 export function testing() {
-	return process && process.env && process.env.JEST_WORKER_ID !== undefined
+	return (
+		typeof process !== 'undefined' && (process?.env?.JEST_WORKER_ID ?? true)
+	)
 }
 
 export function matchesValue(test: ValueMatcher, value: string) {

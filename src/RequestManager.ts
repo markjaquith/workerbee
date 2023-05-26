@@ -199,19 +199,19 @@ export default class RequestManager {
 
 				if (isRedirect(response)) {
 					this.log(
-						`⏪ ${response.status}`,
-						response.headers.get('location'),
-						response,
+						`[Early Redirect] ${response.status} ${response.headers.get(
+							'location',
+						)}`,
 					)
 				} else {
-					this.log('⏪', response)
+					this.log(`[Early Response] ${response.status}`)
 				}
 				break
 			} else if (result instanceof Request) {
 				// A new Request was returned.
 				if (result.url !== request.url) {
 					// The request URL changed.
-					this.log('✏️', result.url, result)
+					this.log(`[Edited URL] ${result.url}`)
 				}
 
 				// We have a new request to pass to the next handler.
@@ -243,12 +243,12 @@ export default class RequestManager {
 			)
 		}
 
-		this.log('➡️', request.url)
+		this.log(`[Upstream Request] ${request.url}`)
 		const response = await fetch(request, {
 			...(hasCfProperties ? { cf: cfProperties } : {}),
 			redirect: this.redirectMode,
 		})
-		this.log('⬅️', response)
+		this.log(`[Upstream Response] ${response.status}`)
 		return response
 	}
 
@@ -291,7 +291,7 @@ export default class RequestManager {
 		const { request } = event
 
 		this.group(request.url)
-		this.log('🎬', request)
+		this.log(`[Request] ${request.method} ${request.url}`)
 
 		// Determine the route.
 		let routeRequestHandlers: Handler[] = []
@@ -331,12 +331,12 @@ export default class RequestManager {
 
 		if (isRedirect(finalResponse)) {
 			this.log(
-				`⤴️ ${finalResponse.status}`,
-				finalResponse.headers.get('location'),
-				finalResponse,
+				`[Redirect] ${finalResponse.status} ${finalResponse.headers.get(
+					'location',
+				)}`,
 			)
 		} else {
-			this.log('✅', finalResponse)
+			this.log(`[Response] ${finalResponse.status}`)
 		}
 
 		this.groupEnd()
